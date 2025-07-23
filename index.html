@@ -129,13 +129,12 @@
             <div class="mt-10">
                 <div class="mb-4 border-b border-slate-300 flex justify-center">
                     <button data-tab="imageTab" class="tab-button text-lg font-medium py-2 px-6 border-b-2 transition active">Dịch từ ảnh</button>
-                    <button data-tab="fileTranslationTab" class="tab-button text-lg font-medium py-2 px-6 border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition">Dịch File</button>
-                    <button data-tab="audioTranslationTab" class="tab-button text-lg font-medium py-2 px-6 border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition">Dịch Ghi Âm</button>
-                    <button data-tab="dictionaryTab" class="tab-button text-lg font-medium py-2 px-6 border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition">Từ điển cá nhân</button>
+                    <button data-tab="personalDictionaryTab" class="tab-button text-lg font-medium py-2 px-6 border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition">Từ điển cá nhân</button>
+                    <button data-tab="sharedDictionaryTab" class="tab-button text-lg font-medium py-2 px-6 border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition">Từ điển chung</button>
                 </div>
 
                 <div class="tab-content card rounded-2xl shadow-lg p-6 md:p-8">
-                    <!-- Image Translation Tab - Updated for Camera Input -->
+                    <!-- Image Translation Tab -->
                     <div id="imageTab" class="space-y-6">
                         <p class="text-slate-700">Tải lên một hình ảnh để trích xuất văn bản và thực hiện dịch hoặc giải bài tập tiếng Ê-đê.</p>
                         <div class="flex flex-col sm:flex-row gap-4">
@@ -161,7 +160,6 @@
                             </div>
                         </div>
                         
-                        <!-- New: Action buttons for image processing -->
                         <div class="flex flex-col sm:flex-row gap-4">
                             <button id="translateTextFromImageButton" class="flex-1 flex items-center justify-center gap-2 px-8 py-3 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-transform transform hover:scale-105 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:transform-none">
                                 <span class="button-icon">↔️</span>
@@ -174,74 +172,9 @@
                         </div>
                     </div>
 
-                    <!-- New: File Translation Tab -->
-                    <div id="fileTranslationTab" class="hidden space-y-6">
-                        <p class="text-slate-700">Tải lên một file văn bản (.txt) để dịch toàn bộ nội dung. Các định dạng khác như .docx, .pdf cần được chuyển đổi sang .txt trước khi tải lên.</p>
-                        
-                        <div class="flex flex-col space-y-4">
-                            <label for="translationFileInput" class="font-semibold text-slate-800">Chọn File (.txt):</label>
-                            <input type="file" id="translationFileInput" accept=".txt" class="p-2 rounded-lg border-2 border-slate-200">
-                        </div>
-
-                        <div class="flex flex-col space-y-4">
-                            <label for="translationFileContent" class="font-semibold text-slate-800">Nội dung File:</label>
-                            <textarea id="translationFileContent" rows="8" readonly class="w-full p-4 rounded-lg bg-slate-100 border-2 border-slate-200 resize-none" placeholder="Nội dung file sẽ hiển thị ở đây..."></textarea>
-                        </div>
-
-                        <button id="translateFileContentButton" class="w-full flex items-center justify-center gap-2 px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:transform-none">
-                            <span class="button-icon">📄</span>
-                            <span class="button-text">Dịch File</span>
-                        </button>
-
-                        <div class="flex flex-col space-y-4 mt-6">
-                            <label for="translatedFileResult" class="font-semibold text-slate-800">Kết quả dịch File:</label>
-                            <div class="relative w-full">
-                                <textarea id="translatedFileResult" rows="8" readonly class="w-full p-4 rounded-lg bg-slate-100 border-2 border-slate-200 resize-none" placeholder="Kết quả dịch file sẽ hiển thị ở đây..."></textarea>
-                                <button id="speakTranslatedFileButton" title="Phát âm kết quả dịch file" class="absolute bottom-3 right-3 p-2 rounded-full bg-slate-200 hover:bg-slate-300 transition">
-                                    <span>🔊</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- New: Audio Translation Tab -->
-                    <div id="audioTranslationTab" class="hidden space-y-6">
-                        <p class="text-slate-700">Tải lên một file ghi âm (ví dụ: .mp3, .wav) để chuyển đổi giọng nói thành văn bản và sau đó dịch nội dung đó.</p>
-                        
-                        <div class="flex flex-col space-y-4">
-                            <label for="audioFileInput" class="font-semibold text-slate-800">Chọn File Ghi Âm (.mp3, .wav, ...):</label>
-                            <input type="file" id="audioFileInput" accept="audio/*" class="p-2 rounded-lg border-2 border-slate-200">
-                        </div>
-
-                        <div class="flex flex-col space-y-4">
-                            <label for="audioPlayer" class="font-semibold text-slate-800">Nghe Ghi Âm:</label>
-                            <audio id="audioPlayer" controls class="w-full rounded-lg border border-slate-300 p-2" style="display: none;"></audio>
-                        </div>
-
-                        <div class="flex flex-col space-y-4">
-                            <label for="audioTranscribedContent" class="font-semibold text-slate-800">Nội dung Ghi Âm (Mô phỏng):</label>
-                            <textarea id="audioTranscribedContent" rows="6" readonly class="w-full p-4 rounded-lg bg-slate-100 border-2 border-slate-200 resize-none" placeholder="Nội dung ghi âm sẽ hiển thị ở đây sau khi tải file..."></textarea>
-                        </div>
-
-                        <button id="translateAudioContentButton" class="w-full flex items-center justify-center gap-2 px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:transform-none">
-                            <span class="button-icon">🎧</span>
-                            <span class="button-text">Dịch Ghi Âm</span>
-                        </button>
-
-                        <div class="flex flex-col space-y-4 mt-6">
-                            <label for="translatedAudioResult" class="font-semibold text-slate-800">Kết quả Dịch Ghi Âm:</label>
-                            <div class="relative w-full">
-                                <textarea id="translatedAudioResult" rows="6" readonly class="w-full p-4 rounded-lg bg-slate-100 border-2 border-slate-200 resize-none" placeholder="Kết quả dịch ghi âm sẽ hiển thị ở đây..."></textarea>
-                                <button id="speakTranslatedAudioButton" title="Phát âm kết quả dịch ghi âm" class="absolute bottom-3 right-3 p-2 rounded-full bg-slate-200 hover:bg-slate-300 transition">
-                                    <span>🔊</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div id="dictionaryTab" class="hidden space-y-6">
-                        <p class="text-slate-700">Xây dựng từ điển của riêng bạn. Các bản dịch bạn thêm vào đây sẽ được ưu tiên sử dụng, giúp cải thiện độ chính xác theo thời gian.</p>
+                    <!-- Personal Dictionary Tab -->
+                    <div id="personalDictionaryTab" class="hidden space-y-6">
+                        <p class="text-slate-700">Xây dựng từ điển cá nhân của riêng bạn. Các bản dịch bạn thêm vào đây sẽ được ưu tiên sử dụng, giúp cải thiện độ chính xác theo thời gian.</p>
                         <div>
                             <h3 class="text-lg font-semibold mb-3">Thêm từ mới</h3>
                             <div class="flex flex-col sm:flex-row gap-4">
@@ -252,24 +185,26 @@
                         </div>
                         
                         <div class="mt-6 pt-4 border-t border-slate-200">
-                            <h3 class="text-lg font-semibold mb-3">Tải từ điển từ File</h3>
-                            <p class="text-slate-600 text-sm mb-2">Chọn một file JSON (.json) chứa các cặp từ điển của bạn. Định dạng file: <code class="bg-slate-100 p-1 rounded">[{ "ede": "từ Ê-đê", "viet": "từ tiếng Việt" }]</code></p>
-                            <div class="flex flex-col sm:flex-row gap-4 items-center">
-                                <input type="file" id="loadDictionaryFileInput" accept=".json" class="flex-1 p-2 rounded-lg border-2 border-slate-200">
-                                <button id="loadDictionaryFromFileButton" class="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">
-                                    <span class="button-icon">📂</span>
-                                    <span class="button-text">Tải từ File</span>
-                                </button>
-                            </div>
-                            <p class="text-slate-600 text-sm mt-4 mb-2">
-                                <span class="font-bold">Lưu ý:</span> Tính năng tải từ điển từ Web (URL) hiện đang được phát triển.
-                            </p>
-                        </div>
-
-                        <div class="mt-6 pt-4 border-t border-slate-200">
                             <h3 class="lg font-semibold mb-3">Các bản dịch của bạn</h3>
-                            <div id="customTranslationsList" class="max-h-80 overflow-y-auto space-y-3 pr-2">
-                                <p class="text-slate-500 text-center py-4" id="dictionaryPlaceholder">Từ điển cá nhân của bạn đang trống.</p>
+                            <div id="personalTranslationsList" class="max-h-80 overflow-y-auto space-y-3 pr-2">
+                                <p class="text-slate-500 text-center py-4" id="personalDictionaryPlaceholder">Từ điển cá nhân của bạn đang trống.</p>
+                                <!-- Personal dictionary items will be rendered here -->
+                            </div>
+                            <button id="uploadFromFileButton" class="mt-4 w-full flex items-center justify-center gap-2 px-6 py-3 bg-indigo-500 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105">
+                                <span class="button-icon">⬆️</span>
+                                <span class="button-text">Tải dữ liệu từ File (mẫu)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Shared Dictionary Tab -->
+                    <div id="sharedDictionaryTab" class="hidden space-y-6">
+                        <p class="text-slate-700">Khám phá và sử dụng các từ được chia sẻ bởi cộng đồng. Bạn cũng có thể đóng góp từ của mình từ từ điển cá nhân.</p>
+                        <div class="mt-6 pt-4 border-t border-slate-200">
+                            <h3 class="lg font-semibold mb-3">Các từ được chia sẻ</h3>
+                            <div id="sharedTranslationsList" class="max-h-80 overflow-y-auto space-y-3 pr-2">
+                                <p class="text-slate-500 text-center py-4" id="sharedDictionaryPlaceholder">Từ điển chung đang trống hoặc đang tải...</p>
+                                <!-- Shared dictionary items will be rendered here -->
                             </div>
                         </div>
                     </div>
@@ -278,593 +213,679 @@
         </main>
         
         <footer class="text-center mt-10 text-slate-500 text-sm">
-            <p>Phát triển bởi Gemini &copy; 2025</p>
+            <p>Phát triển bởi TheBang &copy; 2025</p>
             <p id="userIdDisplay" class="mt-1 opacity-70">Đang chờ xác thực người dùng...</p>
         </footer>
     </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
+<script type="module">
+    // Firebase SDK imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, setDoc, deleteDoc, onSnapshot, doc, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const state = {
-        isLoading: false,
-        currentTab: 'imageTab',
-        userId: null,
-        dictionary: [
-            { id: 1, ede: 'klei', viet: 'lời nói' },
-            { id: 2, ede: 'mnuih', viet: 'người' },
-            { id: 3, ede: 'hriê', viet: 'ngày' }
-        ],
-        selectedImageFile: null,
-        isGeneratingEssay: false
-    };
+    document.addEventListener('DOMContentLoaded', () => {
 
-    const ui = {
-        inputText: document.getElementById('inputText'),
-        outputText: document.getElementById('outputText'),
-        additionalOutput: document.getElementById('additionalOutput'),
-        additionalOutputWrapper: document.getElementById('additionalOutputWrapper'),
-        translateButton: document.getElementById('translateButton'),
-        generateExamplesButton: document.getElementById('generateExamplesButton'),
-        summarizeExplainButton: document.getElementById('summarizeExplainButton'),
-        recordButton: document.getElementById('recordButton'),
-        speakTranslatedTextButton: document.getElementById('speakTranslatedTextButton'),
-        speakAdditionalTextButton: document.getElementById('speakAdditionalTextButton'),
-        tabs: document.querySelectorAll('.tab-button'),
-        tabContents: document.querySelectorAll('.tab-content > div'),
-        imageInput: document.getElementById('imageInput'),
-        dropZone: document.getElementById('dropZone'),
-        imagePlaceholder: document.getElementById('imagePlaceholder'),
-        imagePreviewWrapper: document.getElementById('imagePreviewWrapper'),
-        imagePreview: document.getElementById('imagePreview'),
-        removeImageButton: document.getElementById('removeImageButton'),
-        takePhotoButton: document.getElementById('takePhotoButton'),
-        chooseImageButton: document.getElementById('chooseImageButton'),
-        translateTextFromImageButton: document.getElementById('translateTextFromImageButton'),
-        solveEdeProblemButton: document.getElementById('solveEdeProblemButton'),
-        newEdeText: document.getElementById('newEdeText'),
-        newVietText: document.getElementById('newVietText'),
-        addTermButton: document.getElementById('addTermButton'),
-        customTranslationsList: document.getElementById('customTranslationsList'),
-        dictionaryPlaceholder: document.getElementById('dictionaryPlaceholder'),
-        userIdDisplay: document.getElementById('userIdDisplay'),
-        essayKeywords: document.getElementById('essayKeywords'),
-        generateEssayButton: document.getElementById('generateEssayButton'),
-        essayOutput: document.getElementById('essayOutput'),
-        essayOutputWrapper: document.getElementById('essayOutputWrapper'),
-        speakEssayTextButton: document.getElementById('speakEssayTextButton'),
-        loadDictionaryFileInput: document.getElementById('loadDictionaryFileInput'),
-        loadDictionaryFromFileButton: document.getElementById('loadDictionaryFromFileButton'),
-        translationFileInput: document.getElementById('translationFileInput'),
-        translationFileContent: document.getElementById('translationFileContent'),
-        translateFileContentButton: document.getElementById('translateFileContentButton'),
-        translatedFileResult: document.getElementById('translatedFileResult'),
-        speakTranslatedFileButton: document.getElementById('speakTranslatedFileButton'),
-        audioFileInput: document.getElementById('audioFileInput'),
-        audioPlayer: document.getElementById('audioPlayer'),
-        audioTranscribedContent: document.getElementById('audioTranscribedContent'),
-        translateAudioContentButton: document.getElementById('translateAudioContentButton'),
-        translatedAudioResult: document.getElementById('translatedAudioResult'),
-        speakTranslatedAudioButton: document.getElementById('speakTranslatedAudioButton')
-    };
-    
-    async function callGeminiAPI(prompt, imageData = null, model = 'gemini-2.0-flash') {
-        // THAY THẾ "AIzaSyDJ7ECoH5VagzAqaZ5QrBFS2Yx-mWbHmOg" BẰNG KHÓA API THỰC CỦA BẠN TẠI ĐÂY
-        // Ví dụ: const apiKey = "AIzaSyC_YOUR_ACTUAL_API_KEY_HERE_12345";
-        const apiKey = "AIzaSyDJ7ECoH5VagzAqaZ5QrBFS2Yx-mWbHmOg"; 
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-        let chatHistory = [];
-        let parts = [{ text: prompt }];
-
-        if (imageData) {
-            parts.push({
-                inlineData: {
-                    mimeType: imageData.mimeType,
-                    data: imageData.data
-                }
-            });
-        }
-        chatHistory.push({ role: "user", parts: parts });
-
-        const payload = { contents: chatHistory };
-
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error("API Error:", errorData);
-                throw new Error(`Lỗi API: ${response.status} - ${errorData.error.message || 'Unknown error'}`);
-            }
-
-            const result = await response.json();
-            if (result.candidates && result.candidates.length > 0 &&
-                result.candidates[0].content && result.candidates[0].content.parts &&
-                result.candidates[0].content.parts.length > 0) {
-                return result.candidates[0].content.parts[0].text;
-            } else {
-                console.warn("Unexpected API response structure:", result);
-                throw new Error("Cấu trúc phản hồi API không mong muốn.");
-            }
-        } catch (error) {
-            console.error("Error calling Gemini API:", error);
-            throw error;
-        }
-    }
-
-    function setLoadingState(button, isLoading, originalText) {
-        const textSpan = button.querySelector('.button-text');
-        const iconSpan = button.querySelector('.button-icon');
-        
-        if (isLoading) {
-            state.isLoading = true;
-            button.disabled = true;
-            textSpan.textContent = 'Đang xử lý...';
-            iconSpan.innerHTML = '<div class="loader"></div>';
-        } else {
-            state.isLoading = false;
-            button.disabled = false;
-            textSpan.textContent = originalText;
-            switch(originalText) {
-                case 'Dịch': iconSpan.innerHTML = '✨'; break;
-                case 'Tạo ví dụ': iconSpan.innerHTML = '💡'; break;
-                case 'Tóm tắt': iconSpan.innerHTML = '📝'; break;
-                case 'Trích xuất văn bản từ ảnh': iconSpan.innerHTML = '↔️'; break; // Updated text and icon
-                case 'Giải bài tập từ ảnh': iconSpan.innerHTML = '🧠'; break;
-                case 'Tạo Bài Văn': iconSpan.innerHTML = '✍️'; break;
-                case 'Chụp ảnh': iconSpan.innerHTML = '📸'; break;
-                case 'Chọn ảnh từ thư viện': iconSpan.innerHTML = '📂'; break;
-                case 'Tải từ File': iconSpan.innerHTML = '📂'; break;
-                case 'Dịch File': iconSpan.innerHTML = '📄'; break;
-                case 'Dịch Ghi Âm': iconSpan.innerHTML = '🎧'; break;
-            }
-        }
-    }
-    
-    function renderDictionary() {
-        ui.customTranslationsList.innerHTML = '';
-        if (state.dictionary.length === 0) {
-            ui.customTranslationsList.appendChild(ui.dictionaryPlaceholder);
-            ui.dictionaryPlaceholder.classList.remove('hidden');
-        } else {
-            if (ui.dictionaryPlaceholder) {
-                ui.dictionaryPlaceholder.classList.add('hidden');
-            }
-            state.dictionary.forEach(term => {
-                const item = document.createElement('div');
-                item.className = 'dictionary-item flex justify-between items-center p-3 rounded-lg border border-slate-200 transition-all duration-300';
-                item.innerHTML = `
-                    <div>
-                        <p class="font-semibold text-slate-800">${term.ede}</p>
-                        <p class="text-sm text-slate-500">${term.viet}</p>
-                    </div>
-                    <button data-id="${term.id}" class="delete-term-btn text-red-500 hover:text-red-700 p-1 rounded-full text-lg">&times;</button>
-                `;
-                ui.customTranslationsList.appendChild(item);
-            });
-        }
-    }
-
-    async function handleTranslate() {
-        if (state.isLoading || !ui.inputText.value.trim()) return;
-        setLoadingState(ui.translateButton, true, 'Dịch');
-        ui.outputText.value = '';
-        ui.additionalOutputWrapper.classList.add('hidden');
-        
-        const inputTextLower = ui.inputText.value.trim().toLowerCase();
-        let translatedText = '';
-
-        const customMatch = state.dictionary.find(t => t.ede.toLowerCase() === inputTextLower || t.viet.toLowerCase() === inputTextLower);
-        if (customMatch) {
-            translatedText = customMatch.ede.toLowerCase() === inputTextLower ? customMatch.viet : customMatch.ede;
-            translatedText += " (từ từ điển cá nhân)";
-            ui.outputText.value = translatedText;
-            setLoadingState(ui.translateButton, false, 'Dịch');
-            return;
-        }
-        
-        const prompt = `Bạn là một công cụ dịch thuật chuyên nghiệp. Hãy dịch văn bản sau đây giữa tiếng Việt và tiếng Ê-đê. Nếu văn bản là tiếng Việt, hãy dịch sang tiếng Ê-đê. Nếu văn bản là tiếng Ê-đê, hãy dịch sang tiếng Việt. Chỉ trả về văn bản đã dịch, không thêm bất kỳ giải thích nào. Văn bản cần dịch: ${ui.inputText.value}`;
-
-        try {
-            translatedText = await callGeminiAPI(prompt);
-            ui.outputText.value = translatedText;
-        } catch (error) {
-            ui.outputText.value = `Đã xảy ra lỗi trong quá trình dịch: ${error.message}`;
-        } finally {
-            setLoadingState(ui.translateButton, false, 'Dịch');
-        }
-    }
-
-    async function handleGenerateExamples() {
-        if (state.isLoading || !ui.outputText.value.trim() || ui.outputText.value.includes("Kết quả dịch sẽ hiển thị ở đây")) return;
-        setLoadingState(ui.generateExamplesButton, true, 'Tạo ví dụ');
-        ui.additionalOutput.value = '';
-        
-        const prompt = `Tạo 3 câu ví dụ sử dụng từ hoặc cụm từ "${ui.outputText.value}" trong ngữ cảnh khác nhau. Các câu ví dụ này nên được dịch sang ngôn ngữ còn lại (nếu từ gốc là tiếng Việt, ví dụ là tiếng Ê-đê và ngược lại). Chỉ trả về các câu ví dụ, mỗi câu trên một dòng mới, không thêm bất kỳ giải thích nào.`;
-
-        try {
-            const examples = await callGeminiAPI(prompt);
-            ui.additionalOutput.value = examples;
-            ui.additionalOutputWrapper.classList.remove('hidden');
-        } catch (error) {
-            ui.additionalOutput.value = `Đã xảy ra lỗi khi tạo ví dụ: ${error.message}`;
-        } finally {
-            setLoadingState(ui.generateExamplesButton, false, 'Tạo ví dụ');
-        }
-    }
-
-    async function handleSummarize() {
-        if (state.isLoading || !ui.outputText.value.trim() || ui.outputText.value.includes("Kết quả dịch sẽ hiển thị ở đây")) return;
-        setLoadingState(ui.summarizeExplainButton, true, 'Tóm tắt');
-        ui.additionalOutput.value = '';
-
-        const prompt = `Tóm tắt hoặc giải thích ngắn gọn ý nghĩa của văn bản sau: "${ui.outputText.value}". Nếu văn bản phức tạp, hãy giải thích các điểm chính. Chỉ trả về phần tóm tắt/giải thích, không thêm bất kỳ giải thích nào khác.`;
-
-        try {
-            const summary = await callGeminiAPI(prompt);
-            ui.additionalOutput.value = summary;
-            ui.additionalOutputWrapper.classList.remove('hidden');
-        } catch (error) {
-            ui.additionalOutput.value = `Đã xảy ra lỗi khi tóm tắt/giải thích: ${error.message}`;
-        } finally {
-            setLoadingState(ui.summarizeExplainButton, false, 'Tóm tắt');
-        }
-    }
-
-    async function handleGenerateEssay() {
-        if (state.isLoading || !ui.essayKeywords.value.trim()) return;
-        setLoadingState(ui.generateEssayButton, true, 'Tạo Bài Văn');
-        ui.essayOutput.value = '';
-        ui.essayOutputWrapper.classList.add('hidden');
-
-        const prompt = `Viết một bài văn về chủ đề dựa trên các từ khóa sau: "${ui.essayKeywords.value}". Bài văn nên có độ dài vừa phải, khoảng 200-300 từ, và có cấu trúc rõ ràng (mở bài, thân bài, kết luận).`;
-
-        try {
-            const essay = await callGeminiAPI(prompt);
-            ui.essayOutput.value = essay;
-            ui.essayOutputWrapper.classList.remove('hidden');
-        } catch (error) {
-            ui.essayOutput.value = `Đã xảy ra lỗi khi tạo bài văn: ${error.message}`;
-        } finally {
-            setLoadingState(ui.generateEssayButton, false, 'Tạo Bài Văn');
-        }
-    }
-    
-    function setupTabs() {
-        ui.tabs.forEach(button => {
-            button.addEventListener('click', () => {
-                const tabId = button.dataset.tab;
-                if (tabId === state.currentTab) return;
-
-                ui.tabs.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-
-                ui.tabContents.forEach(content => content.classList.add('hidden'));
-                document.getElementById(tabId).classList.remove('hidden');
-                
-                state.currentTab = tabId;
-            });
-        });
-    }
-
-    function handleImageSelection(file) {
-        if (file && file.type.startsWith('image/')) {
-            state.selectedImageFile = file;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                ui.imagePreview.src = e.target.result;
-                ui.imagePlaceholder.classList.add('hidden');
-                ui.imagePreviewWrapper.classList.remove('hidden');
-                ui.translateTextFromImageButton.disabled = false;
-                ui.solveEdeProblemButton.disabled = false;
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    async function handleTranslateTextFromImage() {
-        if(state.isLoading || !state.selectedImageFile) return;
-        setLoadingState(ui.translateTextFromImageButton, true, 'Trích xuất văn bản từ ảnh'); // Updated button text
-        ui.inputText.value = ''; // Clear input text area
-        ui.outputText.value = ''; // Clear output text area
-        ui.additionalOutput.value = ''; // Clear additional output
-        ui.additionalOutputWrapper.classList.add('hidden'); // Hide additional output wrapper
-
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-            const base64Image = reader.result.split(',')[1];
-            const mimeType = state.selectedImageFile.type;
-
-            // Prompt to only extract text
-            const prompt = `Trích xuất tất cả văn bản từ hình ảnh này. Chỉ xuất ra văn bản đã trích xuất, không thêm bất kỳ giải thích nào khác.`;
-            
-            try {
-                const extractedText = await callGeminiAPI(prompt, { data: base64Image, mimeType: mimeType });
-                ui.inputText.value = extractedText; // Put extracted text into the main input area
-                ui.outputText.value = "Văn bản đã được trích xuất. Vui lòng nhấn 'Dịch' để dịch."; // Inform user
-            } catch (error) {
-                ui.outputText.value = `Đã xảy ra lỗi khi trích xuất văn bản từ ảnh: ${error.message}`;
-            } finally {
-                setLoadingState(ui.translateTextFromImageButton, false, 'Trích xuất văn bản từ ảnh');
-            }
+        const state = {
+            isLoading: false,
+            currentTab: 'imageTab',
+            userId: null,
+            personalDictionary: [], // Now managed by Firestore
+            sharedDictionary: [], // Now managed by Firestore
+            selectedImageFile: null,
+            isGeneratingEssay: false,
+            db: null,
+            auth: null,
+            appId: typeof __app_id !== 'undefined' ? __app_id : 'default-app-id',
+            isAuthReady: false // To track Firebase auth readiness
         };
-        reader.readAsDataURL(state.selectedImageFile);
-    }
 
-    async function handleSolveEdeProblem() {
-        if(state.isLoading || !state.selectedImageFile) return;
-        setLoadingState(ui.solveEdeProblemButton, true, 'Giải bài tập từ ảnh');
-        ui.outputText.value = '';
-        ui.additionalOutput.value = '';
-        ui.additionalOutputWrapper.classList.add('hidden');
+        const ui = {
+            inputText: document.getElementById('inputText'),
+            outputText: document.getElementById('outputText'),
+            additionalOutput: document.getElementById('additionalOutput'),
+            additionalOutputWrapper: document.getElementById('additionalOutputWrapper'),
+            translateButton: document.getElementById('translateButton'),
+            generateExamplesButton: document.getElementById('generateExamplesButton'),
+            summarizeExplainButton: document.getElementById('summarizeExplainButton'),
+            recordButton: document.getElementById('recordButton'),
+            speakTranslatedTextButton: document.getElementById('speakTranslatedTextButton'),
+            speakAdditionalTextButton: document.getElementById('speakAdditionalTextButton'),
+            tabs: document.querySelectorAll('.tab-button'),
+            tabContents: document.querySelectorAll('.tab-content > div'),
+            imageInput: document.getElementById('imageInput'),
+            dropZone: document.getElementById('dropZone'),
+            imagePlaceholder: document.getElementById('imagePlaceholder'),
+            imagePreviewWrapper: document.getElementById('imagePreviewWrapper'),
+            imagePreview: document.getElementById('imagePreview'),
+            removeImageButton: document.getElementById('removeImageButton'),
+            takePhotoButton: document.getElementById('takePhotoButton'),
+            chooseImageButton: document.getElementById('chooseImageButton'),
+            translateTextFromImageButton: document.getElementById('translateTextFromImageButton'),
+            solveEdeProblemButton: document.getElementById('solveEdeProblemButton'),
+            newEdeText: document.getElementById('newEdeText'),
+            newVietText: document.getElementById('newVietText'),
+            addTermButton: document.getElementById('addTermButton'),
+            personalTranslationsList: document.getElementById('personalTranslationsList'), // Renamed
+            personalDictionaryPlaceholder: document.getElementById('personalDictionaryPlaceholder'), // Renamed
+            sharedTranslationsList: document.getElementById('sharedTranslationsList'), // New
+            sharedDictionaryPlaceholder: document.getElementById('sharedDictionaryPlaceholder'), // New
+            userIdDisplay: document.getElementById('userIdDisplay'),
+            essayKeywords: document.getElementById('essayKeywords'),
+            generateEssayButton: document.getElementById('generateEssayButton'),
+            essayOutput: document.getElementById('essayOutput'),
+            essayOutputWrapper: document.getElementById('essayOutputWrapper'),
+            speakEssayTextButton: document.getElementById('speakEssayTextButton'),
+            uploadFromFileButton: document.getElementById('uploadFromFileButton'), // New button
+        };
+        
+        // Function to call Gemini API
+        async function callGeminiAPI(prompt, imageData = null, model = 'gemini-2.0-flash') {
+            // THAY THẾ "YOUR_API_KEY_HERE" BẰNG KHÓA API THỰC CỦA BẠN TẠI ĐÂY
+            // Ví dụ: const apiKey = "AIzaSyC_YOUR_ACTUAL_API_KEY_HERE_12345";
+            const apiKey = "AIzaSyDJ7ECoH5VagzAqaZ5QrBFS2Yx-mWbHmOg"; // Leave empty for Canvas to auto-provide
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-            const base64Image = reader.result.split(',')[1];
-            const mimeType = state.selectedImageFile.type;
+            let chatHistory = [];
+            let parts = [{ text: prompt }];
 
-            const prompt = `Từ hình ảnh được cung cấp, hãy trích xuất văn bản tiếng Ê-đê. Sau đó, phân tích nội dung này như một bài tập hoặc câu hỏi tiếng Ê-đê. Cung cấp lời giải thích chi tiết, đáp án (nếu có), và bất kỳ thông tin ngữ pháp hoặc từ vựng liên quan nào để giúp người dùng hiểu rõ. Trả lời bằng tiếng Việt.`;
-            
+            if (imageData) {
+                parts.push({
+                    inlineData: {
+                        mimeType: imageData.mimeType,
+                        data: imageData.data
+                    }
+                });
+            }
+            chatHistory.push({ role: "user", parts: parts });
+
+            const payload = { contents: chatHistory };
+
             try {
-                const solutionText = await callGeminiAPI(prompt, { data: base64Image, mimeType: mimeType });
-                ui.outputText.value = "Kết quả giải bài tập từ ảnh (xem phần bổ sung):";
-                ui.additionalOutput.value = solutionText;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("API Error:", errorData);
+                    throw new Error(`Lỗi API: ${response.status} - ${errorData.error.message || 'Unknown error'}`);
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    console.warn("Unexpected API response structure:", result);
+                    throw new Error("Cấu trúc phản hồi API không mong muốn.");
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                throw error;
+            }
+        }
+
+        function setLoadingState(button, isLoading, originalText) {
+            const textSpan = button.querySelector('.button-text');
+            const iconSpan = button.querySelector('.button-icon');
+            
+            if (isLoading) {
+                state.isLoading = true;
+                button.disabled = true;
+                textSpan.textContent = 'Đang xử lý...';
+                iconSpan.innerHTML = '<div class="loader"></div>';
+            } else {
+                state.isLoading = false;
+                button.disabled = false;
+                textSpan.textContent = originalText;
+                switch(originalText) {
+                    case 'Dịch': iconSpan.innerHTML = '✨'; break;
+                    case 'Tạo ví dụ': iconSpan.innerHTML = '💡'; break;
+                    case 'Tóm tắt': iconSpan.innerHTML = '📝'; break;
+                    case 'Trích xuất văn bản từ ảnh': iconSpan.innerHTML = '↔️'; break;
+                    case 'Giải bài tập từ ảnh': iconSpan.innerHTML = '🧠'; break;
+                    case 'Tạo Bài Văn': iconSpan.innerHTML = '✍️'; break;
+                    case 'Chụp ảnh': iconSpan.innerHTML = '📸'; break;
+                    case 'Chọn ảnh từ thư viện': iconSpan.innerHTML = '📂'; break;
+                    case 'Thêm': iconSpan.innerHTML = ''; break; // No icon for Add button
+                    case 'Chia sẻ': iconSpan.innerHTML = '🤝'; break; // New icon for Share button
+                    case 'Tải dữ liệu từ File (mẫu)': iconSpan.innerHTML = '⬆️'; break; // New icon for upload button
+                }
+            }
+        }
+        
+        function renderPersonalDictionary() {
+            ui.personalTranslationsList.innerHTML = '';
+            if (state.personalDictionary.length === 0) {
+                ui.personalTranslationsList.appendChild(ui.personalDictionaryPlaceholder);
+                ui.personalDictionaryPlaceholder.classList.remove('hidden');
+            } else {
+                if (ui.personalDictionaryPlaceholder) {
+                    ui.personalDictionaryPlaceholder.classList.add('hidden');
+                }
+                state.personalDictionary.forEach(term => {
+                    const item = document.createElement('div');
+                    item.className = 'dictionary-item flex justify-between items-center p-3 rounded-lg border border-slate-200 transition-all duration-300';
+                    item.innerHTML = `
+                        <div>
+                            <p class="font-semibold text-slate-800">${term.ede}</p>
+                            <p class="text-sm text-slate-500">${term.viet}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button data-id="${term.id}" data-ede="${term.ede}" data-viet="${term.viet}" class="share-term-btn px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition-transform transform hover:scale-105">Chia sẻ</button>
+                            <button data-id="${term.id}" class="delete-term-btn text-red-500 hover:text-red-700 p-1 rounded-full text-lg">&times;</button>
+                        </div>
+                    `;
+                    ui.personalTranslationsList.appendChild(item);
+                });
+            }
+        }
+
+        function renderSharedDictionary() {
+            ui.sharedTranslationsList.innerHTML = '';
+            if (state.sharedDictionary.length === 0) {
+                ui.sharedTranslationsList.appendChild(ui.sharedDictionaryPlaceholder);
+                ui.sharedDictionaryPlaceholder.classList.remove('hidden');
+            } else {
+                if (ui.sharedDictionaryPlaceholder) {
+                    ui.sharedDictionaryPlaceholder.classList.add('hidden');
+                }
+                state.sharedDictionary.forEach(term => {
+                    const item = document.createElement('div');
+                    item.className = 'dictionary-item flex justify-between items-center p-3 rounded-lg border border-slate-200 transition-all duration-300';
+                    item.innerHTML = `
+                        <div>
+                            <p class="font-semibold text-slate-800">${term.ede}</p>
+                            <p class="text-sm text-slate-500">${term.viet}</p>
+                            <p class="text-xs text-slate-400">Đóng góp bởi: ${term.contributorId.substring(0, 8)}...</p>
+                        </div>
+                    `;
+                    ui.sharedTranslationsList.appendChild(item);
+                });
+            }
+        }
+
+        async function handleTranslate() {
+            if (state.isLoading || !ui.inputText.value.trim()) return;
+            setLoadingState(ui.translateButton, true, 'Dịch');
+            ui.outputText.value = '';
+            ui.additionalOutputWrapper.classList.add('hidden');
+            
+            const inputTextLower = ui.inputText.value.trim().toLowerCase();
+            let translatedText = '';
+
+            // 1. Check personal dictionary first
+            const personalMatch = state.personalDictionary.find(t => t.ede.toLowerCase() === inputTextLower || t.viet.toLowerCase() === inputTextLower);
+            if (personalMatch) {
+                translatedText = personalMatch.ede.toLowerCase() === inputTextLower ? personalMatch.viet : personalMatch.ede;
+                translatedText += " (từ từ điển cá nhân)";
+                ui.outputText.value = translatedText;
+                setLoadingState(ui.translateButton, false, 'Dịch');
+                return;
+            }
+
+            // 2. Check shared dictionary
+            const sharedMatch = state.sharedDictionary.find(t => t.ede.toLowerCase() === inputTextLower || t.viet.toLowerCase() === inputTextLower);
+            if (sharedMatch) {
+                translatedText = sharedMatch.ede.toLowerCase() === inputTextLower ? sharedMatch.viet : sharedMatch.ede;
+                translatedText += " (từ từ điển chung)";
+                ui.outputText.value = translatedText;
+                setLoadingState(ui.translateButton, false, 'Dịch');
+                return;
+            }
+            
+            // 3. Fallback to Gemini API
+            const prompt = `Bạn là một công cụ dịch thuật chuyên nghiệp. Hãy dịch văn bản sau đây giữa tiếng Việt và tiếng Ê-đê. Nếu văn bản là tiếng Việt, hãy dịch sang tiếng Ê-đê. Nếu văn bản là tiếng Ê-đê, hãy dịch sang tiếng Việt. Chỉ trả về văn bản đã dịch, không thêm bất kỳ giải thích nào. Văn bản cần dịch: ${ui.inputText.value}`;
+
+            try {
+                translatedText = await callGeminiAPI(prompt);
+                ui.outputText.value = translatedText;
+            } catch (error) {
+                ui.outputText.value = `Đã xảy ra lỗi trong quá trình dịch: ${error.message}`;
+            } finally {
+                setLoadingState(ui.translateButton, false, 'Dịch');
+            }
+        }
+
+        async function handleGenerateExamples() {
+            if (state.isLoading || !ui.outputText.value.trim() || ui.outputText.value.includes("Kết quả dịch sẽ hiển thị ở đây")) return;
+            setLoadingState(ui.generateExamplesButton, true, 'Tạo ví dụ');
+            ui.additionalOutput.value = '';
+            
+            const prompt = `Tạo 3 câu ví dụ sử dụng từ hoặc cụm từ "${ui.outputText.value}" trong ngữ cảnh khác nhau. Các câu ví dụ này nên được dịch sang ngôn ngữ còn lại (nếu từ gốc là tiếng Việt, ví dụ là tiếng Ê-đê và ngược lại). Chỉ trả về các câu ví dụ, mỗi câu trên một dòng mới, không thêm bất kỳ giải thích nào.`;
+
+            try {
+                const examples = await callGeminiAPI(prompt);
+                ui.additionalOutput.value = examples;
                 ui.additionalOutputWrapper.classList.remove('hidden');
             } catch (error) {
-                ui.outputText.value = `Đã xảy ra lỗi khi giải bài tập từ ảnh: ${error.message}`;
+                ui.additionalOutput.value = `Đã xảy ra lỗi khi tạo ví dụ: ${error.message}`;
             } finally {
-                setLoadingState(ui.solveEdeProblemButton, false, 'Giải bài tập từ ảnh');
+                setLoadingState(ui.generateExamplesButton, false, 'Tạo ví dụ');
             }
-        };
-        reader.readAsDataURL(state.selectedImageFile);
-    }
-    
-    function handleAddTerm() {
-        const ede = ui.newEdeText.value.trim();
-        const viet = ui.newVietText.value.trim();
-        if (ede && viet) {
-            state.dictionary.push({ id: Date.now(), ede, viet });
-            renderDictionary();
-            ui.newEdeText.value = '';
-            ui.newVietText.value = '';
-        }
-    }
-
-    function handleDeleteTerm(e) {
-        if (e.target.classList.contains('delete-term-btn')) {
-            const id = parseInt(e.target.dataset.id);
-            state.dictionary = state.dictionary.filter(term => term.id !== id);
-            renderDictionary();
-        }
-    }
-
-    async function handleLoadDictionaryFromFile() {
-        const file = ui.loadDictionaryFileInput.files[0];
-        if (!file) {
-            alert("Vui lòng chọn một file JSON để tải.");
-            return;
         }
 
-        setLoadingState(ui.loadDictionaryFromFileButton, true, 'Tải từ File');
+        async function handleSummarize() {
+            if (state.isLoading || !ui.outputText.value.trim() || ui.outputText.value.includes("Kết quả dịch sẽ hiển thị ở đây")) return;
+            setLoadingState(ui.summarizeExplainButton, true, 'Tóm tắt');
+            ui.additionalOutput.value = '';
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
+            const prompt = `Tóm tắt hoặc giải thích ngắn gọn ý nghĩa của văn bản sau: "${ui.outputText.value}". Nếu văn bản phức tạp, hãy giải thích các điểm chính. Chỉ trả về phần tóm tắt/giải thích, không thêm bất kỳ giải thích nào khác.`;
+
             try {
-                const loadedData = JSON.parse(e.target.result);
-                if (Array.isArray(loadedData) && loadedData.every(item => item.ede && item.viet)) {
-                    const newEntries = loadedData.filter(newItem => 
-                        !state.dictionary.some(existingItem => 
-                            existingItem.ede.toLowerCase() === newItem.ede.toLowerCase() && 
-                            existingItem.viet.toLowerCase() === newItem.viet.toLowerCase()
-                        )
-                    ).map(item => ({ id: Date.now() + Math.random(), ...item }));
-
-                    state.dictionary = [...state.dictionary, ...newEntries];
-                    renderDictionary();
-                    alert(`Đã tải thành công ${newEntries.length} từ vào từ điển!`);
-                } else {
-                    alert("Định dạng file JSON không hợp lệ. Vui lòng đảm bảo file chứa mảng các đối tượng có thuộc tính 'ede' và 'viet'.");
-                }
+                const summary = await callGeminiAPI(prompt);
+                ui.additionalOutput.value = summary;
+                ui.additionalOutputWrapper.classList.remove('hidden');
             } catch (error) {
-                alert(`Lỗi khi đọc file: ${error.message}. Vui lòng đảm bảo đây là file JSON hợp lệ.`);
-                console.error("Error parsing dictionary file:", error);
+                ui.additionalOutput.value = `Đã xảy ra lỗi khi tóm tắt/giải thích: ${error.message}`;
             } finally {
-                setLoadingState(ui.loadDictionaryFromFileButton, false, 'Tải từ File');
+                setLoadingState(ui.summarizeExplainButton, false, 'Tóm tắt');
             }
-        };
-        reader.onerror = () => {
-            alert("Không thể đọc file.");
-            setLoadingState(ui.loadDictionaryFromFileButton, false, 'Tải từ File');
-        };
-        reader.readAsText(file);
-    }
-
-    async function handleTranslationFileChange() {
-        const file = ui.translationFileInput.files[0];
-        if (!file) {
-            ui.translationFileContent.value = '';
-            ui.translateFileContentButton.disabled = true;
-            return;
         }
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            ui.translationFileContent.value = e.target.result;
-            ui.translateFileContentButton.disabled = false;
-        };
-        reader.onerror = () => {
-            ui.translationFileContent.value = 'Không thể đọc file.';
-            ui.translateFileContentButton.disabled = true;
-        };
-        reader.readAsText(file);
-    }
+        async function handleGenerateEssay() {
+            if (state.isLoading || !ui.essayKeywords.value.trim()) return;
+            setLoadingState(ui.generateEssayButton, true, 'Tạo Bài Văn');
+            ui.essayOutput.value = '';
+            ui.essayOutputWrapper.classList.add('hidden');
 
-    async function handleTranslateFileContent() {
-        if (state.isLoading || !ui.translationFileContent.value.trim()) return;
-        setLoadingState(ui.translateFileContentButton, true, 'Dịch File');
-        ui.translatedFileResult.value = '';
+            const prompt = `Viết một bài văn về chủ đề dựa trên các từ khóa sau: "${ui.essayKeywords.value}". Bài văn nên có độ dài vừa phải, khoảng 200-300 từ, và có cấu trúc rõ ràng (mở bài, thân bài, kết luận).`;
 
-        const fileContent = ui.translationFileContent.value;
-        const prompt = `Bạn là một công cụ dịch thuật chuyên nghiệp. Hãy dịch toàn bộ văn bản sau đây giữa tiếng Việt và tiếng Ê-đê. Nếu văn bản là tiếng Việt, hãy dịch sang tiếng Ê-đê. Nếu văn bản là tiếng Ê-đê, hãy dịch sang tiếng Việt. Chỉ trả về văn bản đã dịch, không thêm bất kỳ giải thích nào. Văn bản cần dịch: \n\n${fileContent}`;
-
-        try {
-            const translatedText = await callGeminiAPI(prompt);
-            ui.translatedFileResult.value = translatedText;
-        } catch (error) {
-            ui.translatedFileResult.value = `Đã xảy ra lỗi khi dịch file: ${error.message}`;
-        } finally {
-            setLoadingState(ui.translateFileContentButton, false, 'Dịch File');
+            try {
+                const essay = await callGeminiAPI(prompt);
+                ui.essayOutput.value = essay;
+                ui.essayOutputWrapper.classList.remove('hidden');
+            } catch (error) {
+                ui.essayOutput.value = `Đã xảy ra lỗi khi tạo bài văn: ${error.message}`;
+            } finally {
+                setLoadingState(ui.generateEssayButton, false, 'Tạo Bài Văn');
+            }
         }
-    }
+        
+        function setupTabs() {
+            ui.tabs.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+                    if (tabId === state.currentTab) return;
 
-    async function handleAudioFileChange() {
-        const file = ui.audioFileInput.files[0];
-        if (!file) {
-            ui.audioPlayer.style.display = 'none';
-            ui.audioPlayer.src = '';
-            ui.audioTranscribedContent.value = '';
-            ui.translateAudioContentButton.disabled = true;
-            return;
+                    ui.tabs.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    ui.tabContents.forEach(content => content.classList.add('hidden'));
+                    document.getElementById(tabId).classList.remove('hidden');
+                    
+                    state.currentTab = tabId;
+                });
+            });
         }
 
-        if (!file.type.startsWith('audio/')) {
-            alert("Vui lòng chọn một file âm thanh hợp lệ.");
-            ui.audioFileInput.value = '';
-            ui.audioPlayer.style.display = 'none';
-            ui.audioPlayer.src = '';
-            ui.audioTranscribedContent.value = '';
-            ui.translateAudioContentButton.disabled = true;
-            return;
+        function handleImageSelection(file) {
+            if (file && file.type.startsWith('image/')) {
+                state.selectedImageFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    ui.imagePreview.src = e.target.result;
+                    ui.imagePlaceholder.classList.add('hidden');
+                    ui.imagePreviewWrapper.classList.remove('hidden');
+                    ui.translateTextFromImageButton.disabled = false;
+                    ui.solveEdeProblemButton.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            ui.audioPlayer.src = e.target.result;
-            ui.audioPlayer.style.display = 'block';
-            ui.translateAudioContentButton.disabled = false;
+        async function handleTranslateTextFromImage() {
+            if(state.isLoading || !state.selectedImageFile) return;
+            setLoadingState(ui.translateTextFromImageButton, true, 'Trích xuất văn bản từ ảnh');
+            ui.inputText.value = '';
+            ui.outputText.value = '';
+            ui.additionalOutput.value = '';
+            ui.additionalOutputWrapper.classList.add('hidden');
 
-            // Simulate transcription for now
-            ui.audioTranscribedContent.value = `(Nội dung mô phỏng từ ghi âm) Đây là văn bản được trích xuất từ file ghi âm "${file.name}". Để có tính năng chuyển đổi giọng nói thành văn bản chính xác, cần tích hợp API Speech-to-Text chuyên nghiệp.`;
-        };
-        reader.onerror = () => {
-            alert("Không thể đọc file ghi âm.");
-            ui.audioPlayer.style.display = 'none';
-            ui.audioPlayer.src = '';
-            ui.audioTranscribedContent.value = 'Lỗi khi đọc file ghi âm.';
-            ui.translateAudioContentButton.disabled = true;
-        };
-        reader.readAsDataURL(file);
-    }
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64Image = reader.result.split(',')[1];
+                const mimeType = state.selectedImageFile.type;
 
-    async function handleTranslateAudioContent() {
-        if (state.isLoading || !ui.audioTranscribedContent.value.trim()) return;
-        setLoadingState(ui.translateAudioContentButton, true, 'Dịch Ghi Âm');
-        ui.translatedAudioResult.value = '';
-
-        const transcribedText = ui.audioTranscribedContent.value;
-        const prompt = `Bạn là một công cụ dịch thuật chuyên nghiệp. Hãy dịch toàn bộ văn bản sau đây giữa tiếng Việt và tiếng Ê-đê. Nếu văn bản là tiếng Việt, hãy dịch sang tiếng Ê-đê. Nếu văn bản là tiếng Ê-đê, hãy dịch sang tiếng Việt. Chỉ trả về văn bản đã dịch, không thêm bất kỳ giải thích nào. Văn bản cần dịch: \n\n${transcribedText}`;
-
-        try {
-            const translatedText = await callGeminiAPI(prompt);
-            ui.translatedAudioResult.value = translatedText;
-        } catch (error) {
-            ui.translatedAudioResult.value = `Đã xảy ra lỗi khi dịch ghi âm: ${error.message}`;
-        } finally {
-            setLoadingState(ui.translateAudioContentButton, false, 'Dịch Ghi Âm');
+                const prompt = `Trích xuất tất cả văn bản từ hình ảnh này. Chỉ xuất ra văn bản đã trích xuất, không thêm bất kỳ giải thích nào khác.`;
+                
+                try {
+                    const extractedText = await callGeminiAPI(prompt, { data: base64Image, mimeType: mimeType });
+                    ui.inputText.value = extractedText;
+                    ui.outputText.value = "Văn bản đã được trích xuất. Vui lòng nhấn 'Dịch' để dịch.";
+                } catch (error) {
+                    ui.outputText.value = `Đã xảy ra lỗi khi trích xuất văn bản từ ảnh: ${error.message}`;
+                } finally {
+                    setLoadingState(ui.translateTextFromImageButton, false, 'Trích xuất văn bản từ ảnh');
+                }
+            };
+            reader.readAsDataURL(state.selectedImageFile);
         }
-    }
+
+        async function handleSolveEdeProblem() {
+            if(state.isLoading || !state.selectedImageFile) return;
+            setLoadingState(ui.solveEdeProblemButton, true, 'Giải bài tập từ ảnh');
+            ui.outputText.value = '';
+            ui.additionalOutput.value = '';
+            ui.additionalOutputWrapper.classList.add('hidden');
+
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64Image = reader.result.split(',')[1];
+                const mimeType = state.selectedImageFile.type;
+
+                const prompt = `Từ hình ảnh được cung cấp, hãy trích xuất văn bản tiếng Ê-đê. Sau đó, phân tích nội dung này như một bài tập hoặc câu hỏi tiếng Ê-đê. Cung cấp lời giải thích chi tiết, đáp án (nếu có), và bất kỳ thông tin ngữ pháp hoặc từ vựng liên quan nào để giúp người dùng hiểu rõ. Trả lời bằng tiếng Việt.`;
+                
+                try {
+                    const solutionText = await callGeminiAPI(prompt, { data: base64Image, mimeType: mimeType });
+                    ui.outputText.value = "Kết quả giải bài tập từ ảnh (xem phần bổ sung):";
+                    ui.additionalOutput.value = solutionText;
+                    ui.additionalOutputWrapper.classList.remove('hidden');
+                } catch (error) {
+                    ui.outputText.value = `Đã xảy ra lỗi khi giải bài tập từ ảnh: ${error.message}`;
+                } finally {
+                    setLoadingState(ui.solveEdeProblemButton, false, 'Giải bài tập từ ảnh');
+                }
+            };
+            reader.readAsDataURL(state.selectedImageFile);
+        }
+        
+        async function handleAddTerm() {
+            const ede = ui.newEdeText.value.trim();
+            const viet = ui.newVietText.value.trim();
+            if (ede && viet && state.db && state.userId) {
+                try {
+                    await addDoc(collection(state.db, `artifacts/${state.appId}/users/${state.userId}/personal_dictionary`), {
+                        ede: ede,
+                        viet: viet,
+                        createdAt: Date.now()
+                    });
+                    ui.newEdeText.value = '';
+                    ui.newVietText.value = '';
+                } catch (e) {
+                    console.error("Error adding document to personal dictionary: ", e);
+                    alert("Đã xảy ra lỗi khi thêm từ vào từ điển cá nhân.");
+                }
+            } else {
+                alert("Vui lòng nhập cả từ tiếng Ê-đê và nghĩa tiếng Việt.");
+            }
+        }
+
+        async function handleDeleteTerm(e) {
+            if (e.target.classList.contains('delete-term-btn')) {
+                const docId = e.target.dataset.id;
+                if (state.db && state.userId && docId) {
+                    try {
+                        await deleteDoc(doc(state.db, `artifacts/${state.appId}/users/${state.userId}/personal_dictionary`, docId));
+                    } catch (e) {
+                        console.error("Error removing document from personal dictionary: ", e);
+                        alert("Đã xảy ra lỗi khi xóa từ khỏi từ điển cá nhân.");
+                    }
+                }
+            }
+        }
+
+        async function handleShareTerm(e) {
+            if (e.target.classList.contains('share-term-btn')) {
+                const docId = e.target.dataset.id;
+                const ede = e.target.dataset.ede;
+                const viet = e.target.dataset.viet;
+
+                if (state.db && state.userId && docId && ede && viet) {
+                    try {
+                        // Check if the term already exists in the shared dictionary to prevent duplicates
+                        const sharedQuery = query(collection(state.db, `artifacts/${state.appId}/public/data/shared_dictionary`));
+                        const sharedDocs = await getDocs(sharedQuery);
+                        const exists = sharedDocs.docs.some(d => d.data().ede === ede && d.data().viet === viet);
+
+                        if (exists) {
+                            alert("Từ này đã tồn tại trong từ điển chung rồi.");
+                            return;
+                        }
+
+                        await addDoc(collection(state.db, `artifacts/${state.appId}/public/data/shared_dictionary`), {
+                            ede: ede,
+                            viet: viet,
+                            contributorId: state.userId,
+                            createdAt: Date.now()
+                        });
+                        alert("Đã chia sẻ từ thành công vào từ điển chung!");
+                    } catch (e) {
+                        console.error("Error sharing term to public dictionary: ", e);
+                        alert("Đã xảy ra lỗi khi chia sẻ từ.");
+                    }
+                }
+            }
+        }
+
+        // Function to upload sample data from files
+        async function uploadSampleDataFromFile() {
+            if (state.isLoading || !state.db || !state.userId) return;
+            setLoadingState(ui.uploadFromFileButton, true, 'Tải dữ liệu từ File (mẫu)');
+
+            // Sample data from "Từ điển E-V.doc" and "tài liêu tiếng êđê.doc"
+            // NOTE: This is a simplified example. In a real application, you'd parse the DOC files.
+            // For demonstration, I'm manually extracting a few terms.
+            const sampleTerms = [
+                { ede: "Kkuh", viet: "chào" },
+                { ede: "Ann", viet: "tên" },
+                { ede: "Ko", viet: "tôi" },
+                { ede: "Ih", viet: "anh, chị" },
+                { ede: "Hlei", viet: "ai, gì" },
+                { ede: "Dk gu", viet: "ngồi xuống" },
+                { ede: "Suaih pral", viet: "mạnh khỏe" },
+                { ede: "Klei Yun", viet: "tiếng Kinh" },
+                { ede: "Hrim", viet: "học" },
+                { ede: "Hdruäm hrà", viet: "quyển sách" },
+                { ede: "Nao", viet: "đi" },
+                { ede: "Sang", viet: "nhà" },
+                { ede: "Mdei", viet: "nghỉ" },
+                { ede: "Hru", viet: "ngày" },
+                { ede: "Hu", viet: "ăn (cơm)" },
+                { ede: "Kn", viet: "nấu (cơm)" },
+                { ede: "Anei", viet: "này, đây" },
+                { ede: "Bru", viet: "việc" },
+                { ede: "M bru", viet: "làm việc" },
+                { ede: "Djam", viet: "rau, canh" },
+                { ede: "Mnm", viet: "uống" },
+                { ede: "Kph", viet: "cà phê" },
+                { ede: "Ktr", viet: "bắp" },
+                { ede: "Prk", viet: "tiền" },
+                { ede: "Man", viet: "voi" },
+                { ede: "Dli", viet: "rừng" },
+                { ede: "Hl mn\ng", viet: "thú rừng" },
+                { ede: "Kan", viet: "cá" },
+                { ede: "Hdang", viet: "tôm" },
+                { ede: "Aring", viet: "cua" },
+                { ede: "Kpi", viet: "rượu cần" },
+                { ede: "Kmr\ng dli", viet: "rừng cây" },
+                { ede: "Knu\k kna", viet: "Chính phủ" },
+                { ede: "Dju ana", viet: "dân tộc" },
+                { ede: "Ala ]ar", viet: "Tổ quốc" },
+                { ede: "Klei hd^p", viet: "cuộc sống" },
+                { ede: "Mkra mjing", viet: "chế biến" },
+                { ede: "Hgu\m mgup", viet: "đoàn kết" },
+                { ede: "Yum bhn", viet: "quan trọng" },
+                { ede: "Ao\ knang", viet: "tin tưởng" },
+            ];
+
+            try {
+                const personalDictCollectionRef = collection(state.db, `artifacts/${state.appId}/users/${state.userId}/personal_dictionary`);
+                
+                // Get existing terms to avoid duplicates
+                const existingDocs = await getDocs(personalDictCollectionRef);
+                const existingTerms = new Set(existingDocs.docs.map(doc => `${doc.data().ede.toLowerCase()}-${doc.data().viet.toLowerCase()}`));
+
+                let termsAdded = 0;
+                for (const term of sampleTerms) {
+                    const termKey = `${term.ede.toLowerCase()}-${term.viet.toLowerCase()}`;
+                    if (!existingTerms.has(termKey)) {
+                        await addDoc(personalDictCollectionRef, {
+                            ede: term.ede,
+                            viet: term.viet,
+                            createdAt: Date.now()
+                        });
+                        termsAdded++;
+                    }
+                }
+                alert(`Đã tải thành công ${termsAdded} từ mới vào từ điển cá nhân của bạn.`);
+            } catch (error) {
+                console.error("Error uploading sample data:", error);
+                alert("Đã xảy ra lỗi khi tải dữ liệu mẫu.");
+            } finally {
+                setLoadingState(ui.uploadFromFileButton, false, 'Tải dữ liệu từ File (mẫu)');
+            }
+        }
+
+        // Event listeners
+        ui.translateButton.addEventListener('click', handleTranslate);
+        ui.generateExamplesButton.addEventListener('click', handleGenerateExamples);
+        ui.summarizeExplainButton.addEventListener('click', handleSummarize);
+        ui.generateEssayButton.addEventListener('click', handleGenerateEssay);
+        ui.addTermButton.addEventListener('click', handleAddTerm);
+        ui.personalTranslationsList.addEventListener('click', handleDeleteTerm);
+        ui.personalTranslationsList.addEventListener('click', handleShareTerm); // Listen for share button clicks
+        ui.uploadFromFileButton.addEventListener('click', uploadSampleDataFromFile); // New event listener
+
+        ui.takePhotoButton.addEventListener('click', () => {
+            ui.imageInput.setAttribute('capture', 'environment');
+            ui.imageInput.click();
+        });
+        ui.chooseImageButton.addEventListener('click', () => {
+            ui.imageInput.removeAttribute('capture');
+            ui.imageInput.click();
+        });
+
+        ui.translateTextFromImageButton.addEventListener('click', handleTranslateTextFromImage);
+        ui.solveEdeProblemButton.addEventListener('click', handleSolveEdeProblem);
+
+        ui.dropZone.addEventListener('click', () => ui.imageInput.click());
+        ui.imageInput.addEventListener('change', (e) => handleImageSelection(e.target.files[0]));
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            ui.dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            ui.dropZone.addEventListener(eventName, () => ui.dropZone.classList.add('bg-blue-100'), false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            ui.dropZone.addEventListener(eventName, () => ui.dropZone.classList.remove('bg-blue-100'), false);
+        });
+        ui.dropZone.addEventListener('drop', (e) => handleImageSelection(e.dataTransfer.files[0]));
+        
+        ui.removeImageButton.addEventListener('click', () => {
+            state.selectedImageFile = null;
+            ui.imageInput.value = '';
+            ui.imagePlaceholder.classList.remove('hidden');
+            ui.imagePreviewWrapper.classList.add('hidden');
+            ui.translateTextFromImageButton.disabled = true;
+            ui.solveEdeProblemButton.disabled = true;
+        });
+        
+        // Web Speech API (Placeholders for now, not LLM-powered directly)
+        ui.recordButton.addEventListener('click', () => {
+            alert('Tính năng ghi âm giọng nói đang được phát triển!');
+        });
+        ui.speakTranslatedTextButton.addEventListener('click', () => {
+            alert('Tính năng phát âm đang được phát triển!');
+        });
+        ui.speakAdditionalTextButton.addEventListener('click', () => {
+            alert('Tính năng phát âm đang được phát triển!');
+        });
+        ui.speakEssayTextButton.addEventListener('click', () => {
+            alert('Tính năng phát âm đang được phát triển!');
+        });
+
+        // Firebase Initialization and Auth
+        async function initializeFirebase() {
+            try {
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                const app = initializeApp(firebaseConfig);
+                state.db = getFirestore(app);
+                state.auth = getAuth(app);
+
+                onAuthStateChanged(state.auth, async (user) => {
+                    if (user) {
+                        state.userId = user.uid;
+                        ui.userIdDisplay.textContent = `ID Người dùng: ${state.userId}`;
+                        state.isAuthReady = true;
+                        // Start listening to dictionaries only after auth is ready
+                        listenToPersonalDictionary();
+                        listenToSharedDictionary();
+                    } else {
+                        // Sign in anonymously if no user is authenticated
+                        try {
+                            if (typeof __initial_auth_token !== 'undefined') {
+                                await signInWithCustomToken(state.auth, __initial_auth_token);
+                            } else {
+                                await signInAnonymously(state.auth);
+                            }
+                        } catch (error) {
+                            console.error("Firebase Auth Error:", error);
+                            ui.userIdDisplay.textContent = `Lỗi xác thực: ${error.message}`;
+                            state.isAuthReady = true; // Still mark as ready to avoid blocking UI
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                ui.userIdDisplay.textContent = `Lỗi khởi tạo Firebase: ${error.message}`;
+            }
+        }
+
+        // Listen to Personal Dictionary changes in real-time
+        function listenToPersonalDictionary() {
+            if (!state.db || !state.userId || !state.isAuthReady) return;
+
+            const personalDictRef = collection(state.db, `artifacts/${state.appId}/users/${state.userId}/personal_dictionary`);
+            onSnapshot(personalDictRef, (snapshot) => {
+                const terms = [];
+                snapshot.forEach(doc => {
+                    terms.push({ id: doc.id, ...doc.data() });
+                });
+                state.personalDictionary = terms;
+                renderPersonalDictionary();
+            }, (error) => {
+                console.error("Error listening to personal dictionary:", error);
+                ui.personalTranslationsList.innerHTML = `<p class="text-red-500 text-center py-4">Lỗi tải từ điển cá nhân: ${error.message}</p>`;
+            });
+        }
+
+        // Listen to Shared Dictionary changes in real-time
+        function listenToSharedDictionary() {
+            if (!state.db || !state.isAuthReady) return;
+
+            const sharedDictRef = collection(state.db, `artifacts/${state.appId}/public/data/shared_dictionary`);
+            onSnapshot(sharedDictRef, (snapshot) => {
+                const terms = [];
+                snapshot.forEach(doc => {
+                    terms.push({ id: doc.id, ...doc.data() });
+                });
+                state.sharedDictionary = terms;f
+                renderSharedDictionary();
+            }, (error) => {
+                console.error("Error listening to shared dictionary:", error);
+                ui.sharedTranslationsList.innerHTML = `<p class="text-red-500 text-center py-4">Lỗi tải từ điển chung: ${error.message}</p>`;
+            });
+        }
 
 
-    ui.translateButton.addEventListener('click', handleTranslate);
-    ui.generateExamplesButton.addEventListener('click', handleGenerateExamples);
-    ui.summarizeExplainButton.addEventListener('click', handleSummarize);
-    ui.generateEssayButton.addEventListener('click', handleGenerateEssay);
-    ui.addTermButton.addEventListener('click', handleAddTerm);
-    ui.customTranslationsList.addEventListener('click', handleDeleteTerm);
-    ui.loadDictionaryFromFileButton.addEventListener('click', handleLoadDictionaryFromFile);
-
-    ui.takePhotoButton.addEventListener('click', () => {
-        ui.imageInput.setAttribute('capture', 'environment');
-        ui.imageInput.click();
+        function initializeApp() {
+            initializeFirebase(); // Initialize Firebase first
+            ui.translateTextFromImageButton.disabled = true;
+            ui.solveEdeProblemButton.disabled = true;
+            setupTabs();
+            // Initial render will happen after Firebase auth is ready and listeners are set up
+        }
+        
+        initializeApp();
     });
-    ui.chooseImageButton.addEventListener('click', () => {
-        ui.imageInput.removeAttribute('capture');
-        ui.imageInput.click();
-    });
-
-    ui.translateTextFromImageButton.addEventListener('click', handleTranslateTextFromImage);
-    ui.solveEdeProblemButton.addEventListener('click', handleSolveEdeProblem);
-
-    ui.dropZone.addEventListener('click', () => ui.imageInput.click());
-    ui.imageInput.addEventListener('change', (e) => handleImageSelection(e.target.files[0]));
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        ui.dropZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-        }, false);
-    });
-    ['dragenter', 'dragover'].forEach(eventName => {
-        ui.dropZone.addEventListener(eventName, () => ui.dropZone.classList.add('bg-blue-100'), false);
-    });
-    ['dragleave', 'drop'].forEach(eventName => {
-        ui.dropZone.addEventListener(eventName, () => ui.dropZone.classList.remove('bg-blue-100'), false);
-    });
-    ui.dropZone.addEventListener('drop', (e) => handleImageSelection(e.dataTransfer.files[0]));
-    
-    ui.removeImageButton.addEventListener('click', () => {
-        state.selectedImageFile = null;
-        ui.imageInput.value = '';
-        ui.imagePlaceholder.classList.remove('hidden');
-        ui.imagePreviewWrapper.classList.add('hidden');
-        ui.translateTextFromImageButton.disabled = true;
-        ui.solveEdeProblemButton.disabled = true;
-    });
-    
-    ui.translationFileInput.addEventListener('change', handleTranslationFileChange);
-    ui.translateFileContentButton.addEventListener('click', handleTranslateFileContent);
-    ui.speakTranslatedFileButton.addEventListener('click', () => {
-        alert('Tính năng phát âm đang được phát triển!');
-    });
-
-    ui.audioFileInput.addEventListener('change', handleAudioFileChange);
-    ui.translateAudioContentButton.addEventListener('click', handleTranslateAudioContent);
-    ui.speakTranslatedAudioButton.addEventListener('click', () => {
-        alert('Tính năng phát âm đang được phát triển!');
-    });
-
-
-    ui.recordButton.addEventListener('click', () => {
-        alert('Tính năng ghi âm giọng nói đang được phát triển!');
-    });
-    ui.speakTranslatedTextButton.addEventListener('click', () => {
-        alert('Tính năng phát âm đang được phát triển!');
-    });
-    ui.speakAdditionalTextButton.addEventListener('click', () => {
-        alert('Tính năng phát âm đang được phát triển!');
-    });
-    ui.speakEssayTextButton.addEventListener('click', () => {
-        alert('Tính năng phát âm đang được phát triển!');
-    });
-
-    function initializeApp() {
-        state.userId = `user_${Math.random().toString(36).substr(2, 9)}`;
-        ui.userIdDisplay.textContent = `ID Người dùng: ${state.userId}`;
-        ui.translateTextFromImageButton.disabled = true;
-        ui.solveEdeProblemButton.disabled = true;
-        ui.translateFileContentButton.disabled = true;
-        ui.translateAudioContentButton.disabled = true;
-        ui.audioPlayer.style.display = 'none';
-        setupTabs();
-        renderDictionary();
-    }
-    
-    initializeApp();
-});
 </script>
 </body>
 </html>
