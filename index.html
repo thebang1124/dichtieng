@@ -165,7 +165,7 @@
                         <div class="flex flex-col sm:flex-row gap-4">
                             <button id="translateTextFromImageButton" class="flex-1 flex items-center justify-center gap-2 px-8 py-3 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-transform transform hover:scale-105 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:transform-none">
                                 <span class="button-icon">↔️</span>
-                                <span class="button-text">Dịch văn bản từ ảnh</span>
+                                <span class="button-text">Trích xuất văn bản từ ảnh</span>
                             </button>
                             <button id="solveEdeProblemButton" class="flex-1 flex items-center justify-center gap-2 px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:transform-none">
                                 <span class="button-icon">🧠</span>
@@ -349,6 +349,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     async function callGeminiAPI(prompt, imageData = null, model = 'gemini-2.0-flash') {
+        // THAY THẾ "YOUR_API_KEY_HERE" BẰNG KHÓA API THỰC CỦA BẠN TẠI ĐÂY
+        // Ví dụ: const apiKey = "AIzaSyC_YOUR_ACTUAL_API_KEY_HERE_12345";
         const apiKey = "484080678597"; 
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -412,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'Dịch': iconSpan.innerHTML = '✨'; break;
                 case 'Tạo ví dụ': iconSpan.innerHTML = '💡'; break;
                 case 'Tóm tắt': iconSpan.innerHTML = '📝'; break;
-                case 'Dịch văn bản từ ảnh': iconSpan.innerHTML = '↔️'; break;
+                case 'Trích xuất văn bản từ ảnh': iconSpan.innerHTML = '↔️'; break; // Updated text and icon
                 case 'Giải bài tập từ ảnh': iconSpan.innerHTML = '🧠'; break;
                 case 'Tạo Bài Văn': iconSpan.innerHTML = '✍️'; break;
                 case 'Chụp ảnh': iconSpan.innerHTML = '📸'; break;
@@ -567,25 +569,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function handleTranslateTextFromImage() {
         if(state.isLoading || !state.selectedImageFile) return;
-        setLoadingState(ui.translateTextFromImageButton, true, 'Dịch văn bản từ ảnh');
-        ui.outputText.value = '';
-        ui.additionalOutput.value = '';
-        ui.additionalOutputWrapper.classList.add('hidden');
+        setLoadingState(ui.translateTextFromImageButton, true, 'Trích xuất văn bản từ ảnh'); // Updated button text
+        ui.inputText.value = ''; // Clear input text area
+        ui.outputText.value = ''; // Clear output text area
+        ui.additionalOutput.value = ''; // Clear additional output
+        ui.additionalOutputWrapper.classList.add('hidden'); // Hide additional output wrapper
 
         const reader = new FileReader();
         reader.onloadend = async () => {
             const base64Image = reader.result.split(',')[1];
             const mimeType = state.selectedImageFile.type;
 
-            const prompt = `Trích xuất tất cả văn bản từ hình ảnh này. Sau đó, nếu văn bản đã trích xuất là tiếng Ê-đê, hãy dịch sang tiếng Việt. Nếu văn bản là tiếng Việt, hãy dịch sang tiếng Ê-đê. Nếu không phải cả hai, chỉ cung cấp văn bản đã trích xuất. Chỉ xuất ra văn bản đã dịch hoặc văn bản đã trích xuất nếu không thể dịch. Không thêm bất kỳ lời giải thích nào khác.`;
+            // Prompt to only extract text
+            const prompt = `Trích xuất tất cả văn bản từ hình ảnh này. Chỉ xuất ra văn bản đã trích xuất, không thêm bất kỳ giải thích nào khác.`;
             
             try {
-                const translatedText = await callGeminiAPI(prompt, { data: base64Image, mimeType: mimeType });
-                ui.outputText.value = translatedText;
+                const extractedText = await callGeminiAPI(prompt, { data: base64Image, mimeType: mimeType });
+                ui.inputText.value = extractedText; // Put extracted text into the main input area
+                ui.outputText.value = "Văn bản đã được trích xuất. Vui lòng nhấn 'Dịch' để dịch."; // Inform user
             } catch (error) {
-                ui.outputText.value = `Đã xảy ra lỗi khi dịch văn bản từ ảnh: ${error.message}`;
+                ui.outputText.value = `Đã xảy ra lỗi khi trích xuất văn bản từ ảnh: ${error.message}`;
             } finally {
-                setLoadingState(ui.translateTextFromImageButton, false, 'Dịch văn bản từ ảnh');
+                setLoadingState(ui.translateTextFromImageButton, false, 'Trích xuất văn bản từ ảnh');
             }
         };
         reader.readAsDataURL(state.selectedImageFile);
@@ -863,4 +868,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
