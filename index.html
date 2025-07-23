@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     async function callGeminiAPI(prompt, imageData = null, model = 'gemini-2.0-flash') {
-        const apiKey = ""; 
+        const apiKey = "GEMINI_API_KEY"; 
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         let chatHistory = [];
