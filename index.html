@@ -3,7 +3,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>Trình Dịch Ê-đê + AI + OCR + Font</title>
+  <title>Trình Dịch Tiếng Ê-đê</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
@@ -137,7 +137,7 @@ async function callGemini(type) {
     "đoạn văn": `Viết đoạn văn dựa trên: ${input}`,
     "giải thích": `Giải thích từ/ngữ pháp của: ${input}`
   };
-  const apiKey = "YOUR_GEMINI_API_KEY";
+  const apiKey = "AIzaSyDJ7ECoH5VagzAqaZ5QrBFS2Yx-mWbHmOg";
   const genAI = new google.generativeai.GenerativeModel({ model: "gemini-pro", apiKey });
   const result = await genAI.generateContent(prompts[type]);
   const text = await result.response.text();
