@@ -3,10 +3,8 @@
 <html lang="vi" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <title>Ê‑đê ↔ Việt + OCR + Giọng nói + Giải đề</title>
+  <title>Dịch Ê‑đê ↔ Việt + Giải đề + Ảnh</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
-  <script>tailwind.config = { darkMode: 'class' };</script>
   <style>
     @font-face {
       font-family: 'CharisSIL';
@@ -15,44 +13,44 @@
     body { font-family: 'CharisSIL', serif; }
   </style>
 </head>
-<body class="dark:bg-gray-900 dark:text-white text-black bg-white p-4">
-  <div class="max-w-4xl mx-auto space-y-6">
+<body class="dark:bg-gray-900 dark:text-white text-black bg-white p-6">
+  <div class="max-w-3xl mx-auto space-y-6">
 
-    <h1 class="text-2xl font-bold">Dịch Ê‑đê ↔ Việt</h1>
+    <h1 class="text-3xl font-bold text-center">📘 Từ điển Ê‑đê ↔ Việt</h1>
+    <p class="text-center text-gray-400 text-sm">Tra từ, giải đề, nhận diện hình ảnh và giọng nói</p>
 
     <!-- Tra từ -->
-    <input id="inputText" placeholder="Nhập từ..." class="w-full p-2 bg-gray-100 dark:bg-gray-800 rounded" />
-    <div class="flex gap-2 mt-2">
-      <button onclick="translate()" class="px-3 py-1 bg-blue-600 text-white rounded">Dịch</button>
-      <button onclick="saveFavorite()" class="px-3 py-1 bg-yellow-500 text-black rounded">⭐ Ghim</button>
-      <button onclick="startVoice()" class="px-3 py-1 bg-green-600 text-white rounded">🎙️ Nói</button>
-    </div>
-    <textarea id="outputText" rows="2" class="w-full p-2 bg-gray-200 dark:bg-gray-700 rounded mt-2" readonly></textarea>
-    <div id="exampleText" class="text-sm italic text-green-400"></div>
+    <section class="space-y-2">
+      <h2 class="text-xl font-semibold">🔍 Dịch từ</h2>
+      <input id="inputText" placeholder="Nhập từ tiếng Việt hoặc Ê‑đê..." class="w-full p-2 rounded bg-gray-100 dark:bg-gray-800" />
+      <div class="flex gap-2">
+        <button onclick="translate()" class="px-4 py-1 bg-blue-600 text-white rounded">Dịch</button>
+        <button onclick="startVoice()" class="px-4 py-1 bg-green-600 text-white rounded">🎙️ Nói</button>
+      </div>
+      <textarea id="outputText" rows="2" class="w-full mt-2 p-2 bg-gray-200 dark:bg-gray-700 rounded" readonly></textarea>
+      <div id="exampleText" class="text-sm italic text-green-400"></div>
+    </section>
 
-    <!-- OCR ảnh + dịch -->
-    <div>
-      <h2 class="font-semibold mt-6">📷 Dịch từ ảnh</h2>
+    <!-- OCR dịch -->
+    <section class="space-y-2">
+      <h2 class="text-xl font-semibold">📷 Dịch từ ảnh</h2>
       <input type="file" accept="image/*" onchange="handleOCR(this.files, false)" />
-      <pre id="ocrOutput" class="bg-gray-100 dark:bg-gray-800 p-2 mt-2 rounded text-sm"></pre>
-    </div>
+      <pre id="ocrOutput" class="bg-gray-100 dark:bg-gray-800 p-2 rounded text-sm"></pre>
+    </section>
 
-    <!-- OCR ảnh + giải đề -->
-    <div>
-      <h2 class="font-semibold mt-6">📘 Giải đề từ ảnh</h2>
+    <!-- OCR giải đề -->
+    <section class="space-y-2">
+      <h2 class="text-xl font-semibold">📘 Giải đề bài từ ảnh</h2>
       <input type="file" accept="image/*" onchange="handleOCR(this.files, true)" />
-      <div id="solveOutput" class="bg-gray-100 dark:bg-gray-800 p-2 mt-2 rounded text-sm whitespace-pre-wrap"></div>
-    </div>
+      <div id="solveOutput" class="bg-gray-100 dark:bg-gray-800 p-2 rounded text-sm whitespace-pre-wrap"></div>
+    </section>
 
-    <!-- Danh sách yêu thích -->
-    <div>
-      <h2 class="font-semibold mt-6">⭐ Từ đã ghim (<span id="favCount">0</span>)</h2>
-      <ul id="favoriteList" class="text-sm list-disc pl-4"></ul>
-    </div>
-
-    <p class="text-xs pt-6 text-gray-400">© Phát triển bởi Thế Bằng 2025</p>
+    <footer class="pt-6 text-center text-xs text-gray-400">
+      © Phát triển bởi Thế Bằng 2025 – Dành cho giáo dục
+    </footer>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
   <script>
     const dict = {
       "abă": { vi: "cha", example: "abă đhông: cha tôi" },
@@ -76,7 +74,7 @@
 
     function handleOCR(files, isSolve = false) {
       const textContainer = isSolve ? document.getElementById("solveOutput") : document.getElementById("ocrOutput");
-      textContainer.textContent = "⏳ Đang nhận dạng ảnh...";
+      textContainer.textContent = "⏳ Đang xử lý ảnh...";
       Tesseract.recognize(files[0], 'vie', { logger: m => console.log(m) }).then(({ data: { text } }) => {
         const clean = text.trim();
         if (!isSolve) {
@@ -100,21 +98,6 @@
       return "🤖 Chưa rõ đề bài. Hãy thử nhập đề cụ thể hơn.";
     }
 
-    function saveFavorite() {
-      const word = document.getElementById("inputText").value.trim();
-      if (!word) return;
-      let saved = JSON.parse(localStorage.getItem("favorites") || "[]");
-      if (!saved.includes(word)) saved.push(word);
-      localStorage.setItem("favorites", JSON.stringify(saved));
-      loadFavorites();
-    }
-
-    function loadFavorites() {
-      const list = JSON.parse(localStorage.getItem("favorites") || "[]");
-      document.getElementById("favCount").innerText = list.length;
-      document.getElementById("favoriteList").innerHTML = list.map(w => `<li>${w}</li>`).join('');
-    }
-
     function startVoice() {
       const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
       recognition.lang = 'vi-VN';
@@ -128,8 +111,6 @@
       };
       recognition.start();
     }
-
-    loadFavorites();
   </script>
 </body>
 </html>
