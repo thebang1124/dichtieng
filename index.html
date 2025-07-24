@@ -3,7 +3,7 @@
 <html lang="vi" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <title>Dịch Việt ↔ Ê-đê - Final v3</title>
+  <title>Ê‑đê ↔ Việt + OCR + Giọng nói + Giải đề</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
   <script>tailwind.config = { darkMode: 'class' };</script>
@@ -18,76 +18,118 @@
 <body class="dark:bg-gray-900 dark:text-white text-black bg-white p-4">
   <div class="max-w-4xl mx-auto space-y-6">
 
-    <h1 class="text-2xl font-bold">Dịch Việt ↔ Ê‑đê</h1>
+    <h1 class="text-2xl font-bold">Dịch Ê‑đê ↔ Việt</h1>
 
-    <!-- Input & Translation -->
+    <!-- Tra từ -->
     <input id="inputText" placeholder="Nhập từ..." class="w-full p-2 bg-gray-100 dark:bg-gray-800 rounded" />
-    <button onclick="translate()" class="px-4 py-2 bg-blue-600 text-white rounded">Dịch</button>
-    <textarea id="outputText" rows="2" class="w-full p-2 bg-gray-200 dark:bg-gray-700 rounded" readonly></textarea>
+    <div class="flex gap-2 mt-2">
+      <button onclick="translate()" class="px-3 py-1 bg-blue-600 text-white rounded">Dịch</button>
+      <button onclick="saveFavorite()" class="px-3 py-1 bg-yellow-500 text-black rounded">⭐ Ghim</button>
+      <button onclick="startVoice()" class="px-3 py-1 bg-green-600 text-white rounded">🎙️ Nói</button>
+    </div>
+    <textarea id="outputText" rows="2" class="w-full p-2 bg-gray-200 dark:bg-gray-700 rounded mt-2" readonly></textarea>
+    <div id="exampleText" class="text-sm italic text-green-400"></div>
 
-    <!-- OCR -->
+    <!-- OCR ảnh + dịch -->
     <div>
-      <h2 class="font-semibold">📷 OCR Đa Ảnh</h2>
-      <input type="file" multiple accept="image/*" onchange="handleOCR(this.files)" />
-      <pre id="ocrOutput" class="bg-gray-100 dark:bg-gray-800 p-2 rounded mt-2 text-sm whitespace-pre-wrap"></pre>
+      <h2 class="font-semibold mt-6">📷 Dịch từ ảnh</h2>
+      <input type="file" accept="image/*" onchange="handleOCR(this.files, false)" />
+      <pre id="ocrOutput" class="bg-gray-100 dark:bg-gray-800 p-2 mt-2 rounded text-sm"></pre>
     </div>
 
-    <!-- Flashcard -->
+    <!-- OCR ảnh + giải đề -->
     <div>
-      <h2 class="font-semibold">🎴 Flashcard luyện từ</h2>
-      <button onclick="showFlashcard()" class="text-sm bg-green-600 text-white px-3 py-1 rounded">Luyện tập</button>
-      <div id="flashcard" class="mt-2 p-2 border rounded dark:border-gray-700"></div>
+      <h2 class="font-semibold mt-6">📘 Giải đề từ ảnh</h2>
+      <input type="file" accept="image/*" onchange="handleOCR(this.files, true)" />
+      <div id="solveOutput" class="bg-gray-100 dark:bg-gray-800 p-2 mt-2 rounded text-sm whitespace-pre-wrap"></div>
     </div>
 
-    <!-- AI Mô phỏng -->
+    <!-- Danh sách yêu thích -->
     <div>
-      <h2 class="font-semibold">🧠 AI Giải thích (mô phỏng)</h2>
-      <button onclick="mockAIExplain()" class="text-sm bg-purple-600 text-white px-3 py-1 rounded">Giải thích từ</button>
-      <div id="aiExplain" class="mt-2 text-sm italic"></div>
+      <h2 class="font-semibold mt-6">⭐ Từ đã ghim (<span id="favCount">0</span>)</h2>
+      <ul id="favoriteList" class="text-sm list-disc pl-4"></ul>
     </div>
 
-    <!-- Tác giả -->
-    <p class="text-xs pt-6 text-gray-400">Ứng dụng được phát triển bởi <strong>Thế Bằng</strong> © 2025</p>
+    <p class="text-xs pt-6 text-gray-400">© Phát triển bởi Thế Bằng 2025</p>
   </div>
 
   <script>
-    const dictEV = { "abă": "cha", "abăn": "xoa dịu", "amâo": "lửa" };
-    const dictVE = { "cha": "abă", "xoa dịu": "abăn", "lửa": "amâo" };
+    const dict = {
+      "abă": { vi: "cha", example: "abă đhông: cha tôi" },
+      "abăn": { vi: "xoa dịu", example: "abăn anak: dỗ con" },
+      "amâo": { vi: "lửa", example: "amâo kơtô: lửa cháy" },
+      "cha": { ede: "abă", example: "cha hiền lành" },
+      "xoa dịu": { ede: "abăn", example: "mẹ xoa dịu đứa bé" },
+      "lửa": { ede: "amâo", example: "lửa bốc lên cao" }
+    };
 
     function translate() {
       const input = document.getElementById("inputText").value.trim().toLowerCase();
-      const output = dictEV[input] || dictVE[input] || `(tra mạng: ${input})`;
-      document.getElementById("outputText").value = output;
+      const out = dict[input];
+      let result = "", ex = "";
+      if (out?.vi) { result = out.vi; ex = out.example; }
+      else if (out?.ede) { result = out.ede; ex = out.example; }
+      else { result = "(Chưa có trong từ điển)"; ex = ""; }
+      document.getElementById("outputText").value = result;
+      document.getElementById("exampleText").innerText = ex ? "Ví dụ: " + ex : "";
     }
 
-    function handleOCR(files) {
-      document.getElementById("ocrOutput").textContent = "Đang xử lý ảnh...";
-      let results = [];
-      Array.from(files).forEach((file, index) => {
-        Tesseract.recognize(file, 'vie', {
-          logger: m => console.log(`[OCR ${index + 1}]`, m)
-        }).then(({ data: { text } }) => {
-          results.push(`🖼 Ảnh ${index + 1}:
-${text.trim()}`);
-          document.getElementById("ocrOutput").textContent = results.join("\n\n");
-        });
+    function handleOCR(files, isSolve = false) {
+      const textContainer = isSolve ? document.getElementById("solveOutput") : document.getElementById("ocrOutput");
+      textContainer.textContent = "⏳ Đang nhận dạng ảnh...";
+      Tesseract.recognize(files[0], 'vie', { logger: m => console.log(m) }).then(({ data: { text } }) => {
+        const clean = text.trim();
+        if (!isSolve) {
+          document.getElementById("inputText").value = clean;
+          translate();
+        } else {
+          textContainer.innerText = "📝 Đề bài: " + clean + "\n\n🧠 Trả lời: " + solvePrompt(clean);
+        }
       });
     }
 
-    function showFlashcard() {
-      const keys = Object.keys(dictVE);
-      const random = keys[Math.floor(Math.random() * keys.length)];
-      document.getElementById("flashcard").innerText = `👉 ${random} = ${dictVE[random]}`;
+    function solvePrompt(text) {
+      const lower = text.toLowerCase();
+      if (/tổng|cộng|phép cộng/.test(lower)) {
+        const match = lower.match(/(\d+)[^\d]+(\d+)/);
+        if (match) return `Kết quả là ${parseInt(match[1]) + parseInt(match[2])}.`;
+      }
+      if (/viết đoạn|viết văn/.test(lower) || lower.length > 30) {
+        return "Gia đình là nơi ta sinh ra và lớn lên. Mọi người trong gia đình yêu thương nhau...";
+      }
+      return "🤖 Chưa rõ đề bài. Hãy thử nhập đề cụ thể hơn.";
     }
 
-    function mockAIExplain() {
-      const word = document.getElementById("inputText").value.trim().toLowerCase();
-      const meaning = dictEV[word] || dictVE[word];
-      const explanation = meaning
-        ? `Từ "${word}" có nghĩa là "${meaning}". Đây là một từ đơn giản trong tiếng Ê-đê/Việt.`
-        : `Không tìm thấy từ "${word}". Vui lòng kiểm tra lại hoặc tra trên internet.`;
-      document.getElementById("aiExplain").innerText = explanation;
+    function saveFavorite() {
+      const word = document.getElementById("inputText").value.trim();
+      if (!word) return;
+      let saved = JSON.parse(localStorage.getItem("favorites") || "[]");
+      if (!saved.includes(word)) saved.push(word);
+      localStorage.setItem("favorites", JSON.stringify(saved));
+      loadFavorites();
     }
+
+    function loadFavorites() {
+      const list = JSON.parse(localStorage.getItem("favorites") || "[]");
+      document.getElementById("favCount").innerText = list.length;
+      document.getElementById("favoriteList").innerHTML = list.map(w => `<li>${w}</li>`).join('');
+    }
+
+    function startVoice() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'vi-VN';
+      recognition.onresult = function(event) {
+        const spoken = event.results[0][0].transcript;
+        document.getElementById("inputText").value = spoken;
+        translate();
+      };
+      recognition.onerror = function() {
+        alert("Không nhận được giọng nói. Hãy thử lại!");
+      };
+      recognition.start();
+    }
+
+    loadFavorites();
   </script>
 </body>
 </html>
