@@ -1,116 +1,1185 @@
-
 <!DOCTYPE html>
-<html lang="vi" class="dark">
+<html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dịch Ê‑đê ↔ Việt + Giải đề + Ảnh</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @font-face {
-      font-family: 'CharisSIL';
-      src: url('https://cdn.jsdelivr.net/gh/silnrsi/font-charis@main/web/CharisSIL-Regular.woff2') format('woff2');
-    }
-    body { font-family: 'CharisSIL', serif; }
-  </style>
-</head>
-<body class="dark:bg-gray-900 dark:text-white text-black bg-white p-6">
-  <div class="max-w-3xl mx-auto space-y-6">
-
-    <h1 class="text-3xl font-bold text-center">📘 Từ điển Ê‑đê ↔ Việt</h1>
-    <p class="text-center text-gray-400 text-sm">Tra từ, giải đề, nhận diện hình ảnh và giọng nói</p>
-
-    <!-- Tra từ -->
-    <section class="space-y-2">
-      <h2 class="text-xl font-semibold">🔍 Dịch từ</h2>
-      <input id="inputText" placeholder="Nhập từ tiếng Việt hoặc Ê‑đê..." class="w-full p-2 rounded bg-gray-100 dark:bg-gray-800" />
-      <div class="flex gap-2">
-        <button onclick="translate()" class="px-4 py-1 bg-blue-600 text-white rounded">Dịch</button>
-        <button onclick="startVoice()" class="px-4 py-1 bg-green-600 text-white rounded">🎙️ Nói</button>
-      </div>
-      <textarea id="outputText" rows="2" class="w-full mt-2 p-2 bg-gray-200 dark:bg-gray-700 rounded" readonly></textarea>
-      <div id="exampleText" class="text-sm italic text-green-400"></div>
-    </section>
-
-    <!-- OCR dịch -->
-    <section class="space-y-2">
-      <h2 class="text-xl font-semibold">📷 Dịch từ ảnh</h2>
-      <input type="file" accept="image/*" onchange="handleOCR(this.files, false)" />
-      <pre id="ocrOutput" class="bg-gray-100 dark:bg-gray-800 p-2 rounded text-sm"></pre>
-    </section>
-
-    <!-- OCR giải đề -->
-    <section class="space-y-2">
-      <h2 class="text-xl font-semibold">📘 Giải đề bài từ ảnh</h2>
-      <input type="file" accept="image/*" onchange="handleOCR(this.files, true)" />
-      <div id="solveOutput" class="bg-gray-100 dark:bg-gray-800 p-2 rounded text-sm whitespace-pre-wrap"></div>
-    </section>
-
-    <footer class="pt-6 text-center text-xs text-gray-400">
-      © Phát triển bởi Thế Bằng 2025 – Dành cho giáo dục
-    </footer>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
-  <script>
-    const dict = {
-      "abă": { vi: "cha", example: "abă đhông: cha tôi" },
-      "abăn": { vi: "xoa dịu", example: "abăn anak: dỗ con" },
-      "amâo": { vi: "lửa", example: "amâo kơtô: lửa cháy" },
-      "cha": { ede: "abă", example: "cha hiền lành" },
-      "xoa dịu": { ede: "abăn", example: "mẹ xoa dịu đứa bé" },
-      "lửa": { ede: "amâo", example: "lửa bốc lên cao" }
-    };
-
-    function translate() {
-      const input = document.getElementById("inputText").value.trim().toLowerCase();
-      const out = dict[input];
-      let result = "", ex = "";
-      if (out?.vi) { result = out.vi; ex = out.example; }
-      else if (out?.ede) { result = out.ede; ex = out.example; }
-      else { result = "(Chưa có trong từ điển)"; ex = ""; }
-      document.getElementById("outputText").value = result;
-      document.getElementById("exampleText").innerText = ex ? "Ví dụ: " + ex : "";
-    }
-
-    function handleOCR(files, isSolve = false) {
-      const textContainer = isSolve ? document.getElementById("solveOutput") : document.getElementById("ocrOutput");
-      textContainer.textContent = "⏳ Đang xử lý ảnh...";
-      Tesseract.recognize(files[0], 'vie', { logger: m => console.log(m) }).then(({ data: { text } }) => {
-        const clean = text.trim();
-        if (!isSolve) {
-          document.getElementById("inputText").value = clean;
-          translate();
-        } else {
-          textContainer.innerText = "📝 Đề bài: " + clean + "\n\n🧠 Trả lời: " + solvePrompt(clean);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình Dịch Tiếng Ê-đê</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter for a clean look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better content flow */
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
         }
-      });
-    }
+        body.dark {
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text */
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Soft border */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            border-radius: 15px; /* More rounded corners */
+            overflow: hidden; /* Ensure content stays within rounded corners */
+            width: 100%;
+            max-width: 800px; /* Max width for readability */
+            margin-top: 20px;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.dark .card {
+            background-color: rgba(45, 55, 72, 0.9); /* Darker transparent background */
+            border-color: rgba(63, 75, 94, 0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .tab-button.active {
+            border-color: #2563eb; /* Blue border for active tab */
+            color: #2563eb; /* Blue text for active tab */
+            background-color: #dbeafe; /* Light blue background for active tab */
+            font-weight: 600; /* Bolder text for active tab */
+        }
+        body.dark .tab-button.active {
+            border-color: #63b3ed;
+            color: #63b3ed;
+            background-color: #2a4365;
+        }
+        textarea {
+            resize: vertical; /* Allow vertical resizing */
+            min-height: 150px; /* Minimum height for textareas */
+            background-color: #ffffff;
+        }
+        body.dark textarea {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            border-color: #4a5568;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: none; /* Hidden by default */
+            margin: 0 auto;
+        }
 
-    function solvePrompt(text) {
-      const lower = text.toLowerCase();
-      if (/tổng|cộng|phép cộng/.test(lower)) {
-        const match = lower.match(/(\d+)[^\d]+(\d+)/);
-        if (match) return `Kết quả là ${parseInt(match[1]) + parseInt(match[2])}.`;
-      }
-      if (/viết đoạn|viết văn/.test(lower) || lower.length > 30) {
-        return "Gia đình là nơi ta sinh ra và lớn lên. Mọi người trong gia đình yêu thương nhau...";
-      }
-      return "🤖 Chưa rõ đề bài. Hãy thử nhập đề cụ thể hơn.";
-    }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        body.dark .modal-content {
+            background-color: #2d3748;
+            color: #e2e8f0;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        body.dark .close-button {
+            color: #cbd5e0;
+        }
+        body.dark .close-button:hover,
+        body.dark .close-button:focus {
+            color: #e2e8f0;
+        }
 
-    function startVoice() {
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = 'vi-VN';
-      recognition.onresult = function(event) {
-        const spoken = event.results[0][0].transcript;
-        document.getElementById("inputText").value = spoken;
-        translate();
-      };
-      recognition.onerror = function() {
-        alert("Không nhận được giọng nói. Hãy thử lại!");
-      };
-      recognition.start();
-    }
-  </script>
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #e0e7ff;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        body.dark .alphabet-grid {
+            background-color: #2a4365;
+        }
+        .alphabet-char {
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #c7d2fe;
+            color: #3b82f6;
+        }
+        body.dark .alphabet-char {
+            background-color: #4299e1;
+            color: #ffffff;
+        }
+        .dict-entry {
+            background-color: #ffffff;
+            transition: background-color 0.3s ease;
+        }
+        body.dark .dict-entry {
+            background-color: #2d3748;
+        }
+        .dict-entry p {
+            color: #374151; /* Default text color */
+        }
+        body.dark .dict-entry p {
+            color: #e2e8f0; /* Light text color for dark mode */
+        }
+        .dict-entry p.text-gray-600 {
+            color: #4b5563;
+        }
+        body.dark .dict-entry p.text-gray-600 {
+            color: #a0aec0;
+        }
+        .dict-entry p.text-gray-400 {
+            color: #9ca3af;
+        }
+        body.dark .dict-entry p.text-gray-400 {
+            color: #718096;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .translation-direction-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="card w-full max-w-4xl p-6">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Trình Dịch Tiếng Ê-đê</h1>
+
+        <!-- User ID Display and Dark Mode Toggle -->
+        <div class="flex justify-between items-center mb-4">
+            <div id="userIdDisplay" class="text-sm text-gray-600">
+                ID Người Dùng: Đang tải...
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-gray-700 dark:text-gray-300">Chế độ tối</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex border-b border-gray-200 mb-6 overflow-x-auto">
+            <button id="tabTranslate" class="tab-button flex-shrink-0 px-4 py-2 text-gray-700 hover:text-blue-600 border-b-2 border-transparent active focus:outline-none">Dịch Văn Bản</button>
+            <button id="tabProblemSolver" class="tab-button flex-shrink-0 px-4 py-2 text-gray-700 hover:text-blue-600 border-b-2 border-transparent focus:outline-none">Giải Bài Tập</button>
+            <button id="tabPersonalDict" class="tab-button flex-shrink-0 px-4 py-2 text-gray-700 hover:text-blue-600 border-b-2 border-transparent focus:outline-none">Từ Điển Cá Nhân</button>
+            <button id="tabSharedDict" class="tab-button flex-shrink-0 px-4 py-2 text-gray-700 hover:text-blue-600 border-b-2 border-transparent focus:outline-none">Từ Điển Chung</button>
+            <button id="tabSystemDict" class="tab-button flex-shrink-0 px-4 py-2 text-gray-700 hover:text-blue-600 border-b-2 border-transparent focus:outline-none">Bảng Chữ Cái & Từ Điển Cơ Bản</button>
+        </div>
+
+        <!-- Tab Content: Translate Text -->
+        <div id="contentTranslate" class="tab-content">
+            <div class="mb-4">
+                <label for="sourceInput" class="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2">Văn bản nguồn (Êđê hoặc Việt):</label>
+                <textarea id="sourceInput" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200" placeholder="Nhập văn bản tiếng Êđê hoặc tiếng Việt vào đây để dịch tự động..."></textarea>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
+                <button id="translateButton" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 w-full sm:w-auto mb-3 sm:mb-0">
+                    Dịch Văn Bản
+                </button>
+                <div id="loadingSpinner" class="loading-spinner"></div>
+                <input type="file" id="fileInput" accept="image/*, .txt" multiple class="hidden">
+                <button id="translateFromFileButton" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 w-full sm:w-auto mb-3 sm:mb-0">
+                    Dịch từ Tệp (Ảnh/Văn bản)
+                </button>
+            </div>
+            <div>
+                <label for="targetOutput" class="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2">Bản dịch:</label>
+                <textarea id="targetOutput" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none" readonly placeholder="Bản dịch sẽ xuất hiện ở đây..."></textarea>
+            </div>
+        </div>
+
+        <!-- Tab Content: Problem Solver -->
+        <div id="contentProblemSolver" class="tab-content hidden">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Giải Bài Tập Tiếng Êđê</h2>
+            <div class="mb-4">
+                <label for="problemInput" class="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2">Nhập bài tập/câu hỏi tiếng Êđê:</label>
+                <textarea id="problemInput" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-200" placeholder="Nhập bài tập, câu hỏi, hoặc yêu cầu tạo đoạn văn/ví dụ vào đây..."></textarea>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
+                <button id="solveProblemButton" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 w-full sm:w-auto mb-3 sm:mb-0">
+                    Giải Quyết
+                </button>
+                <input type="file" id="problemFileInput" accept="image/*, .txt" class="hidden">
+                <button id="solveProblemFromFileButton" class="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 w-full sm:w-auto">
+                    Giải từ Tệp (Ảnh/Văn bản)
+                </button>
+            </div>
+            <div>
+                <label for="problemSolutionOutput" class="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2">Giải pháp/Giải thích:</label>
+                <textarea id="problemSolutionOutput" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none" readonly placeholder="Giải pháp hoặc giải thích sẽ xuất hiện ở đây..."></textarea>
+            </div>
+        </div>
+
+        <!-- Tab Content: Personal Dictionary -->
+        <div id="contentPersonalDict" class="tab-content hidden">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Từ Điển Cá Nhân</h2>
+            <div class="mb-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
+                <input type="text" id="personalEdeTerm" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-200" placeholder="Từ tiếng Êđê">
+                <input type="text" id="personalVietnameseMeaning" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-200" placeholder="Nghĩa tiếng Việt">
+                <button id="addPersonalTranslation" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 w-full">
+                    Thêm vào Từ Điển Cá Nhân
+                </button>
+            </div>
+            <div id="personalTranslationsList" class="space-y-3">
+                <!-- Personal translations will be rendered here -->
+                <p class="text-center text-gray-500 dark:text-gray-400 py-4">Đang tải từ điển cá nhân...</p>
+            </div>
+        </div>
+
+        <!-- Tab Content: Shared Dictionary -->
+        <div id="contentSharedDict" class="tab-content hidden">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Từ Điển Chung</h2>
+            <div class="mb-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
+                <input type="text" id="sharedEdeTerm" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-200" placeholder="Từ tiếng Êđê">
+                <input type="text" id="sharedVietnameseMeaning" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-200" placeholder="Nghĩa tiếng Việt">
+                <button id="addSharedTranslation" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 w-full">
+                    Thêm vào Từ Điển Chung
+                </button>
+            </div>
+            <div id="sharedTranslationsList" class="space-y-3">
+                <!-- Shared translations will be rendered here -->
+                <p class="text-center text-gray-500 dark:text-gray-400 py-4">Đang tải từ điển chung...</p>
+            </div>
+        </div>
+
+        <!-- Tab Content: System Dictionary (Alphabet & Basic Vocabulary) -->
+        <div id="contentSystemDict" class="tab-content hidden">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Bảng Chữ Cái Tiếng Êđê</h2>
+            <div class="mb-6">
+                <p class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Chữ viết hoa - Bŏh hră phŭn</p>
+                <div class="alphabet-grid">
+                    <span class="alphabet-char">A</span><span class="alphabet-char">Ă</span><span class="alphabet-char">Â</span><span class="alphabet-char">B</span><span class="alphabet-char">Ƀ</span><span class="alphabet-char">Č</span><span class="alphabet-char">D</span><span class="alphabet-char">Đ</span><span class="alphabet-char">E</span><span class="alphabet-char">Ĕ</span><span class="alphabet-char">Ê</span><span class="alphabet-char">Ê̆</span><span class="alphabet-char">G</span><span class="alphabet-char">H</span><span class="alphabet-char">I</span><span class="alphabet-char">Ĭ</span><span class="alphabet-char">J</span><span class="alphabet-char">K</span><span class="alphabet-char">L</span><span class="alphabet-char">M</span><span class="alphabet-char">N</span><span class="alphabet-char">Ñ</span><span class="alphabet-char">O</span><span class="alphabet-char">Ơ</span><span class="alphabet-char">Ŏ</span><span class="alphabet-char">Ơ̆</span><span class="alphabet-char">Ô</span><span class="alphabet-char">Ô̆</span><span class="alphabet-char">P</span><span class="alphabet-char">R</span><span class="alphabet-char">S</span><span class="alphabet-char">T</span><span class="alphabet-char">U</span><span class="alphabet-char">Ŭ</span><span class="alphabet-char">Ư</span><span class="alphabet-char">Ư̆</span><span class="alphabet-char">W</span><span class="alphabet-char">Y</span>
+                </div>
+                <p class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Chữ viết thường - Bŏh hră êdŭk</p>
+                <div class="alphabet-grid">
+                    <span class="alphabet-char">a</span><span class="alphabet-char">ă</span><span class="alphabet-char">â</span><span class="alphabet-char">b</span><span class="alphabet-char">ƀ</span><span class="alphabet-char">č</span><span class="alphabet-char">d</span><span class="alphabet-char">đ</span><span class="alphabet-char">e</span><span class="alphabet-char">ĕ</span><span class="alphabet-char">ê</span><span class="alphabet-char">ê̆</span><span class="alphabet-char">g</span><span class="alphabet-char">h</span><span class="alphabet-char">i</span><span class="alphabet-char">ĭ</span><span class="alphabet-char">j</span><span class="alphabet-char">k</span><span class="alphabet-char">l</span><span class="alphabet-char">m</span><span class="alphabet-char">n</span><span class="alphabet-char">ñ</span><span class="alphabet-char">o</span><span class="alphabet-char">ơ</span><span class="alphabet-char">ŏ</span><span class="alphabet-char">ơ̆</span><span class="alphabet-char">ô</span><span class="alphabet-char">ô̆</span><span class="alphabet-char">p</span><span class="alphabet-char">r</span><span class="alphabet-char">s</span><span class="alphabet-char">t</span><span class="alphabet-char">u</span><span class="alphabet-char">ŭ</span><span class="alphabet-char">ư</span><span class="alphabet-char">ư̆</span><span class="alphabet-char">w</span><span class="alphabet-char">y</span>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Từ Điển Cơ Bản</h2>
+            <div id="systemTranslationsList" class="space-y-3">
+                <!-- System translations will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal for Alerts/Confirmations -->
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p id="modalMessage" class="text-lg text-gray-800 dark:text-gray-200 mb-4"></p>
+            <div id="modalButtons" class="flex justify-center space-x-4">
+                <!-- Buttons will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // State object to hold Firebase instances and user info
+        const state = {
+            app: null,
+            db: null,
+            auth: null,
+            userId: null,
+            isAuthReady: false,
+            personalDictionary: [],
+            sharedDictionary: []
+        };
+
+        // UI elements
+        const ui = {
+            tabTranslate: document.getElementById('tabTranslate'),
+            tabProblemSolver: document.getElementById('tabProblemSolver'), // New tab
+            tabPersonalDict: document.getElementById('tabPersonalDict'),
+            tabSharedDict: document.getElementById('tabSharedDict'),
+            tabSystemDict: document.getElementById('tabSystemDict'),
+            contentTranslate: document.getElementById('contentTranslate'),
+            contentProblemSolver: document.getElementById('contentProblemSolver'), // New tab content
+            contentPersonalDict: document.getElementById('contentPersonalDict'),
+            contentSharedDict: document.getElementById('contentSharedDict'),
+            contentSystemDict: document.getElementById('contentSystemDict'),
+
+            sourceInput: document.getElementById('sourceInput'),
+            targetOutput: document.getElementById('targetOutput'),
+            translateButton: document.getElementById('translateButton'),
+            loadingSpinner: document.getElementById('loadingSpinner'),
+            fileInput: document.getElementById('fileInput'), // Renamed from imageInput
+            translateFromFileButton: document.getElementById('translateFromFileButton'), // Renamed from translateTextFromImageButton
+
+            problemInput: document.getElementById('problemInput'), // New input for problem solver
+            problemFileInput: document.getElementById('problemFileInput'), // New file input for problem solver
+            solveProblemButton: document.getElementById('solveProblemButton'), // Renamed from solveEdeProblemButton
+            solveProblemFromFileButton: document.getElementById('solveProblemFromFileButton'), // New button for problem file
+            problemSolutionOutput: document.getElementById('problemSolutionOutput'), // New output for problem solver
+
+            personalEdeTerm: document.getElementById('personalEdeTerm'),
+            personalVietnameseMeaning: document.getElementById('personalVietnameseMeaning'),
+            addPersonalTranslation: document.getElementById('addPersonalTranslation'),
+            personalTranslationsList: document.getElementById('personalTranslationsList'),
+            sharedEdeTerm: document.getElementById('sharedEdeTerm'),
+            sharedVietnameseMeaning: document.getElementById('sharedVietnameseMeaning'),
+            addSharedTranslation: document.getElementById('addSharedTranslation'),
+            sharedTranslationsList: document.getElementById('sharedTranslationsList'),
+            userIdDisplay: document.getElementById('userIdDisplay'),
+            customModal: document.getElementById('customModal'),
+            modalMessage: document.getElementById('modalMessage'),
+            modalButtons: document.getElementById('modalButtons'),
+            closeModalButton: document.querySelector('#customModal .close-button'),
+            systemTranslationsList: document.getElementById('systemTranslationsList'),
+            darkModeToggle: document.getElementById('darkModeToggle')
+            // Removed translationDirectionToggle and related labels
+        };
+
+        // --- Hardcoded System Dictionary (Extracted based on user's rules) ---
+        // These are examples extracted from the provided PDF snippets based on the rules:
+        // - For "Từ điển E-V chuẩn.pdf": Meaning is before the period (.).
+        // - For "tài liêu tiếng c.pdf": Meaning is after the colon (:).
+        const systemDictionaryData = [
+            { ede: "Abao", vietnamese: "Ốc bươu" }, // From "Từ điển E-V chuẩn.pdf" example
+            { ede: "Abăn", vietnamese: "Cái chăn (mền)" }, // From "Từ điển E-V chuẩn.pdf" example
+            { ede: "Boh", vietnamese: "Quả, trái" }, // From "Từ điển E-V chuẩn.pdf" example
+            { ede: "Boh", vietnamese: "Trứng" }, // From "Từ điển E-V chuẩn.pdf" example
+            { ede: "Boh", vietnamese: "Giặt" }, // From "Từ điển E-V chuẩn.pdf" example
+            { ede: "Yuär", vietnamese: "Cáy canh kina ræìng" }, // From "Từ điển E-V chuẩn.pdf" snippet
+            { ede: "Yuät", vietnamese: "Baïm" }, // From "Từ điển E-V chuẩn.pdf" snippet
+            { ede: "Yu\\", vietnamese: "Táy" }, // From "Từ điển E-V chuẩn.pdf" snippet
+            { ede: "Yu\\ ngo\\", vietnamese: "Phæång hæåïng" }, // From "Từ điển E-V chuẩn.pdf" snippet
+            { ede: "Yu\\k", vietnamese: "Âuîng" }, // From "Từ điển E-V chuẩn.pdf" snippet
+            { ede: "Yu\\m", vietnamese: "Màõn (nhiãöu), âäng" }, // From "Từ điển E-V chuẩn.pdf" snippet
+            { ede: "Yæh yæp", vietnamese: "Cháûm chaûp" }, // From "Từ điển E-V chuẩn.pdf" snippet
+            { ede: "KLEI HRIĂM", vietnamese: "BÀI HỌC" }, // From "tài liêu tiếng c.pdf" snippet (interpreted as "Boh blu")
+            { ede: "SƠ LƯỢC VỀ TIẾNG, CHỮ ÊĐÊ", vietnamese: "SƠ LƯỢC VỀ TIẾNG, CHỮ ÊĐÊ" }, // From "tài liêu tiếng c.pdf" snippet
+            { ede: "Dân tộc Êđê", vietnamese: "Dân tộc Êđê" }, // From "tài liêu tiếng c.pdf" snippet
+            { ede: "tiếng nói và chữ viết riêng", vietnamese: "tiếng nói và chữ viết riêng" }, // From "tài liêu tiếng c.pdf" snippet
+            // Add more entries here if you manually extract them from the PDFs following your rules
+            // { ede: "Boh blu", vietnamese: "Các từ vựng" } // This is an interpretation based on your description
+        ];
+
+        // --- Modal Functions ---
+        function showModal(message, type = 'alert', onConfirm = null, onCancel = null) {
+            ui.modalMessage.innerHTML = message; // Use innerHTML for rich content
+            ui.modalButtons.innerHTML = ''; // Clear previous buttons
+
+            if (type === 'alert') {
+                const okButton = document.createElement('button');
+                okButton.textContent = 'OK';
+                okButton.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
+                okButton.onclick = () => ui.customModal.style.display = 'none';
+                ui.modalButtons.appendChild(okButton);
+            } else if (type === 'confirm') {
+                const confirmButton = document.createElement('button');
+                confirmButton.textContent = 'Xác nhận';
+                confirmButton.className = 'bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600';
+                confirmButton.onclick = () => {
+                    ui.customModal.style.display = 'none';
+                    if (onConfirm) onConfirm();
+                };
+                ui.modalButtons.appendChild(confirmButton);
+
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Hủy';
+                cancelButton.className = 'bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400';
+                cancelButton.onclick = () => {
+                    ui.customModal.style.display = 'none';
+                    if (onCancel) onCancel();
+                };
+                ui.modalButtons.appendChild(cancelButton);
+            } else if (type === 'info') { // For showing AI generated text
+                const okButton = document.createElement('button');
+                okButton.textContent = 'Đóng';
+                okButton.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
+                okButton.onclick = () => ui.customModal.style.display = 'none';
+                ui.modalButtons.appendChild(okButton);
+            }
+
+            ui.customModal.style.display = 'flex';
+        }
+
+        ui.closeModalButton.onclick = () => ui.customModal.style.display = 'none';
+        window.onclick = (event) => {
+            if (event.target == ui.customModal) {
+                ui.customModal.style.display = 'none';
+            }
+        };
+
+        // --- Firebase Initialization ---
+        async function initializeFirebase() {
+            try {
+                state.app = initializeApp(firebaseConfig);
+                state.db = getFirestore(state.app);
+                state.auth = getAuth(state.app);
+
+                onAuthStateChanged(state.auth, async (user) => {
+                    if (user) {
+                        state.userId = user.uid;
+                        ui.userIdDisplay.textContent = `ID Người Dùng: ${state.userId}`;
+                        state.isAuthReady = true;
+                        console.log("Firebase Auth Ready. User ID:", state.userId);
+                        // Once authenticated, start listening to dictionaries
+                        listenToPersonalDictionary();
+                        listenToSharedDictionary();
+                    } else {
+                        // Sign in anonymously if no token, or if token fails
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(state.auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(state.auth);
+                            }
+                        } catch (error) {
+                            console.error("Firebase authentication failed:", error);
+                            showModal(`Lỗi xác thực Firebase: ${error.message}. Vui lòng thử lại.`, 'alert');
+                            // Fallback to anonymous if custom token fails
+                            await signInAnonymously(state.auth);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                showModal(`Lỗi khởi tạo Firebase: ${error.message}. Vui lòng kiểm tra cấu hình.`, 'alert');
+            }
+        }
+
+        // --- Tab Management ---
+        function setupTabs() {
+            const tabs = [
+                { button: ui.tabTranslate, content: ui.contentTranslate },
+                { button: ui.tabProblemSolver, content: ui.contentProblemSolver }, // New tab
+                { button: ui.tabPersonalDict, content: ui.contentPersonalDict },
+                { button: ui.tabSharedDict, content: ui.contentSharedDict },
+                { button: ui.tabSystemDict, content: ui.contentSystemDict }
+            ];
+
+            tabs.forEach(tab => {
+                tab.button.addEventListener('click', () => {
+                    // Deactivate all tabs and hide all content
+                    tabs.forEach(t => {
+                        t.button.classList.remove('active');
+                        t.button.classList.remove('border-blue-600', 'text-blue-600', 'bg-blue-50');
+                        t.button.classList.add('border-transparent', 'text-gray-700');
+                        t.content.classList.add('hidden');
+                    });
+
+                    // Activate clicked tab and show its content
+                    tab.button.classList.add('active');
+                    tab.button.classList.remove('border-transparent', 'text-gray-700');
+                    tab.button.classList.add('border-blue-600', 'text-blue-600', 'bg-blue-50');
+                    tab.content.classList.remove('hidden');
+                });
+            });
+
+            // Set initial active tab
+            ui.tabTranslate.click();
+        }
+
+        // --- LLM Interaction Helper ---
+        async function callGeminiAPI(prompt, imageData = null) {
+            let contents = [];
+
+            if (imageData) {
+                contents.push({
+                    role: "user",
+                    parts: [
+                        { text: prompt },
+                        { inlineData: { mimeType: "image/png", data: imageData.split(',')[1] } } // Extract base64 data
+                    ]
+                });
+            } else {
+                contents.push({ role: "user", parts: [{ text: prompt }] });
+            }
+
+            const payload = { contents: contents };
+            const apiKey = ""; // Canvas will provide this at runtime
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                return result.candidates[0].content.parts[0].text;
+            } else {
+                console.error('Unexpected API response structure:', result);
+                throw new Error('Không thể nhận phản hồi từ AI.');
+            }
+        }
+
+        // --- Translation Function (Auto-detect language) ---
+        async function translateText() {
+            const text = ui.sourceInput.value.trim();
+            if (!text) {
+                ui.targetOutput.value = 'Vui lòng nhập văn bản để dịch.';
+                return;
+            }
+
+            ui.loadingSpinner.style.display = 'block';
+            ui.translateButton.disabled = true;
+            ui.translateFromFileButton.disabled = true;
+            ui.targetOutput.value = 'Đang dịch...';
+
+            // Prompt for auto-detection and two-way translation
+            const prompt = `Detect the language of the following text. If it's Ede, translate it to Vietnamese. If it's Vietnamese, translate it to Ede. Provide the translation only. Text: "${text}"`;
+
+            try {
+                const translatedText = await callGeminiAPI(prompt);
+                ui.targetOutput.value = translatedText;
+            } catch (error) {
+                ui.targetOutput.value = `Lỗi dịch: ${error.message}. Vui lòng thử lại.`;
+                console.error('Error during translation:', error);
+            } finally {
+                ui.loadingSpinner.style.display = 'none';
+                ui.translateButton.disabled = false;
+                ui.translateFromFileButton.disabled = false;
+            }
+        }
+
+        // --- Translate from File (Multiple Images/Text) Function ---
+        async function translateFromFile() {
+            ui.fileInput.click(); // Trigger file input click
+        }
+
+        async function handleFileUpload(event) {
+            const files = event.target.files;
+            if (files.length === 0) return;
+
+            ui.loadingSpinner.style.display = 'block';
+            ui.translateButton.disabled = true;
+            ui.translateFromFileButton.disabled = true;
+            ui.targetOutput.value = 'Đang xử lý tệp và dịch...';
+
+            let combinedSourceText = '';
+            let combinedTranslatedText = '';
+            let errorOccurred = false;
+
+            for (const file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    await new Promise((resolve, reject) => {
+                        reader.onload = async (e) => {
+                            const imageData = e.target.result; // Base64 string
+                            try {
+                                const extractionPrompt = "Trích xuất toàn bộ văn bản từ hình ảnh này:";
+                                const extractedText = await callGeminiAPI(extractionPrompt, imageData);
+                                combinedSourceText += extractedText + '\n\n'; // Add to combined source
+
+                                const translationPrompt = `Detect the language of the following text. If it's Ede, translate it to Vietnamese. If it's Vietnamese, translate it to Ede. Provide the translation only. Text: "${extractedText}"`;
+                                const translatedText = await callGeminiAPI(translationPrompt);
+                                combinedTranslatedText += translatedText + '\n\n'; // Add to combined translated
+                                resolve();
+                            } catch (error) {
+                                console.error(`Error processing image ${file.name}:`, error);
+                                combinedTranslatedText += `[Lỗi dịch ảnh ${file.name}: ${error.message}]\n\n`;
+                                errorOccurred = true;
+                                resolve(); // Resolve to continue with other files
+                            }
+                        };
+                        reader.onerror = (error) => {
+                            console.error(`FileReader error for ${file.name}:`, error);
+                            combinedTranslatedText += `[Lỗi đọc tệp ${file.name}]\n\n`;
+                            errorOccurred = true;
+                            resolve(); // Resolve to continue with other files
+                        };
+                    });
+                } else if (file.type === 'text/plain') {
+                    try {
+                        const textContent = await file.text();
+                        combinedSourceText += textContent + '\n\n'; // Add to combined source
+
+                        const translationPrompt = `Detect the language of the following text. If it's Ede, translate it to Vietnamese. If it's Vietnamese, translate it to Ede. Provide the translation only. Text: "${textContent}"`;
+                        const translatedText = await callGeminiAPI(translationPrompt);
+                        combinedTranslatedText += translatedText + '\n\n'; // Add to combined translated
+                    } catch (error) {
+                        console.error(`Error processing text file ${file.name}:`, error);
+                        combinedTranslatedText += `[Lỗi dịch tệp văn bản ${file.name}: ${error.message}]\n\n`;
+                        errorOccurred = true;
+                    }
+                } else {
+                    combinedTranslatedText += `[Tệp ${file.name} không được hỗ trợ. Chỉ hỗ trợ ảnh và văn bản (.txt)]\n\n`;
+                    errorOccurred = true;
+                }
+            }
+
+            ui.sourceInput.value = combinedSourceText.trim();
+            ui.targetOutput.value = combinedTranslatedText.trim();
+
+            if (errorOccurred) {
+                showModal('Đã xảy ra lỗi khi xử lý một số tệp. Vui lòng kiểm tra đầu ra.', 'alert');
+            }
+
+            ui.loadingSpinner.style.display = 'none';
+            ui.translateButton.disabled = false;
+            ui.translateFromFileButton.disabled = false;
+            ui.fileInput.value = ''; // Clear file input
+        }
+
+        // --- Solve Ede Problem Function (Text Input) ---
+        async function solveEdeProblem() {
+            const problemText = ui.problemInput.value.trim();
+            if (!problemText) {
+                showModal('Vui lòng nhập bài tập hoặc câu hỏi tiếng Êđê vào ô văn bản.', 'alert');
+                return;
+            }
+
+            ui.loadingSpinner.style.display = 'block';
+            ui.solveProblemButton.disabled = true;
+            ui.solveProblemFromFileButton.disabled = true;
+            ui.problemSolutionOutput.value = 'Đang giải quyết bài tập tiếng Êđê...';
+
+            const prompt = `Giải thích, phân tích hoặc giải quyết bài tập/câu hỏi tiếng Êđê sau: "${problemText}". Cung cấp câu trả lời chi tiết bằng tiếng Việt. Nếu đây là yêu cầu tạo đoạn văn hoặc ví dụ, hãy thực hiện theo yêu cầu đó và dịch sang tiếng Việt.`;
+
+            try {
+                const solution = await callGeminiAPI(prompt);
+                ui.problemSolutionOutput.value = solution;
+            } catch (error) {
+                ui.problemSolutionOutput.value = `Lỗi giải bài tập: ${error.message}. Vui lòng thử lại.`;
+                console.error('Error solving Ede problem:', error);
+            } finally {
+                ui.loadingSpinner.style.display = 'none';
+                ui.solveProblemButton.disabled = false;
+                ui.solveProblemFromFileButton.disabled = false;
+            }
+        }
+
+        // --- Solve Ede Problem from File Function ---
+        async function solveProblemFromFile() {
+            ui.problemFileInput.click(); // Trigger file input click
+        }
+
+        async function handleProblemFileUpload(event) {
+            const files = event.target.files;
+            if (files.length === 0) return;
+
+            ui.loadingSpinner.style.display = 'block';
+            ui.solveProblemButton.disabled = true;
+            ui.solveProblemFromFileButton.disabled = true;
+            ui.problemSolutionOutput.value = 'Đang xử lý tệp bài tập...';
+
+            let combinedProblemText = '';
+            let combinedSolutionText = '';
+            let errorOccurred = false;
+
+            for (const file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    await new Promise((resolve, reject) => {
+                        reader.onload = async (e) => {
+                            const imageData = e.target.result; // Base64 string
+                            try {
+                                const extractionPrompt = "Trích xuất toàn bộ văn bản từ hình ảnh này:";
+                                const extractedText = await callGeminiAPI(extractionPrompt, imageData);
+                                combinedProblemText += extractedText + '\n\n';
+
+                                const problemPrompt = `Giải thích, phân tích hoặc giải quyết bài tập/câu hỏi tiếng Êđê sau: "${extractedText}". Cung cấp câu trả lời chi tiết bằng tiếng Việt.`;
+                                const solution = await callGeminiAPI(problemPrompt);
+                                combinedSolutionText += `--- Giải pháp cho tệp ảnh: ${file.name} ---\n${solution}\n\n`;
+                                resolve();
+                            } catch (error) {
+                                console.error(`Error processing problem image ${file.name}:`, error);
+                                combinedSolutionText += `[Lỗi giải bài tập từ ảnh ${file.name}: ${error.message}]\n\n`;
+                                errorOccurred = true;
+                                resolve();
+                            }
+                        };
+                        reader.onerror = (error) => {
+                            console.error(`FileReader error for problem file ${file.name}:`, error);
+                            combinedSolutionText += `[Lỗi đọc tệp bài tập ${file.name}]\n\n`;
+                            errorOccurred = true;
+                            resolve();
+                        };
+                    });
+                } else if (file.type === 'text/plain') {
+                    try {
+                        const textContent = await file.text();
+                        combinedProblemText += textContent + '\n\n';
+
+                        const problemPrompt = `Giải thích, phân tích hoặc giải quyết bài tập/câu hỏi tiếng Êđê sau: "${textContent}". Cung cấp câu trả lời chi tiết bằng tiếng Việt.`;
+                        const solution = await callGeminiAPI(problemPrompt);
+                        combinedSolutionText += `--- Giải pháp cho tệp văn bản: ${file.name} ---\n${solution}\n\n`;
+                    } catch (error) {
+                        console.error(`Error processing problem text file ${file.name}:`, error);
+                        combinedSolutionText += `[Lỗi giải bài tập từ tệp văn bản ${file.name}: ${error.message}]\n\n`;
+                        errorOccurred = true;
+                    }
+                } else {
+                    combinedSolutionText += `[Tệp bài tập ${file.name} không được hỗ trợ. Chỉ hỗ trợ ảnh và văn bản (.txt)]\n\n`;
+                    errorOccurred = true;
+                }
+            }
+
+            ui.problemInput.value = combinedProblemText.trim(); // Show combined problem text
+            ui.problemSolutionOutput.value = combinedSolutionText.trim();
+
+            if (errorOccurred) {
+                showModal('Đã xảy ra lỗi khi xử lý một số tệp bài tập. Vui lòng kiểm tra đầu ra.', 'alert');
+            }
+
+            ui.loadingSpinner.style.display = 'none';
+            ui.solveProblemButton.disabled = false;
+            ui.solveProblemFromFileButton.disabled = false;
+            ui.problemFileInput.value = ''; // Clear file input
+        }
+
+
+        // --- Clarify Word Meaning / Generate Example Function ---
+        async function handleAIAction(edeWord, vietMeaning, actionType) {
+            let prompt = '';
+            let title = '';
+
+            if (actionType === 'clarify') {
+                prompt = `Giải thích chi tiết nghĩa của từ tiếng Êđê "${edeWord}" (nghĩa tiếng Việt: "${vietMeaning}"). Cung cấp các ví dụ sử dụng và làm rõ ngữ cảnh. Trả lời bằng tiếng Việt.`;
+                title = `Giải thích từ "${edeWord}"`;
+            } else if (actionType === 'example') {
+                prompt = `Tạo một đoạn văn ngắn hoặc một vài câu ví dụ sử dụng từ tiếng Êđê "${edeWord}" (nghĩa tiếng Việt: "${vietMeaning}"). Đoạn văn/ví dụ nên được viết bằng tiếng Êđê và sau đó dịch sang tiếng Việt.`;
+                title = `Ví dụ sử dụng từ "${edeWord}"`;
+            }
+
+            showModal('Đang yêu cầu AI xử lý...', 'info'); // Show loading modal
+
+            try {
+                const result = await callGeminiAPI(prompt);
+                showModal(`<h3>${title}</h3><p class="mt-4 text-left">${result.replace(/\n/g, '<br>')}</p>`, 'info');
+            } catch (error) {
+                showModal(`Lỗi khi yêu cầu AI: ${error.message}`, 'alert');
+                console.error('Error calling AI for clarification/example:', error);
+            }
+        }
+
+        // --- Dictionary Functions (Firestore) ---
+
+        // Render Personal Dictionary
+        function renderPersonalDictionary() {
+            ui.personalTranslationsList.innerHTML = ''; // Clear current list
+            if (state.personalDictionary.length === 0) {
+                ui.personalTranslationsList.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400 py-4">Chưa có bản dịch cá nhân nào.</p>';
+                return;
+            }
+            state.personalDictionary.forEach(term => {
+                const termDiv = document.createElement('div');
+                termDiv.className = 'dict-entry bg-white p-3 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center';
+                termDiv.innerHTML = `
+                    <div class="mb-2 sm:mb-0">
+                        <p class="font-semibold text-gray-800 dark:text-gray-200">Êđê: ${term.ede}</p>
+                        <p class="text-gray-600 dark:text-gray-400">Việt: ${term.vietnamese}</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="clarify-btn bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition duration-200" data-ede="${term.ede}" data-viet="${term.vietnamese}" data-action="clarify">Giải thích</button>
+                        <button class="example-btn bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition duration-200" data-ede="${term.ede}" data-viet="${term.vietnamese}" data-action="example">Ví dụ</button>
+                        <button class="delete-personal-btn bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200" data-id="${term.id}">Xóa</button>
+                    </div>
+                `;
+                ui.personalTranslationsList.appendChild(termDiv);
+            });
+
+            // Add event listeners for new buttons
+            document.querySelectorAll('.delete-personal-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const idToDelete = event.target.dataset.id;
+                    showModal('Bạn có chắc chắn muốn xóa mục này khỏi từ điển cá nhân?', 'confirm', () => {
+                        deletePersonalTranslation(idToDelete);
+                    });
+                });
+            });
+            document.querySelectorAll('.clarify-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const ede = event.target.dataset.ede;
+                    const viet = event.target.dataset.viet;
+                    handleAIAction(ede, viet, 'clarify');
+                });
+            });
+            document.querySelectorAll('.example-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const ede = event.target.dataset.ede;
+                    const viet = event.target.dataset.viet;
+                    handleAIAction(ede, viet, 'example');
+                });
+            });
+        }
+
+        // Render Shared Dictionary
+        function renderSharedDictionary() {
+            ui.sharedTranslationsList.innerHTML = ''; // Clear current list
+            if (state.sharedDictionary.length === 0) {
+                ui.sharedTranslationsList.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400 py-4">Chưa có bản dịch chung nào.</p>';
+                return;
+            }
+            state.sharedDictionary.forEach(term => {
+                const termDiv = document.createElement('div');
+                termDiv.className = 'dict-entry bg-white p-3 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center';
+                termDiv.innerHTML = `
+                    <div class="mb-2 sm:mb-0">
+                        <p class="font-semibold text-gray-800 dark:text-gray-200">Êđê: ${term.ede}</p>
+                        <p class="text-gray-600 dark:text-gray-400">Việt: ${term.vietnamese}</p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500">Người thêm: ${term.userId}</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="clarify-btn bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition duration-200" data-ede="${term.ede}" data-viet="${term.vietnamese}" data-action="clarify">Giải thích</button>
+                        <button class="example-btn bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition duration-200" data-ede="${term.ede}" data-viet="${term.vietnamese}" data-action="example">Ví dụ</button>
+                        ${state.userId === term.userId ? `<button class="delete-shared-btn bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200" data-id="${term.id}">Xóa</button>` : ''}
+                    </div>
+                `;
+                ui.sharedTranslationsList.appendChild(termDiv);
+            });
+
+            // Add event listeners for new buttons
+            document.querySelectorAll('.delete-shared-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const idToDelete = event.target.dataset.id;
+                    showModal('Bạn có chắc chắn muốn xóa mục này khỏi từ điển chung?', 'confirm', () => {
+                        deleteSharedTranslation(idToDelete);
+                    });
+                });
+            });
+            document.querySelectorAll('.clarify-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const ede = event.target.dataset.ede;
+                    const viet = event.target.dataset.viet;
+                    handleAIAction(ede, viet, 'clarify');
+                });
+            });
+            document.querySelectorAll('.example-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const ede = event.target.dataset.ede;
+                    const viet = event.target.dataset.viet;
+                    handleAIAction(ede, viet, 'example');
+                });
+            });
+        }
+
+        // Render System Dictionary
+        function renderSystemDictionary() {
+            ui.systemTranslationsList.innerHTML = ''; // Clear current list
+            if (systemDictionaryData.length === 0) {
+                ui.systemTranslationsList.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400 py-4">Không có từ vựng cơ bản nào.</p>';
+                return;
+            }
+            systemDictionaryData.forEach(term => {
+                const termDiv = document.createElement('div');
+                termDiv.className = 'dict-entry bg-white p-3 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center';
+                termDiv.innerHTML = `
+                    <div class="mb-2 sm:mb-0">
+                        <p class="font-semibold text-gray-800 dark:text-gray-200">Êđê: ${term.ede}</p>
+                        <p class="text-gray-600 dark:text-gray-400">Việt: ${term.vietnamese}</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="clarify-btn bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition duration-200" data-ede="${term.ede}" data-viet="${term.vietnamese}" data-action="clarify">Giải thích</button>
+                        <button class="example-btn bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition duration-200" data-ede="${term.ede}" data-viet="${term.vietnamese}" data-action="example">Ví dụ</button>
+                    </div>
+                `;
+                ui.systemTranslationsList.appendChild(termDiv);
+            });
+
+            // Add event listeners for new buttons
+            document.querySelectorAll('#systemTranslationsList .clarify-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const ede = event.target.dataset.ede;
+                    const viet = event.target.dataset.viet;
+                    handleAIAction(ede, viet, 'clarify');
+                });
+            });
+            document.querySelectorAll('#systemTranslationsList .example-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const ede = event.target.dataset.ede;
+                    const viet = event.target.dataset.viet;
+                    handleAIAction(ede, viet, 'example');
+                });
+            });
+        }
+
+        // Add Personal Translation
+        async function addPersonalTranslation() {
+            if (!state.db || !state.isAuthReady || !state.userId) {
+                showModal('Hệ thống chưa sẵn sàng. Vui lòng đợi hoặc làm mới trang.', 'alert');
+                return;
+            }
+            const ede = ui.personalEdeTerm.value.trim();
+            const vietnamese = ui.personalVietnameseMeaning.value.trim();
+
+            if (!ede || !vietnamese) {
+                showModal('Vui lòng nhập cả từ tiếng Êđê và nghĩa tiếng Việt.', 'alert');
+                return;
+            }
+
+            try {
+                const personalDictRef = collection(state.db, `artifacts/${appId}/users/${state.userId}/personal_dictionary`);
+                await addDoc(personalDictRef, {
+                    ede: ede,
+                    vietnamese: vietnamese,
+                    timestamp: new Date()
+                });
+                ui.personalEdeTerm.value = '';
+                ui.personalVietnameseMeaning.value = '';
+                showModal('Đã thêm vào từ điển cá nhân thành công!', 'alert');
+            } catch (error) {
+                console.error("Error adding personal translation:", error);
+                showModal(`Lỗi khi thêm bản dịch cá nhân: ${error.message}`, 'alert');
+            }
+        }
+
+        // Delete Personal Translation
+        async function deletePersonalTranslation(id) {
+            if (!state.db || !state.isAuthReady || !state.userId) {
+                showModal('Hệ thống chưa sẵn sàng. Vui lòng đợi hoặc làm mới trang.', 'alert');
+                return;
+            }
+            try {
+                const docRef = doc(state.db, `artifacts/${appId}/users/${state.userId}/personal_dictionary`, id);
+                await deleteDoc(docRef);
+                showModal('Đã xóa bản dịch cá nhân thành công!', 'alert');
+            } catch (error) {
+                console.error("Error deleting personal translation:", error);
+                showModal(`Lỗi khi xóa bản dịch cá nhân: ${error.message}`, 'alert');
+            }
+        }
+
+        // Listen to Personal Dictionary changes in real-time
+        function listenToPersonalDictionary() {
+            if (!state.db || !state.isAuthReady || !state.userId) return;
+
+            const personalDictRef = collection(state.db, `artifacts/${appId}/users/${state.userId}/personal_dictionary`);
+            onSnapshot(personalDictRef, (snapshot) => {
+                const terms = [];
+                snapshot.forEach(doc => {
+                    terms.push({ id: doc.id, ...doc.data() });
+                });
+                state.personalDictionary = terms;
+                renderPersonalDictionary();
+            }, (error) => {
+                console.error("Error listening to personal dictionary:", error);
+                ui.personalTranslationsList.innerHTML = `<p class="text-red-500 text-center py-4">Lỗi tải từ điển cá nhân: ${error.message}</p>`;
+            });
+        }
+
+        // Add Shared Translation
+        async function addSharedTranslation() {
+            if (!state.db || !state.isAuthReady || !state.userId) {
+                showModal('Hệ thống chưa sẵn sàng. Vui lòng đợi hoặc làm mới trang.', 'alert');
+                return;
+            }
+            const ede = ui.sharedEdeTerm.value.trim();
+            const vietnamese = ui.sharedVietnameseMeaning.value.trim();
+
+            if (!ede || !vietnamese) {
+                showModal('Vui lòng nhập cả từ tiếng Êđê và nghĩa tiếng Việt.', 'alert');
+                return;
+            }
+
+            try {
+                const sharedDictRef = collection(state.db, `artifacts/${appId}/public/data/shared_dictionary`);
+                await addDoc(sharedDictRef, {
+                    ede: ede,
+                    vietnamese: vietnamese,
+                    userId: state.userId, // Store the user ID who added it
+                    timestamp: new Date()
+                });
+                ui.sharedEdeTerm.value = '';
+                ui.sharedVietnameseMeaning.value = '';
+                showModal('Đã thêm vào từ điển chung thành công!', 'alert');
+            } catch (error) {
+                console.error("Error adding shared translation:", error);
+                showModal(`Lỗi khi thêm bản dịch chung: ${error.message}`, 'alert');
+            }
+        }
+
+        // Delete Shared Translation
+        async function deleteSharedTranslation(id) {
+            if (!state.db || !state.isAuthReady || !state.userId) {
+                showModal('Hệ thống chưa sẵn sàng. Vui lòng đợi hoặc làm mới trang.', 'alert');
+                return;
+            }
+            try {
+                const docRef = doc(state.db, `artifacts/${appId}/public/data/shared_dictionary`, id);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists() && docSnap.data().userId === state.userId) {
+                    await deleteDoc(docRef);
+                    showModal('Đã xóa bản dịch chung thành công!', 'alert');
+                } else {
+                    showModal('Bạn không có quyền xóa mục này.', 'alert');
+                }
+            } catch (error) {
+                console.error("Error deleting shared translation:", error);
+                showModal(`Lỗi khi xóa bản dịch chung: ${error.message}`, 'alert');
+            }
+        }
+
+        // Listen to Shared Dictionary changes in real-time
+        function listenToSharedDictionary() {
+            if (!state.db || !state.isAuthReady) return;
+
+            const sharedDictRef = collection(state.db, `artifacts/${appId}/public/data/shared_dictionary`);
+            onSnapshot(sharedDictRef, (snapshot) => {
+                const terms = [];
+                snapshot.forEach(doc => {
+                    terms.push({ id: doc.id, ...doc.data() });
+                });
+                state.sharedDictionary = terms;
+                renderSharedDictionary();
+            }, (error) => {
+                console.error("Error listening to shared dictionary:", error);
+                ui.sharedTranslationsList.innerHTML = `<p class="text-red-500 text-center py-4">Lỗi tải từ điển chung: ${error.message}</p>`;
+            });
+        }
+
+        // --- Dark Mode Toggle ---
+        function applyDarkMode(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark');
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                document.body.classList.remove('dark');
+                localStorage.setItem('darkMode', 'disabled');
+            }
+            ui.darkModeToggle.checked = isDark;
+        }
+
+        function setupDarkModeToggle() {
+            const savedMode = localStorage.getItem('darkMode');
+            if (savedMode === 'enabled') {
+                applyDarkMode(true);
+            } else {
+                applyDarkMode(false);
+            }
+
+            ui.darkModeToggle.addEventListener('change', (event) => {
+                applyDarkMode(event.target.checked);
+            });
+        }
+
+        // --- Event Listeners ---
+        function setupEventListeners() {
+            ui.translateButton.addEventListener('click', translateText);
+            ui.translateFromFileButton.addEventListener('click', translateFromFile);
+            ui.fileInput.addEventListener('change', handleFileUpload);
+
+            ui.solveProblemButton.addEventListener('click', solveEdeProblem);
+            ui.solveProblemFromFileButton.addEventListener('click', solveProblemFromFile);
+            ui.problemFileInput.addEventListener('change', handleProblemFileUpload);
+
+            ui.addPersonalTranslation.addEventListener('click', addPersonalTranslation);
+            ui.addSharedTranslation.addEventListener('click', addSharedTranslation);
+        }
+
+        // --- Initialize Application ---
+        function initializeApp() {
+            initializeFirebase(); // Initialize Firebase first
+            setupTabs();
+            setupEventListeners();
+            renderSystemDictionary(); // Render the static system dictionary
+            setupDarkModeToggle(); // Setup dark mode
+            // Initial render of personal/shared dictionaries will happen after Firebase auth is ready and listeners are set up
+        }
+
+        // Run the initialization when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
 </body>
 </html>
