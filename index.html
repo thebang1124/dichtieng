@@ -1,4 +1,8 @@
-// ✅ index.js — Đã thay API Gemini bằng OpenAI GPT-4 + Tesseract OCR
+// ✅ Full Web Implementation with OpenAI GPT-4 + Tesseract OCR
+
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom/client';
+import Tesseract from 'tesseract.js';
 
 const OPENAI_API_KEY = "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";
 
@@ -27,37 +31,7 @@ async function callOpenAI(prompt, systemPrompt = "") {
   return data.choices?.[0]?.message?.content?.trim() || "Không có kết quả.";
 }
 
-// 🔁 Ví dụ sử dụng:
-
-export async function translateWord(word, direction = 'edeToViet') {
-  let prompt = "";
-  if (direction === 'edeToViet') {
-    prompt = `Dịch từ Êđê sang tiếng Việt: \"${word}\".`;
-  } else {
-    prompt = `Dịch từ tiếng Việt sang Êđê: \"${word}\".`;
-  }
-  return await callOpenAI(prompt, "Bạn là một trợ lý dịch tiếng Êđê - Việt.");
-}
-
-export async function generateExample(edeWord) {
-  const prompt = `Tạo một câu ví dụ bằng tiếng Êđê sử dụng từ: \"${edeWord}\". Sau đó dịch câu đó sang tiếng Việt.`;
-  return await callOpenAI(prompt, "Bạn là một trợ lý tạo ví dụ từ điển Êđê.");
-}
-
-export async function generateParagraph(topic) {
-  const prompt = `Viết một đoạn văn ngắn bằng tiếng Êđê (3-5 câu) về chủ đề: \"${topic}\".`;
-  return await callOpenAI(prompt, "Bạn là một giáo viên tiếng Êđê.");
-}
-
-export async function explainConcept(word) {
-  const prompt = `Giải thích từ hoặc khái niệm tiếng Êđê sau bằng tiếng Việt: \"${word}\".`;
-  return await callOpenAI(prompt, "Bạn là nhà ngôn ngữ học chuyên giải thích từ vựng tiếng Êđê bằng tiếng Việt.");
-}
-
-// 🖼️ OCR + Translate ảnh: dùng Tesseract.js để nhận dạng rồi GPT dịch
-import Tesseract from 'tesseract.js';
-
-export async function extractAndTranslateImage(imageFile) {
+async function extractAndTranslateImage(imageFile) {
   const result = await Tesseract.recognize(imageFile, 'vie+eng', {
     logger: m => console.log(m)
   });
@@ -74,3 +48,68 @@ export async function extractAndTranslateImage(imageFile) {
 
   return { extractedText, translated };
 }
+
+function App() {
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [imageResult, setImageResult] = useState(null);
+
+  const handleTranslate = async () => {
+    setLoading(true);
+    try {
+      const res = await callOpenAI(
+        `Dịch từ Êđê sang tiếng Việt: \"${input}\"`,
+        "Bạn là một trợ lý dịch tiếng Êđê - Việt."
+      );
+      setOutput(res);
+    } catch (e) {
+      setOutput("Lỗi: " + e.message);
+    }
+    setLoading(false);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setLoading(true);
+    try {
+      const result = await extractAndTranslateImage(file);
+      setImageResult(result);
+    } catch (e) {
+      setImageResult({ extractedText: '', translated: "Lỗi: " + e.message });
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: 20 }}>
+      <h1>Dịch Êđê ⇄ Việt</h1>
+      <input
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Nhập từ hoặc cụm từ tiếng Êđê"
+        style={{ padding: 10, width: '100%', marginBottom: 10 }}
+      />
+      <button onClick={handleTranslate} disabled={loading}>
+        {loading ? 'Đang dịch...' : 'Dịch'}
+      </button>
+      <pre>{output}</pre>
+
+      <hr />
+      <h2>Dịch từ ảnh</h2>
+      <input type="file" accept="image/*" onChange={handleImageUpload} />
+      {imageResult && (
+        <div>
+          <h4>Văn bản nhận dạng:</h4>
+          <pre>{imageResult.extractedText}</pre>
+          <h4>Bản dịch:</h4>
+          <pre>{imageResult.translated}</pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
