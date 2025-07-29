@@ -353,7 +353,7 @@
 
                 setMessage(''); // Clear any modal messages
                 console.log(`Tab changed to: ${activeTab}. States reset.`); // Debugging log
-            }, [activeTab]); // Effect runs whenever activeTab changes
+            }, [activeTab]);
 
 
             // --- Image Translation Logic ---
@@ -424,8 +424,9 @@
 
                     const resultExtract = await responseExtract.json();
                     let extractedTextFromImage = "Không thể trích xuất văn bản.";
+                    // FIX: Corrected the typo from resultResultExtract to resultExtract
                     if (resultExtract.candidates && resultExtract.candidates[0]?.content?.parts[0]?.text) {
-                        extractedTextFromImage = resultResultExtract.candidates[0].content.parts[0].text;
+                        extractedTextFromImage = resultExtract.candidates[0].content.parts[0].text;
                     }
                     setExtractedText(extractedTextFromImage);
 
