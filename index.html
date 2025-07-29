@@ -30,7 +30,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Flag waving animation */
+        /* Flag waving animation (kept for potential future use or if user changes mind) */
         @keyframes waveFlag {
             0%, 100% {
                 transform: rotateZ(0deg) translateY(0px) skewX(0deg);
@@ -136,6 +136,8 @@
 
         // Main App Component
         function App() {
+            console.log("App component rendered"); // Debugging log
+
             // State for dark mode toggle
             const [darkMode, setDarkMode] = useState(false);
             // State to manage active tab in the UI
@@ -189,7 +191,7 @@
 
             // Data for Êđê Alphabet Table
             const edeAlphabet = [
-                { char: "A a", vietnameseSound: "a", unicode: "U+0041, U+0061", notes: "Chuẩn Latin" },
+                 { char: "A a", vietnameseSound: "a", unicode: "U+0041, U+0061", notes: "Chuẩn Latin" },
                 { char: "Ă ă", vietnameseSound: "ă", unicode: "U+0102, U+0103", notes: "Latin Extended-A" },
                 { char: "Â â", vietnameseSound: "â (â+o thành vần: âo- đọc là au)", unicode: "U+00C2, U+00E2", notes: "Latin-1 Supplement" },
                 { char: "B b", vietnameseSound: "không có âm tương ứng", unicode: "U+0042, U+0062", notes: "Đặc trưng Êđê" },
@@ -242,6 +244,7 @@
 
             // --- Firebase Initialization and Authentication ---
             useEffect(() => {
+                console.log("Initializing Firebase..."); // Debugging log
                 const initializeFirebase = async () => {
                     try {
                         // Retrieve Firebase config and app ID from global variables provided by the environment
@@ -268,15 +271,19 @@
                                 // User is signed in
                                 setUserId(user.uid);
                                 setIsAuthenticated(true);
+                                console.log("Firebase: User signed in with UID:", user.uid); // Debugging log
                             } else {
                                 // User is signed out, attempt anonymous or custom token sign-in
+                                console.log("Firebase: User signed out. Attempting sign-in..."); // Debugging log
                                 try {
                                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                                         // Sign in with custom token if available
                                         await window.firebase.signInWithCustomToken(authInstance, __initial_auth_token);
+                                        console.log("Firebase: Signed in with custom token."); // Debugging log
                                     } else {
                                         // Fallback to anonymous sign-in
                                         await window.firebase.signInAnonymously(authInstance);
+                                        console.log("Firebase: Signed in anonymously."); // Debugging log
                                     }
                                 } catch (error) {
                                     console.error("Firebase sign-in error:", error);
@@ -284,6 +291,7 @@
                                 }
                             }
                             setAuthLoading(false); // Authentication process completed
+                            console.log("Firebase: Auth loading finished."); // Debugging log
                         });
                     } catch (error) {
                         console.error("Error initializing Firebase:", error);
@@ -349,9 +357,10 @@
                 if (synthRef.current) {
                     synthRef.current.cancel(); // Stop any ongoing speech synthesis
                 }
-                setSelectedVoice(null); // Reset selected voice
+                setSelectedVoice(null); // Reset selected voice to null
 
                 setMessage(''); // Clear any modal messages
+                console.log(`Tab changed to: ${activeTab}. States reset.`); // Debugging log
             }, [activeTab]); // Effect runs whenever activeTab changes
 
 
@@ -729,6 +738,7 @@
 
             // --- Text-to-Speech Logic ---
             useEffect(() => {
+                console.log("TTS useEffect triggered."); // Debugging log
                 // Check if browser supports SpeechSynthesis API
                 if (!('speechSynthesis' in window)) {
                     showMessage("Trình duyệt của bạn không hỗ trợ chuyển văn bản thành giọng nói.");
@@ -739,15 +749,18 @@
                 synthRef.current = synth; // Store synth object in ref
 
                 const loadVoices = () => {
+                    console.log("Loading voices..."); // Debugging log
                     const availableVoices = synth.getVoices();
                     setVoices(availableVoices); // Set available voices
                     // Try to select a Vietnamese voice by default
                     const defaultVietnameseVoice = availableVoices.find(voice => voice.lang === 'vi-VN');
                     if (defaultVietnameseVoice) {
                         setSelectedVoice(defaultVietnameseVoice);
+                        console.log("Default Vietnamese voice selected:", defaultVietnameseVoice.name); // Debugging log
                     } else if (availableVoices.length > 0) {
                         // Fallback to first available voice if no Vietnamese voice is found
                         setSelectedVoice(availableVoices[0]);
+                        console.log("Fallback to first available voice:", availableVoices[0].name); // Debugging log
                     }
                 };
 
@@ -783,8 +796,10 @@
                 const utterance = new SpeechSynthesisUtterance(speechSynthesisText);
                 if (selectedVoice) {
                     utterance.voice = selectedVoice; // Use selected voice
+                    console.log("Speaking with selected voice:", selectedVoice.name); // Debugging log
                 } else {
                     utterance.lang = 'vi-VN'; // Fallback to Vietnamese language if no specific voice is selected
+                    console.log("Speaking with default Vietnamese language."); // Debugging log
                 }
 
                 // Event handlers for speech synthesis
@@ -810,6 +825,7 @@
             useEffect(() => {
                 // Fetch history only if authenticated, Firebase is initialized, and on the 'history' tab
                 if (db && userId && isAuthenticated && activeTab === 'history') {
+                    console.log("Fetching history for user:", userId); // Debugging log
                     if (historyUnsubscribeRef.current) {
                         historyUnsubscribeRef.current(); // Unsubscribe from previous listener to avoid duplicates
                     }
@@ -829,12 +845,14 @@
                             return dateB - dateA;
                         });
                         setHistoryItems(sortedItems);
+                        console.log("History fetched:", sortedItems.length, "items."); // Debugging log
                     }, (error) => {
                         console.error("Error fetching history:", error);
                         showMessage("Lỗi khi tải lịch sử: " + error.message);
                     });
                 } else if (historyUnsubscribeRef.current) {
                     // Unsubscribe and clear history if not authenticated or not on history tab
+                    console.log("Unsubscribing from history listener."); // Debugging log
                     historyUnsubscribeRef.current();
                     historyUnsubscribeRef.current = null;
                     setHistoryItems([]);
@@ -857,6 +875,7 @@
 
             // Show loading spinner while Firebase is initializing
             if (authLoading) {
+                console.log("Auth is loading, showing spinner."); // Debugging log
                 return (
                     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800">
                         <div className="loader"></div>
@@ -869,15 +888,10 @@
                 <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 dark:from-gray-900 dark:to-gray-700 flex flex-col items-center p-4 transition-colors duration-300">
                     <div className="w-full max-w-3xl mx-auto space-y-8">
                         
-                      {/* Header and Dark Mode Toggle */}
+                        {/* Header and Dark Mode Toggle */}
                         <div className="flex justify-between items-center mb-6">
                             <div className="text-center flex-grow flex items-center justify-center">
-                                {/* Vietnamese Flag Image with waving animation */}
-                                <https://vi.pngtree.com/freepng/vietnam-flag-flying-on-pole_9001142.html
-                                    src="https://placehold.co/60x40/DA251D/FFFF00?text=VN"
-                                    alt="Lá cờ Việt Nam"
-                                    className="mr-4 flag-waving w-[60px] h-[40px]"
-                                />
+                                {/* Removed Vietnamese Flag Image with waving animation */}
                                 <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 dark:text-white mb-2">
                                     <span className="text-indigo-600 dark:text-indigo-400">Từ điển</span> & <span className="text-purple-600 dark:text-purple-400">Dịch thuật Êđê</span>
                                 </h1>
@@ -895,7 +909,7 @@
 
                         {/* Navigation Tabs */}
                         <div className="flex justify-center border-b border-gray-200 dark:border-gray-700 mb-8 overflow-x-auto">
-                           <a href="/dictionary.html">Từ điển Êđê - Việt</a>
+                            <a href="/dictionary.html">Từ điển Êđê - Việt</a>
                             <TabButton tabName="alphabet" activeTab={activeTab} setActiveTab={setActiveTab}>Bảng chữ cái Êđê</TabButton>
                             <TabButton tabName="image" activeTab={activeTab} setActiveTab={setActiveTab}>Dịch Từ Ảnh</TabButton>
                             <TabButton tabName="generate" activeTab={activeTab} setActiveTab={setActiveTab}>Tạo Đoạn Văn</TabButton>
@@ -1108,7 +1122,7 @@
                                     {generatedExplanation && (
                                         <div className="mt-4 bg-purple-50 dark:bg-purple-900 p-4 rounded-lg border border-purple-200 dark:border-purple-700">
                                             <h3 className="text-md font-semibold text-purple-800 dark:text-purple-200 mb-1">Giải thích (tiếng Việt):</h3>
-                                            <p className="text-gray-800 dark:text-gray-100 text-base whitespace-pre-wrap">{generatedExplanation}</p>
+                                            <p className="text-gray-800 dark:text-gray-100 whitespace-pre-wrap">{generatedExplanation}</p>
                                             {isAuthenticated && (
                                                 <button
                                                     onClick={saveExplanationToHistory}
