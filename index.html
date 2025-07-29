@@ -319,7 +319,7 @@
                     chatHistoryExtract.push({ role: "user", parts: [{ inline_data: { mime_type: mimeType, data: base64ImageData } }] });
 
                     const payloadExtract = { contents: chatHistoryExtract };
-                    const apiKey = "AIzaSyDLwSVWe5WPx903S0G9OEfZmocrCU1Yxvo"; // API key is automatically provided by the Canvas environment
+                    const apiKey = "AIzaSyBVCTx8fPnGWFprwoT9bgixio_NUgvNG4k"; // API key is automatically provided by the Canvas environment
                     const apiUrlExtract = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const responseExtract = await fetch(apiUrlExtract, {
@@ -414,7 +414,7 @@
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = "AIzaSyDLwSVWe5WPx903S0G9OEfZmocrCU1Yxvo"; // API key is automatically provided by the Canvas environment
+                    const apiKey = "AIzaSyBVCTx8fPnGWFprwoT9bgixio_NUgvNG4k"; // API key is automatically provided by the Canvas environment
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     const response = await fetch(apiUrl, {
                         method: 'POST',
@@ -496,7 +496,7 @@
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = "AIzaSyDLwSVWe5WPx903S0G9OEfZmocrCU1Yxvo"; // API key is automatically provided by the Canvas environment
+                    const apiKey = "AIzaSyBVCTx8fPnGWFprwoT9bgixio_NUgvNG4k"; // API key is automatically provided by the Canvas environment
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     const response = await fetch(apiUrl, {
                         method: 'POST',
