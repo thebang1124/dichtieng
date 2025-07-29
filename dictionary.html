@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Từ điển Êđê - Việt</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Light background */
+            color: #1e293b; /* Dark text */
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        .header-content {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .header-content h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #4f46e5; /* Indigo */
+            margin-bottom: 0.5rem;
+        }
+        .header-content p {
+            font-size: 1.125rem;
+            color: #475569; /* Slate */
+        }
+        .search-section {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            color: #1e293b;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-input:focus {
+            border-color: #6366f1; /* Indigo-500 */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .results-area {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-height: 200px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .result-item {
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0; /* Slate-200 */
+        }
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .result-item h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #4f46e5; /* Indigo */
+            margin-bottom: 0.25rem;
+        }
+        .result-item p {
+            font-size: 1rem;
+            color: #334155; /* Slate-700 */
+        }
+        .result-item .type {
+            font-size: 0.875rem;
+            color: #64748b; /* Slate-500 */
+            margin-left: 0.5rem;
+        }
+        .result-item .examples {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #475569; /* Slate-600 */
+        }
+        .result-item .examples ul {
+            list-style-type: disc;
+            margin-left: 1.25rem;
+        }
+        /* Dark mode styles */
+        body.dark {
+            background-color: #1a202c;
+            color: #f8fafc;
+        }
+        body.dark .search-section,
+        body.dark .results-area {
+            background-color: #2d3748;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        body.dark .search-input {
+            background-color: #4a5568;
+            border-color: #6b7280;
+            color: #f7fafc;
+        }
+        body.dark .search-input:focus {
+            border-color: #818cf8;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.3);
+        }
+        body.dark .header-content h1 {
+            color: #818cf8;
+        }
+        body.dark .header-content p {
+            color: #cbd5e0;
+        }
+        body.dark .result-item h3 {
+            color: #a78bfa;
+        }
+        body.dark .result-item p {
+            color: #e2e8f0;
+        }
+        body.dark .result-item .type {
+            color: #a0aec0;
+        }
+        body.dark .result-item .examples {
+            color: #cbd5e0;
+        }
+        body.dark .result-item {
+            border-color: #4a5568;
+        }
+        .dark-mode-toggle {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            padding: 0.5rem;
+            border-radius: 9999px; /* Full rounded */
+            background-color: #e2e8f0; /* Light gray */
+            color: #475569; /* Slate */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        .dark-mode-toggle:hover {
+            background-color: #cbd5e1;
+        }
+        body.dark .dark-mode-toggle {
+            background-color: #4a5568;
+            color: #f8fafc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        body.dark .dark-mode-toggle:hover {
+            background-color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <button id="darkModeToggle" class="dark-mode-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+            <path d="M9.528 1.718a.75.75 0 0 1 .75 0l.75.22a.75.75 0 0 1 .58.56l.006.048c.03.111.115.196.226.226l.048.006a.75.75 0 0 1 .56.58l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.58.56l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.75-.22a.75.75 0 0 1-.58-.56l-.006-.048a.75.75 0 0 1-.226-.226l-.048-.006a.75.75 0 0 1-.56-.58l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .58-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM12 6a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 6ZM12 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 15ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM3.75 12a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75ZM18 12a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75ZM12 18.75a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5a.75.75 0 0 1 .75-.75ZM5.625 4.5a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM18.375 4.5a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM5.625 18.75a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM18.375 18.75a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 0-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22Z" />
+        </svg>
+    </button>
+
+    <div class="container">
+        <div class="header-content">
+            <h1>Từ điển Êđê - Việt</h1>
+            <p>Hdruôm hră mblang klei blŭ Êđê – Yuăn</p>
+        </div>
+
+        <div class="search-section">
+            <label for="searchInput" class="block text-gray-700 text-sm font-semibold mb-2">
+                Nhập từ cần tìm (Êđê hoặc Việt):
+            </label>
+            <input
+                type="text"
+                id="searchInput"
+                class="search-input"
+                placeholder="Ví dụ: Ana, Buôn, Nhà..."
+            />
+            <button
+                id="clearButton"
+                class="mt-4 w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+            >
+                Xóa tìm kiếm
+            </button>
+        </div>
+
+        <div class="results-area">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Kết quả tra cứu:</h2>
+            <div id="resultsDisplay" class="space-y-4">
+                <p class="text-gray-500">Vui lòng nhập từ để tìm kiếm.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark Mode Toggle Logic
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            // Save preference to localStorage
+            if (document.body.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Check for saved theme preference on load
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+
+        // Dictionary Data (hardcoded)
+        const dictionaryData = [
+            { ede: "Abao", type: "dt", vietnamese: "Ốc bươu" },
+            { ede: "Abăn", type: "dt", vietnamese: "Cái chăn (mền). Msăm abăn: Đắp chăn; Abăn hmlei: Chăn bông" },
+            { ede: "Abŭ", type: "dt", vietnamese: "Cái hũ" },
+            { ede: "Adei", type: "dt", vietnamese: "Em" },
+            { ede: "Adě", type: "dt", vietnamese: "Hến" },
+            { ede: "Adham", type: "dt", vietnamese: "Một nhóm trong tộc người Êđê" },
+            { ede: "Adhan", type: "dt", vietnamese: "Cành. Adhan kyão: Cành cây" },
+            { ede: "Adhei", type: "dt", vietnamese: "Trán. Adhei bai: Trán rộng" },
+            { ede: "Adiê", type: "dt", vietnamese: "Trời. Adiê hjan: Trời mưa" },
+            { ede: "Adiê không", type: "", vietnamese: "Nắng hạn" },
+            { ede: "Adiê tlam", type: "", vietnamese: "Xế chiều" },
+            { ede: "Adih", type: "đt", vietnamese: "Kia. Sang kâo ti anôk adih: Nhà tôi chỗ kia; Hruê aguah adih kâo đuễ hiu: Sáng ngày kia tôi đi chơi" },
+            { ede: "Adôk", type: "đgt", vietnamese: "Còn. Kâo adôk prăk: Tôi còn tiền; Adôk hdĩp: Còn sống" },
+            { ede: "Adrăng", type: "dt", vietnamese: "Rơm rạ. Mkăm adrăng: Đống rơm" },
+            { ede: "Adring", type: "dt", vietnamese: "Hiên nhà sàn. Amĩ kâo bhu mdiê ti adring: Mẹ tôi phơi lúa ở hiên nhà sàn" },
+            { ede: "Adrŏk", type: "dt", vietnamese: "Con cóc" },
+            { ede: "Aduôn", type: "dt", vietnamese: "Bà (nội, ngoại)" },
+            { ede: "Adŭ", type: "dt", vietnamese: "1.Phòng. Adŭ pit: Phòng ngủ; Adŭ hriăm: Phòng học. 2. Lớp. Adŭ năm: Lớp 6; Adŭ pluh dua: Lớp 12. 3. Cái ô. Adŭ jũ: Ô màu đen" },
+            { ede: "Adŭ bruă", type: "dt", vietnamese: "Văn phòng" },
+            { ede: "Adŭ git gai bruă kiă kriê", type: "dt", vietnamese: "Phòng hành chính" },
+            { ede: "Adŭ tĩng yap", type: "dt", vietnamese: "Phòng kế toán" },
+            { ede: "Adŭng", type: "dt", vietnamese: "Mũi. Băng adũng: Lỗ mũi" },
+            { ede: "Aê", type: "dt", vietnamese: "Ông (nội, ngoại)" },
+            { ede: "Aê êa drao", type: "dt", vietnamese: "Bác sĩ" },
+            { ede: "Aguah", type: "trạng từ", vietnamese: "Buổi sáng. Aguah ưm: Sáng sớm; Aguah mgi: Sáng mai; Aguah mbruê: Sáng hôm qua" },
+            { ede: "Ai", type: "dt", vietnamese: "Sức. Ai ktang: Sức mạnh" },
+            { ede: "Ajik", type: "dt", vietnamese: "Ếch" },
+            { ede: "Ak", type: "dt", vietnamese: "Con quạ. Jũ msě si ak: Đen như quạ" },
+            { ede: "Akăt", type: "dt", vietnamese: "Bụi (khóm). Akăt kram: Bụi tre" },
+            { ede: "Akâo", type: "đgt", vietnamese: "Xin. Akâo prăk: Xin tiền; Akâo êa mnăm: Xin nước uống" },
+            { ede: "Ala", type: "dt", vietnamese: "Con rắn. Ala knăl: Rắn giun; Ala mtah: Rắn lục" },
+            { ede: "Alah", type: "tt", vietnamese: "Lười biếng. Alah mă bruă: Lười làm việc" },
+            { ede: "Ală", type: "dt", vietnamese: "Mắt. Pĩt ală: Nhắm mắt" },
+            { ede: "Ama", type: "dt", vietnamese: "Bố (cha)" },
+            { ede: "Amai", type: "dt", vietnamese: "Chị" },
+            { ede: "Amâo", type: "pht", vietnamese: "Không. Amâo mâo: Không có" },
+            { ede: "Amĭ", type: "dt", vietnamese: "Mẹ (má)" },
+            { ede: "Ana", type: "dt", vietnamese: "Cây; giống cái (Chỉ động vật). Hlăm hma, awa pla lu ana boh kroh. - Trong rẫy, bác trồng nhiều loại cây ăn trái. Ɇmô ana sang aê mrâo mdai. - Bò cái nhà ông mới đẻ." },
+            { ede: "Anak", type: "dt", vietnamese: "Con (người)" },
+            { ede: "Anăn", type: "dt", vietnamese: "Tên; (đt): Đó, đấy" },
+            { ede: "Anei", type: "đt", vietnamese: "Đây. Kâo mă bruă ti anei: Tôi làm việc ở đây" },
+            { ede: "Anôk", type: "dt", vietnamese: "Nơi, chỗ, vị trí. Djõ anôk: Đúng vị trí" },
+            { ede: "Ao", type: "dt", vietnamese: "Áo. Ao kỗ: Áo trắng. Ao hjan: Áo mưa" },
+            { ede: "Arăng", type: "đt", vietnamese: "Người ta. Kâo dlăng arăng bị lông đi čữ. Tôi xem người ta thi leo núi." },
+            { ede: "Asăr", type: "dt", vietnamese: "Hạt, hột. Asăr mdiê: Hạt lúa. Boh čên anei lu asăr. - Quả chanh này nhiều hột. Mdiê bi asăr êdi. - Lúa rất chắc hạt." },
+            { ede: "Asâo", type: "dt", vietnamese: "Con chó" },
+            { ede: "Awa", type: "dt", vietnamese: "Bác (anh, chị của bố)" },
+            { ede: "Ayong", type: "dt", vietnamese: "Anh" },
+            { ede: "Băng", type: "đgt", vietnamese: "Ăn (thức ăn nói chung), cháy, bén" },
+            { ede: "Blei", type: "đgt", vietnamese: "Mua. Amai blei dua aruăt klei mah. Chị mua hai sợi dây chuyền vàng." },
+            { ede: "Blŭ", type: "đgt", vietnamese: "Nói" },
+            { ede: "Boh", type: "dt", vietnamese: "Quả, trái, trứng; (đgt) giặt; (tl) cái, chiếc. Boh suai: quả xoài; boh kruễ: trái cam; Boh mnũ: trứng gà. Boh chum ao: giặt quần áo. Dua boh kčok: hai cái ly;" },
+            { ede: "Bruă", type: "dt", vietnamese: "Việc, công việc. Mă bruă: làm việc. Tơ nao mă bruă, kâo khăng đi êdeh pơ phút. - Khi đi làm, tôi thường đi xe máy." },
+            { ede: "Buôn", type: "dt", vietnamese: "Làng, buôn. Hlăm buôn anei, mão lu boh gõ esei kjăp băng huă. Trong buôn này, có nhiều con trâu ăn khỏe." },
+            { ede: "Čih", type: "đgt", vietnamese: "Viết" },
+            { ede: "Dlăng", type: "đgt", vietnamese: "Đọc, xem, nhìn" },
+            { ede: "Djam", type: "dt", vietnamese: "Rau, canh" },
+            { ede: "Djă", type: "đgt", vietnamese: "Cầm, giữ" },
+            { ede: "Drei", type: "đt", vietnamese: "Chúng ta, ta; (tl) con (dùng đếm con vật)" },
+            { ede: "Êa", type: "dt", vietnamese: "Nước" },
+            { ede: "Êdeh", type: "dt", vietnamese: "Xe. Tơ nao mă bruă, kâo khăng đi êdeh pơ phút. Khi đi làm, tôi thường đi xe máy." },
+            { ede: "Êmô", type: "dt", vietnamese: "Con bò" },
+            { ede: "Êsei", type: "dt", vietnamese: "Cơm" },
+            { ede: "Hriăm", type: "đgt", vietnamese: "Học" },
+            { ede: "Hruê", type: "dt", vietnamese: "Ngày. Hruê mdei, kâo hiu chưn hồng bằng gặp. Ngày nghỉ, tôi đi chơi với bạn." },
+            { ede: "Huă", type: "đgt", vietnamese: "Ăn (cơm)" },
+            { ede: "Ih", type: "đt", vietnamese: "Anh, chị, bạn (ngôi thứ 2 số ít)" },
+            { ede: "Jăk", type: "tt", vietnamese: "Tốt, ngon" },
+            { ede: "Kâo", type: "đt", vietnamese: "Tôi (ngôi thứ nhất số ít). Kâo dlăng arăng bị lông đi čữ. Tôi xem người ta thi leo núi." },
+            { ede: "Kan", type: "dt", vietnamese: "Cá" },
+            { ede: "Khăp", type: "đgt", vietnamese: "Thích, yêu" },
+            { ede: "Klei", type: "dt", vietnamese: "Tiếng, lời, sự việc, dây. Amai blei dua aruăt klei mah. Chị mua hai sợi dây chuyền vàng." },
+            { ede: "Kphê", type: "dt", vietnamese: "Cà phê. Čar Dak Lak pla lu kphê. Tỉnh Đắk Lắk trồng nhiều cà phê." },
+            { ede: "Kyâo", type: "dt", vietnamese: "Gỗ, cây. Sang kâo ngã hõng kyâo. Nhà tôi làm bằng gỗ." },
+            { ede: "Mă", type: "đgt", vietnamese: "Làm, lấy, bắt" },
+            { ede: "Mâo", type: "đgt", vietnamese: "Có, được" },
+            { ede: "Mdiê", type: "dt", vietnamese: "Lúa" },
+            { ede: "Mlan", type: "dt", vietnamese: "Tháng, trăng" },
+            { ede: "Mnăm", type: "đgt", vietnamese: "Uống" },
+            { ede: "Mniê", type: "dt", vietnamese: "Phụ nữ, con gái" },
+            { ede: "Mnuih", type: "dt", vietnamese: "Người" },
+            { ede: "Mnŭ", type: "dt", vietnamese: "Con gà" },
+            { ede: "Nao", type: "đgt", vietnamese: "Đi" },
+            { ede: "Ñu", type: "đt", vietnamese: "Nó, ông ấy, bà ấy (ngôi thứ 3 số ít)" },
+            { ede: "Pla", type: "đgt", vietnamese: "Trồng, cấy. Hlăm hma, awa pla lu ana boh kroh. Trong rẫy, bác trồng nhiều loại cây ăn trái." },
+            { ede: "Prăk", type: "dt", vietnamese: "Tiền, bạc" },
+            { ede: "Ruă", type: "đgt", vietnamese: "Đau, ốm. Amũ kâo ruă aruăt ariêng. Mẹ tôi đau gân cốt." },
+            { ede: "Sang", type: "dt", vietnamese: "Nhà. Sang kâo ngã hõng kyâo. Nhà tôi làm bằng gỗ." },
+            { ede: "Siam", type: "tt", vietnamese: "Đẹp" },
+            { ede: "Thâo", type: "đgt", vietnamese: "Biết" },
+            { ede: "Thuôn", type: "dt", vietnamese: "Năm, tuổi" },
+            { ede: "Ʉn", type: "dt", vietnamese: "Lợn, heo" },
+            { ede: "Aruăt", type: "dt", vietnamese: "Gân, sợi. Amũ kâo ruă aruăt ariêng. Mẹ tôi đau gân cốt. Amai blei dua aruăt klei mah. Chị mua hai sợi dây chuyền vàng." },
+            { ede: "Čar", type: "dt", vietnamese: "Tỉnh, chẻ. Čar Dak Lak pla lu kphê. Tỉnh Đắk Lắk trồng nhiều cà phê. Aê dôk čar mnũng. Ông đang chẻ lạt." },
+            { ede: "Đi", type: "đgt", vietnamese: "Leo, trèo, cưỡi, đi. Kâo dlăng arăng bị lông đi čữ. Tôi xem người ta thi leo núi. Tơ nao mă bruă, kâo khăng đi êdeh pơ phút. Khi đi làm, tôi thường đi xe máy. Hruê mdei, kâo hiu chưn hồng bằng gặp. Ngày nghỉ, tôi đi chơi với bạn." },
+            { ede: "YuĂr", type: "dt", vietnamese: "Cây canh kina rễ" },
+            { ede: "Yuät", type: "đgt", vietnamese: "Bám. Yuät ti dhan kyáo hrut asei â^ kå dläng: Bám cành cây âu người lăn." },
+            { ede: "Yut yat", type: "tt", vietnamese: "Đung đưa" },
+            { ede: "Yŭ", type: "dt", vietnamese: "(Hướng) Tây. Ang^ng må\\ng yu\\: Gió Tây." },
+            { ede: "Yŭ ngo\\", type: "dt", vietnamese: "Phương hướng. Amáo lo\\ tháo yu\\ ngo\\: Lạc mất phương hướng." },
+            { ede: "Yŭk", type: "dt", vietnamese: "Ổi. Yu\\k ]hum: Ổi quấn." },
+            { ede: "Yu\\m", type: "tt", vietnamese: "Mãn (nhiều), đông. Yu\\m anak: Mãn con. Yu\\m mse\\ si hdàm: Đông như kiến." },
+            { ede: "Yu\\n", type: "đgt", vietnamese: "Rung" },
+            { ede: "Yŭng jing", type: "đgt", vietnamese: "Đứng sững" },
+            { ede: "Yŭr", type: "dt", vietnamese: "Dãi. Yu\\r knga: Dãi tai." },
+            { ede: "Yŭr tluän", type: "dt", vietnamese: "Mỏng, ít" },
+            { ede: "Yăh yăp", type: "tt", vietnamese: "1. Chậm chạp. Ãbat yæh yæp: Đi chậm chạp. 2. Luôn bại. Ai tiã yæh yæp: Tinh thần luôn bại." },
+        ];
+
+        // Function to process raw data to extract meaning and examples
+        function processDictionaryData(rawData) {
+            return rawData.map(entry => {
+                let meaning = entry.vietnamese;
+                const examples = [];
+
+                const isMultiNumberedMeaning = meaning.match(/^\d+\./);
+                const containsExplicitTypeExample = meaning.includes('(tt):') || meaning.includes('(đt):') || meaning.includes('(tl)');
+                const containsSemicolonMeaningSeparator = meaning.includes(';');
+
+                if (isMultiNumberedMeaning || containsExplicitTypeExample || containsSemicolonMeaningSeparator) {
+                    const exampleRegex = /([A-Za-zÀ-Ỹà-ỹ\s\\_]+): ([A-Za-zÀ-Ỹà-ỹ\s\\_.,]+)/g;
+                    let match;
+                    let tempExamples = [];
+                    let currentMeaningPart = meaning;
+
+                    while ((match = exampleRegex.exec(currentMeaningPart)) !== null) {
+                        tempExamples.push(match[0].trim());
+                    }
+
+                    if (tempExamples.length > 0) {
+                        const firstExampleIndex = meaning.indexOf(tempExamples[0]);
+                        if (firstExampleIndex !== -1) {
+                            meaning = meaning.substring(0, firstExampleIndex).trim();
+                        }
+                        examples.push(...tempExamples);
+                    }
+                    
+                    if (entry.examples && entry.examples.length > 0) {
+                        examples.push(...entry.examples);
+                    }
+
+                } else {
+                    const parts = meaning.split('. ');
+                    meaning = parts[0].trim();
+                    if (parts.length > 1) {
+                        const potentialExamples = parts.slice(1).join('. ').trim();
+                        if (potentialExamples) {
+                            potentialExamples.split(';').forEach(ex => {
+                                const trimmedEx = ex.trim();
+                                if (trimmedEx) {
+                                    examples.push(trimmedEx);
+                                }
+                            });
+                        }
+                    }
+                }
+
+                return {
+                    ede: entry.ede,
+                    type: entry.type,
+                    vietnamese: meaning,
+                    examples: examples
+                };
+            });
+        }
+
+        const processedDictionaryData = processDictionaryData(dictionaryData);
+
+        // Get DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const resultsDisplay = document.getElementById('resultsDisplay');
+        const clearButton = document.getElementById('clearButton');
+
+        // Function to display search results
+        function displayResults(results) {
+            resultsDisplay.innerHTML = ''; // Clear previous results
+
+            if (results.length === 0) {
+                resultsDisplay.innerHTML = '<p class="text-gray-500">Không tìm thấy từ nào phù hợp.</p>';
+                return;
+            }
+
+            results.forEach(entry => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+
+                let examplesHtml = '';
+                if (entry.examples && entry.examples.length > 0) {
+                    examplesHtml = `
+                        <div class="examples">
+                            <span class="font-medium">Ví dụ:</span>
+                            <ul class="list-disc list-inside ml-4">
+                                ${entry.examples.map(ex => `<li>${ex}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                resultItem.innerHTML = `
+                    <h3>${entry.ede} <span class="type">(${entry.type})</span></h3>
+                    <p><span class="font-medium">Nghĩa:</span> ${entry.vietnamese}</p>
+                    ${examplesHtml}
+                `;
+                resultsDisplay.appendChild(resultItem);
+            });
+        }
+
+        // Function to perform search
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            if (searchTerm === '') {
+                resultsDisplay.innerHTML = '<p class="text-gray-500">Vui lòng nhập từ để tìm kiếm.</p>';
+                return;
+            }
+
+            const filteredResults = processedDictionaryData.filter(entry =>
+                entry.ede.toLowerCase().includes(searchTerm) ||
+                entry.vietnamese.toLowerCase().includes(searchTerm)
+            );
+            displayResults(filteredResults);
+        }
+
+        // Event Listeners
+        searchInput.addEventListener('input', performSearch);
+        clearButton.addEventListener('click', () => {
+            searchInput.value = '';
+            resultsDisplay.innerHTML = '<p class="text-gray-500">Vui lòng nhập từ để tìm kiếm.</p>';
+        });
+
+        // Initial display
+        displayResults([]); // Show initial message
+    </script>
+</body>
+</html>
