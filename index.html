@@ -134,6 +134,9 @@
             const [extractedText, setExtractedText] = useState(''); // Text extracted from image
             const [imageTranslation, setImageTranslation] = useState(''); // Translation of extracted text
             const [isLoadingImageTranslate, setIsLoadingImageTranslate] = useState(false); // Loading indicator for image translation
+            // New states for image translation language selection
+            const [sourceImageLang, setSourceImageLang] = useState('ede'); // 'ede' or 'vietnamese'
+            const [targetImageLang, setTargetImageLang] = useState('vietnamese'); // 'ede' or 'vietnamese'
 
             // Paragraph Generation States
             const [paragraphPrompt, setParagraphPrompt] = useState(''); // User's prompt for paragraph
@@ -242,7 +245,7 @@
 
             // SVG paths for sun and moon icons (for dark mode toggle)
             const sunIconPath = (
-                <path fillRule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .75 0l.75.22a.75.75 0 0 1 .58.56l.006.048c.03.111.115.196.226.226l.048.006a.75.75 0 0 1 .56.58l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.58.56l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.75-.22a.75.75 0 0 1-.58-.56l-.006-.048a.75.75 0 0 1-.226-.226l-.048-.006a.75.75 0 0 1-.56-.58l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .58-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM12 6a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 6ZM12 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 15ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM3.75 12a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75ZM18 12a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75ZM12 18.75a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5a.75.75 0 0 1 .75-.75ZM5.625 4.5a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM18.375 4.5a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM5.625 18.75a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM18.375 18.75a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22Z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .75 0l.75.22a.75.75 0 0 1 .58.56l.006.048c.03.111.115.196.226.226l.048.006a.75.75 0 0 1 .56.58l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.58.56l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.75-.22a.75.75 0 0 1-.58-.56l-.006-.048a.75.75 0 0 1-.226-.226l-.048-.006a.75.75 0 0 1-.56-.58l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .58-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM12 6a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 6ZM12 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 15ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM3.75 12a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75ZM18 12a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75ZM12 18.75a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5a.75.75 0 0 1 .75-.75ZM5.625 4.5a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM18.375 4.5a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM5.625 18.75a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 1-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22ZM18.375 18.75a.75.75 0 0 1 .56-.56l.75-.22a.75.75 0 0 1 .75 0l.22.75a.75.75 0 0 1 0 .75l-.22.75a.75.75 0 0 1-.56.58l-.048.006a.75.75 0 0 0-.226.226l-.006.048a.75.75 0 0 1-.56.58l-.75.22a.75.75 0 0 1-.75 0l-.22-.75a.75.75 0 0 1 0-.75l.22-.75a.75.75 0 0 1 .56-.56l.048-.006a.75.75 0 0 1 .226-.226l.006-.048a.75.75 0 0 1 .56-.58l.75-.22Z" clipRule="evenodd" />
             );
 
             const moonIconPath = (
@@ -257,6 +260,8 @@
                 setExtractedText('');
                 setImageTranslation('');
                 setIsLoadingImageTranslate(false);
+                setSourceImageLang('ede'); // Reset source language
+                setTargetImageLang('vietnamese'); // Reset target language
 
                 setParagraphPrompt('');
                 setParagraphWordCount(100); // Reset word count to default
@@ -304,6 +309,11 @@
                     showMessage("Vui lòng chọn một hình ảnh trước.");
                     return;
                 }
+                if (sourceImageLang === targetImageLang) {
+                    showMessage("Ngôn ngữ nguồn và ngôn ngữ đích không được giống nhau.");
+                    return;
+                }
+
                 setIsLoadingImageTranslate(true);
                 setExtractedText('');
                 setImageTranslation('');
@@ -313,7 +323,8 @@
                     const mimeType = imageFile.type; // Get MIME type from the file object
 
                     // Step 1: Extract text from image using AI
-                    const extractPrompt = "Trích xuất tất cả văn bản tiếng Êđê từ hình ảnh này. Chỉ trả về văn bản thuần túy, không có giải thích hay định dạng gì thêm.";
+                    // The extraction prompt is general, as we don't know the language of the text in the image yet.
+                    const extractPrompt = "Trích xuất tất cả văn bản từ hình ảnh này. Chỉ trả về văn bản thuần túy, không có giải thích hay định dạng gì thêm.";
                     let chatHistoryExtract = [];
                     chatHistoryExtract.push({ role: "user", parts: [{ text: extractPrompt }] });
                     chatHistoryExtract.push({ role: "user", parts: [{ inline_data: { mime_type: mimeType, data: base64ImageData } }] });
@@ -351,9 +362,14 @@
                     }
                     setExtractedText(extractedTextFromImage);
 
-                    // Step 2: Translate extracted text if successful
+                    // Step 2: Translate extracted text if successful and source/target languages are different
                     if (extractedTextFromImage && extractedTextFromImage.trim() !== "" && extractedTextFromImage !== "Không thể trích xuất văn bản.") {
-                        const translatePrompt = `Dịch đoạn văn tiếng Êđê sau sang tiếng Việt: "${extractedTextFromImage}". Chỉ trả về bản dịch thuần túy, không có giải thích hay định dạng gì thêm.`;
+                        let translatePrompt = "";
+                        const sourceLangName = sourceImageLang === 'ede' ? 'Êđê' : 'Việt';
+                        const targetLangName = targetImageLang === 'ede' ? 'Êđê' : 'Việt';
+
+                        translatePrompt = `Dịch đoạn văn tiếng ${sourceLangName} sau sang tiếng ${targetLangName}: "${extractedTextFromImage}". Chỉ trả về bản dịch thuần túy, không có giải thích hay định dạng gì thêm.`;
+                        
                         let chatHistoryTranslate = [];
                         chatHistoryTranslate.push({ role: "user", parts: [{ text: translatePrompt }] });
                         const payloadTranslate = { contents: chatHistoryTranslate };
@@ -400,6 +416,13 @@
                     setIsLoadingImageTranslate(false); // Hide loading indicator
                 }
             };
+
+            // Function to swap source and target languages for image translation
+            const swapImageLanguages = () => {
+                setSourceImageLang(targetImageLang);
+                setTargetImageLang(sourceImageLang);
+            };
+
 
             // --- Paragraph Generation Logic ---
             const generateParagraph = async () => {
@@ -796,6 +819,9 @@
 
                         {/* Navigation Tabs */}
                         <div className="flex justify-center border-b border-gray-200 dark:border-gray-700 mb-8 overflow-x-auto">
+                            <a href="dictionary.html" target="_blank" class="px-4 py-2 text-lg font-medium rounded-t-lg transition-colors duration-200 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600">
+    Từ điển
+</a>
                             <TabButton tabName="info" activeTab={activeTab} setActiveTab={setActiveTab}>Thông tin & Hướng dẫn</TabButton>
                             <TabButton tabName="image" activeTab={activeTab} setActiveTab={setActiveTab}>Dịch Từ Ảnh</TabButton>
                             <TabButton tabName="generate" activeTab={activeTab} setActiveTab={setActiveTab}>Tạo Đoạn Văn</TabButton>
@@ -803,9 +829,6 @@
                             <TabButton tabName="speechToText" activeTab={activeTab} setActiveTab={setActiveTab}>Giọng nói thành Văn bản</TabButton>
                             <TabButton tabName="textToSpeech" activeTab={activeTab} setActiveTab={setActiveTab}>Văn bản thành Giọng nói</TabButton>
                             <TabButton tabName="history" activeTab={activeTab} setActiveTab={setActiveTab} disabled={!isAuthenticated}>Lịch Sử</TabButton>
-                        <a href="dictionary.html" target="_blank" class="px-4 py-2 text-lg font-medium rounded-t-lg transition-colors duration-200 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600">
-    Từ điển
-</a>
                         </div>
 
                         {/* Tab Content - Conditional Rendering based on activeTab */}
@@ -852,10 +875,8 @@
                                     <div className="info2 text-center mt-6">
                                         <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Chào mừng bạn đến với<br />Từ Điển Êđê Việt</h3>
                                           <blockquote className="text-justify mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
-                                            Bạn thân mến, đồng bào ÊĐê hiền hậu, dễ mến và nhiều nét văn hóa đậm đà bản sắc. Người Êđê có tiếng nói và chữ viết riêng, một kho tàng văn hóa đồ sộ. Hãy khám phá song ngữ tiếng Việt và Êđê qua website này nhé!
-                                            <br /><br />
-                                            - Nội dung: Tổng hợp từ nhiều nguồn.
-                                            <br />                        
+                                           - Nội dung: Tổng hợp từ nhiều nguồn.
+                                            <br />
                                         </blockquote>
                                     </div>
                                 </div>
@@ -865,8 +886,50 @@
                         {activeTab === 'image' && (
                             <div className="bg-white dark:bg-gray-700 p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl">
                                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Dịch từ ảnh</h2>
-                                <p className="text-gray-600 dark:text-gray-400 mb-4">Tải lên một hình ảnh chứa văn bản tiếng Êđê để trích xuất và dịch.</p>
+                                <p className="text-gray-600 dark:text-gray-400 mb-4">Tải lên một hình ảnh chứa văn bản để trích xuất và dịch giữa tiếng Êđê và tiếng Việt.</p>
                                 <div className="space-y-4">
+                                    {/* Language Selection */}
+                                    <div className="flex items-center justify-center space-x-4 mb-4">
+                                        <div className="flex flex-col items-center">
+                                            <label htmlFor="sourceImageLang" className="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2">
+                                                Ngôn ngữ nguồn:
+                                            </label>
+                                            <select
+                                                id="sourceImageLang"
+                                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-white"
+                                                value={sourceImageLang}
+                                                onChange={(e) => setSourceImageLang(e.target.value)}
+                                            >
+                                                <option value="ede">Tiếng Êđê</option>
+                                                <option value="vietnamese">Tiếng Việt</option>
+                                            </select>
+                                        </div>
+                                        <button
+                                            onClick={swapImageLanguages}
+                                            className="p-2 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all mt-6"
+                                            aria-label="Swap languages"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                                                <path fillRule="evenodd" d="M16.28 11.47a.75.75 0 0 0 0-1.06L14.21 8.47a.75.75 0 0 0-1.06 0 .75.75 0 0 0 0 1.06l1.22 1.22H4.5a.75.75 0 0 0 0 1.5h9.89l-1.22 1.22a.75.75 0 1 0 1.06 1.06l2.07-2.07ZM7.72 12.97a.75.75 0 0 0 0 1.06l2.07 2.07a.75.75 0 0 0 1.06 0 .75.75 0 0 0 0-1.06l-1.22-1.22H19.5a.75.75 0 0 0 0-1.5h-9.89l1.22-1.22a.75.75 0 0 0-1.06-1.06l-2.07 2.07Z" clipRule="evenodd" />
+                                            </svg>
+                                        </button>
+
+                                        <div className="flex flex-col items-center">
+                                            <label htmlFor="targetImageLang" className="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2">
+                                                Ngôn ngữ đích:
+                                            </label>
+                                            <select
+                                                id="targetImageLang"
+                                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-white"
+                                                value={targetImageLang}
+                                                onChange={(e) => setTargetImageLang(e.target.value)}
+                                            >
+                                                <option value="vietnamese">Tiếng Việt</option>
+                                                <option value="ede">Tiếng Êđê</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                     <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center bg-gray-50 dark:bg-gray-800">
                                         <label htmlFor="imageUpload" className="cursor-pointer inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
                                             Chọn ảnh
@@ -883,7 +946,7 @@
                                     
                                     <button
                                         onClick={handleImageTranslate}
-                                        disabled={isLoadingImageTranslate || !imageSrc}
+                                        disabled={isLoadingImageTranslate || !imageSrc || sourceImageLang === targetImageLang}
                                         className="w-full flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
                                     >
                                         {isLoadingImageTranslate ? <div className="loader"></div> : 'Trích xuất & Dịch từ ảnh'}
@@ -892,13 +955,13 @@
                                     {(extractedText || imageTranslation || isLoadingImageTranslate) && (
                                         <div className="mt-4 space-y-4">
                                             <div className="bg-purple-50 dark:bg-purple-900 p-4 rounded-lg border border-purple-200 dark:border-purple-700">
-                                                <h3 className="text-md font-semibold text-purple-800 dark:text-purple-200 mb-1">Văn bản gốc (Êđê):</h3>
+                                                <h3 className="text-md font-semibold text-purple-800 dark:text-purple-200 mb-1">Văn bản gốc ({sourceImageLang === 'ede' ? 'Êđê' : 'Việt'}):</h3>
                                                 <p className="text-gray-800 dark:text-gray-100 text-base whitespace-pre-wrap">
                                                     {isLoadingImageTranslate && !extractedText ? "Đang trích xuất văn bản..." : extractedText}
                                                 </p>
                                             </div>
                                             <div className="bg-indigo-50 dark:bg-indigo-900 p-4 rounded-lg border border-indigo-200 dark:border-indigo-700">
-                                                <h3 className="text-md font-semibold text-indigo-800 dark:text-indigo-200 mb-1">Bản dịch (Việt):</h3>
+                                                <h3 className="text-md font-semibold text-indigo-800 dark:text-indigo-200 mb-1">Bản dịch ({targetImageLang === 'ede' ? 'Êđê' : 'Việt'}):</h3>
                                                 <p className="text-gray-800 dark:text-gray-100 text-base whitespace-pre-wrap">
                                                     {isLoadingImageTranslate && !imageTranslation ? "Đang dịch văn bản..." : imageTranslation}
                                                 </p>
