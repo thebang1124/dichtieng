@@ -29,6 +29,28 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Flag waving animation */
+        @keyframes waveFlag {
+            0%, 100% {
+                transform: rotateZ(0deg) translateY(0px) skewX(0deg);
+            }
+            25% {
+                transform: rotateZ(4deg) translateY(-3px) skewX(3deg);
+            }
+            50% {
+                transform: rotateZ(0deg) translateY(0px) skewX(0deg);
+            }
+            75% {
+                transform: rotateZ(-4deg) translateY(3px) skewX(-3deg);
+            }
+        }
+
+        .flag-waving {
+            transform-origin: bottom left; /* Pivot point for waving */
+            animation: waveFlag 3s ease-in-out infinite; /* Increased duration for smoother wave */
+        }
+
         /* Dark mode specific styles */
         .dark .bg-gray-50 { background-color: #1a202c; }
         .dark .bg-white { background-color: #2d3748; }
@@ -117,7 +139,7 @@
             // State for dark mode toggle
             const [darkMode, setDarkMode] = useState(false);
             // State to manage active tab in the UI
-            const [activeTab, setActiveTab] = useState('info'); // Default tab is 'info'
+            const [activeTab, setActiveTab] = useState('alphabet'); // Default tab is now 'alphabet'
             // State for displaying modal messages
             const [message, setMessage] = useState('');
 
@@ -149,7 +171,7 @@
             const [generatedExplanation, setGeneratedExplanation] = useState(''); // Generated explanation
             const [isLoadingExplanation, setIsLoadingExplanation] = useState(false); // Loading indicator for explanation generation
 
-            // Speech-to-Text States
+            // Speech-to-Text States (Removed from UI, but keeping states for potential future use or debugging)
             const [speechRecognitionText, setSpeechRecognitionText] = useState(''); // Recognized text from speech
             const [isRecording, setIsRecording] = useState(false); // Recording status
             const recognitionRef = useRef(null); // Ref for SpeechRecognition object
@@ -164,6 +186,49 @@
             // History States
             const [historyItems, setHistoryItems] = useState([]); // List of historical interactions
             const historyUnsubscribeRef = useRef(null); // Ref to unsubscribe from Firestore listener
+
+            // Data for Êđê Alphabet Table
+            const edeAlphabet = [
+                { char: "A a", vietnameseSound: "a", unicode: "U+0041, U+0061", notes: "Chuẩn Latin" },
+                { char: "Ă ă", vietnameseSound: "ă", unicode: "U+0102, U+0103", notes: "Latin Extended-A" },
+                { char: "Â â", vietnameseSound: "â (â+o thành vần: âo- đọc là au)", unicode: "U+00C2, U+00E2", notes: "Latin-1 Supplement" },
+                { char: "B b", vietnameseSound: "không có âm tương ứng", unicode: "U+0042, U+0062", notes: "Đặc trưng Êđê" },
+                { char: "Ḇ ḇ", vietnameseSound: "b", unicode: "U+0042, U+0062 (kết hợp với U+0332)", notes: "Chữ b có gạch dưới, khác b trên" },
+                { char: "Č č", vietnameseSound: "ch", unicode: "U+010C, U+010D", notes: "Latin Extended-A" },
+                { char: "D d", vietnameseSound: "không có âm tương ứng", unicode: "U+0044, U+0064", notes: "Đặc trưng Êđê" },
+                { char: "Đ đ", vietnameseSound: "d", unicode: "U+0110, U+0111", notes: "Latin Extended-A" },
+                { char: "E e", vietnameseSound: "e", unicode: "U+0045, U+0065", notes: "Chuẩn Latin" },
+                { char: "Ě ě", vietnameseSound: "không có âm tương ứng", unicode: "U+011A, U+011B", notes: "Latin Extended-A" },
+                { char: "Ê ê", vietnameseSound: "ê", unicode: "U+00CA, U+00EA", notes: "Latin-1 Supplement" },
+                { char: "Ẽ ẽ", vietnameseSound: "không có âm tương ứng", unicode: "U+1EBD, U+1EBE", notes: "Latin Extended Additional" },
+                { char: "G g", vietnameseSound: "g (gh)", unicode: "U+0047, U+0067", notes: "Chuẩn Latin" },
+                { char: "H h", vietnameseSound: "h", unicode: "U+0048, U+0068", notes: "Chuẩn Latin" },
+                { char: "I i", vietnameseSound: "i", unicode: "U+0049, U+0069", notes: "Chuẩn Latin" },
+                { char: "Ị ị", vietnameseSound: "không có âm tương ứng", unicode: "U+0049, U+0069 (kết hợp với U+0323)", notes: "Chữ i có dấu chấm dưới" },
+                { char: "J j", vietnameseSound: "không có âm tương ứng", unicode: "U+004A, U+006A", notes: "Đặc trưng Êđê" },
+                { char: "K k", vietnameseSound: "k (c, q)", unicode: "U+004B, U+006B", notes: "Chuẩn Latin" },
+                { char: "L l", vietnameseSound: "l", unicode: "U+004C, U+006C", notes: "Chuẩn Latin" },
+                { char: "M m", vietnameseSound: "m", unicode: "U+004D, U+006D", notes: "Chuẩn Latin" },
+                { char: "N n", vietnameseSound: "n", unicode: "U+004E, U+006E", notes: "Chuẩn Latin" },
+                { char: "Ñ ñ", vietnameseSound: "nh", unicode: "U+00D1, U+00F1", notes: "Latin-1 Supplement" },
+                { char: "O o", vietnameseSound: "o", unicode: "U+004F, U+006F", notes: "Chuẩn Latin" },
+                { char: "Ọ ọ", vietnameseSound: "không có âm tương ứng", unicode: "U+004F, U+006F (kết hợp với U+0323)", notes: "Chữ o có dấu chấm dưới" },
+                { char: "Ô ô", vietnameseSound: "ô", unicode: "U+00D4, U+00F4", notes: "Latin-1 Supplement" },
+                { char: "Ỗ ỗ", vietnameseSound: "không có âm tương ứng", unicode: "U+1ED6, U+1ED7", notes: "Latin Extended Additional" },
+                { char: "Ơ ơ", vietnameseSound: "ơ", unicode: "U+01A0, U+01A1", notes: "Latin Extended-B" },
+                { char: "Ö ö", vietnameseSound: "â", unicode: "U+00D6, U+00F6", notes: "Latin-1 Supplement" },
+                { char: "P p", vietnameseSound: "p", unicode: "U+0050, U+0070", notes: "Chuẩn Latin" },
+                { char: "R r", vietnameseSound: "r", unicode: "U+0052, U+0072", notes: "Chuẩn Latin" },
+                { char: "S s", vietnameseSound: "s (x)", unicode: "U+0053, U+0073", notes: "Chuẩn Latin" },
+                { char: "T t", vietnameseSound: "t", unicode: "U+0054, U+0074", notes: "Chuẩn Latin" },
+                { char: "U u", vietnameseSound: "u", unicode: "U+0055, U+0075", notes: "Chuẩn Latin" },
+                { char: "Ŭ ŭ", vietnameseSound: "ŭ", unicode: "U+016C, U+016D", notes: "Latin Extended-A" },
+                { char: "Ư ư", vietnameseSound: "ư", unicode: "U+01AF, U+01B0", notes: "Latin Extended-B" },
+                { char: "Ự ự", vietnameseSound: "không có âm tương ứng", unicode: "U+01AF, U+01B0 (kết hợp với U+0323)", notes: "Chữ ư có dấu chấm dưới" },
+                { char: "W w", vietnameseSound: "w (v)", unicode: "U+0057, U+0077", notes: "Chuẩn Latin" },
+                { char: "Y y", vietnameseSound: "y (d, gi)", unicode: "U+0059, U+0079", notes: "Chuẩn Latin" },
+            ];
+
 
             // Function to display a modal message
             const showMessage = (msg) => {
@@ -268,15 +333,16 @@
                 setGeneratedParagraph('');
                 setIsLoadingParagraph(false);
 
+                // Speech-to-Text states are no longer reset here as the tab is removed.
+                // setSpeechRecognitionText('');
+                // setIsRecording(false);
+                // if (recognitionRef.current) {
+                //     recognitionRef.current.stop(); // Stop any ongoing speech recognition
+                // }
+
                 setExplanationWord('');
                 setGeneratedExplanation('');
                 setIsLoadingExplanation(false);
-
-                setSpeechRecognitionText('');
-                setIsRecording(false);
-                if (recognitionRef.current) {
-                    recognitionRef.current.stop(); // Stop any ongoing speech recognition
-                }
 
                 setSpeechSynthesisText('');
                 setIsSpeaking(false);
@@ -433,7 +499,8 @@
                 setIsLoadingParagraph(true);
                 setGeneratedParagraph('Đang tạo đoạn văn...'); // Set loading message
                 try {
-                    const prompt = `Viết một đoạn văn ngắn bằng tiếng Êđê về chủ đề: "${paragraphPrompt}". Độ dài khoảng ${paragraphWordCount} từ. Đảm bảo ngữ pháp và từ vựng chính xác.`;
+                    // Updated prompt to request introduction, body, and conclusion
+                    const prompt = `Viết một đoạn văn bằng tiếng Êđê về chủ đề: "${paragraphPrompt}". Đoạn văn cần có cấu trúc rõ ràng gồm mở bài, thân bài và kết bài. Độ dài khoảng ${paragraphWordCount} từ. Đảm bảo ngữ pháp và từ vựng chính xác.`;
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                     const payload = { contents: chatHistory };
@@ -491,7 +558,8 @@
                 }
                 try {
                     // Use __app_id for the collection path as required
-                    const historyCollectionRef = window.firebase.collection(db, `artifacts/${__app_id}/users/${userId}/ede_history`);
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    const historyCollectionRef = window.firebase.collection(db, `artifacts/${appId}/users/${userId}/ede_history`);
                     await window.firebase.addDoc(historyCollectionRef, {
                         type: 'paragraph_generation',
                         prompt: paragraphPrompt,
@@ -572,7 +640,8 @@
                 }
                 try {
                     // Use __app_id for the collection path as required
-                    const historyCollectionRef = window.firebase.collection(db, `artifacts/${__app_id}/users/${userId}/ede_history`);
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    const historyCollectionRef = window.firebase.collection(db, `artifacts/${appId}/users/${userId}/ede_history`);
                     await window.firebase.addDoc(historyCollectionRef, {
                         type: 'explanation',
                         word: explanationWord,
@@ -586,11 +655,12 @@
                 }
             };
 
-            // --- Speech-to-Text Logic ---
+            // --- Speech-to-Text Logic (Removed from UI) ---
+            // Keeping the useEffect and functions for potential future re-introduction or debugging
             useEffect(() => {
                 // Check if browser supports SpeechRecognition API
                 if (!('webkitSpeechRecognition' in window)) {
-                    showMessage("Trình duyệt của bạn không hỗ trợ nhận dạng giọng nói. Vui lòng sử dụng Chrome hoặc trình duyệt tương thích.");
+                    // showMessage("Trình duyệt của bạn không hỗ trợ nhận dạng giọng nói. Vui lòng sử dụng Chrome hoặc trình duyệt tương thích.");
                     return;
                 }
 
@@ -624,7 +694,7 @@
                     setIsRecording(false);
                     console.error("Speech recognition error:", event.error);
                     setSpeechRecognitionText(`Lỗi: ${event.error}. Vui lòng thử lại.`);
-                    showMessage(`Lỗi nhận dạng giọng nói: ${event.error}. Vui lòng kiểm tra micro và cấp quyền.`);
+                    // showMessage(`Lỗi nhận dạng giọng nói: ${event.error}. Vui lòng kiểm tra micro và cấp quyền.`);
                 };
 
                 recognition.onend = () => {
@@ -744,7 +814,8 @@
                         historyUnsubscribeRef.current(); // Unsubscribe from previous listener to avoid duplicates
                     }
                     // Define the Firestore collection path using __app_id
-                    const historyCollectionRef = window.firebase.collection(db, `artifacts/${__app_id}/users/${userId}/ede_history`);
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    const historyCollectionRef = window.firebase.collection(db, `artifacts/${appId}/users/${userId}/ede_history`);
                     // Create a query without orderBy to avoid index issues, sorting will be done in memory
                     const q = window.firebase.query(historyCollectionRef);
                     
@@ -795,16 +866,45 @@
             }
 
             return (
-                <div className="min-h-screen bg-gray-50 dark:bg-gray-800 flex flex-col items-center p-4 transition-colors duration-300">
+                <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 dark:from-gray-900 dark:to-gray-700 flex flex-col items-center p-4 transition-colors duration-300">
                     <div className="w-full max-w-3xl mx-auto space-y-8">
                         
                         {/* Header and Dark Mode Toggle */}
                         <div className="flex justify-between items-center mb-6">
-                            <div className="text-center flex-grow">
+                            <div className="text-center flex-grow flex items-center justify-center">
+                                {/* Vietnamese Flag Image with waving animation */}
+                            /* Cờ Việt Nam có tỉ lệ là 3a:2a, đường kính là 6a/5 */
+.container{
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.background{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 300px;     
+  height: 200px;
+  background: red;
+  border: 1px solid red;
+}
+.star{
+  display: flex;
+  width: 120px;
+  height: 120px;
+  justify-content: center;
+  align-items: center;
+  background: yellow;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+                                    src="https://placehold.co/60x40/DA251D/FFFF00?text=VN"
+                                    alt="Lá cờ Việt Nam"
+                                    className="mr-4 flag-waving w-[60px] h-[40px]"
+                                />
                                 <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 dark:text-white mb-2">
                                     <span className="text-indigo-600 dark:text-indigo-400">Từ điển</span> & <span className="text-purple-600 dark:text-purple-400">Dịch thuật Êđê</span>
                                 </h1>
-                                <p className="text-lg text-gray-600 dark:text-gray-300">Dịch từ, cụm từ và hình ảnh; tạo văn bản và giải thích.</p>
                             </div>
                             <button
                                 onClick={toggleDarkMode}
@@ -819,66 +919,39 @@
 
                         {/* Navigation Tabs */}
                         <div className="flex justify-center border-b border-gray-200 dark:border-gray-700 mb-8 overflow-x-auto">
-                            <a href="dictionary.html" target="_blank" class="px-4 py-2 text-lg font-medium rounded-t-lg transition-colors duration-200 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600">
-    Từ điển
-</a>
-                            <TabButton tabName="info" activeTab={activeTab} setActiveTab={setActiveTab}>Thông tin & Hướng dẫn</TabButton>
+                            <TabButton tabName="alphabet" activeTab={activeTab} setActiveTab={setActiveTab}>Bảng chữ cái Êđê</TabButton>
                             <TabButton tabName="image" activeTab={activeTab} setActiveTab={setActiveTab}>Dịch Từ Ảnh</TabButton>
                             <TabButton tabName="generate" activeTab={activeTab} setActiveTab={setActiveTab}>Tạo Đoạn Văn</TabButton>
                             <TabButton tabName="explain" activeTab={activeTab} setActiveTab={setActiveTab}>Giải Thích</TabButton>
-                            <TabButton tabName="speechToText" activeTab={activeTab} setActiveTab={setActiveTab}>Giọng nói thành Văn bản</TabButton>
                             <TabButton tabName="textToSpeech" activeTab={activeTab} setActiveTab={setActiveTab}>Văn bản thành Giọng nói</TabButton>
-                            <TabButton tabName="history" activeTab={activeTab} setActiveTab={setActiveTab} disabled={!isAuthenticated}>Lịch Sử</TabButton>
                         </div>
 
                         {/* Tab Content - Conditional Rendering based on activeTab */}
-                        {activeTab === 'info' && (
+                        {activeTab === 'alphabet' && (
                             <div className="bg-white dark:bg-gray-700 p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl">
-                                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Thông tin & Hướng dẫn</h2>
-                                <div className="space-y-6 text-gray-700 dark:text-gray-300">
-                                    <div className="info">
-                                        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Hướng dẫn tìm kiếm:</h3>
-                                        <ul className="list-disc list-inside space-y-1">
-                                            <li>Tiếng Êđê có thể nhập không dấu.</li>
-                                            <li>Nhập từ xong nhấn vào chữ "<b>Ê</b>" (có thể dùng enter) hoặc chữ "<b>V</b>".</li>
-                                            <li>Chữ "<b>Ê</b>" tìm kiếm từ tiếng Êđê.</li>
-                                            <li>Chữ "<b>V</b>" tìm kiếm từ tiếng Việt.</li>
-                                            <li>Nếu không nhấp 2 chữ trên: những gợi ý được đề xuất.</li>
-                                            <li>Tìm kiếm tiếng Việt nên viết có dấu</li>
-                                            <li>Có thể nhập bằng bàn phím Êđê</li>
-                                            <li>Nhấn vào từng chữ để nghe âm thanh.</li>
-                                        </ul>
-                                    </div>
-                                    <div className="mt-6">
-                                        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Các ký hiệu viết tắt:</h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(cd)</kbd> ca dao.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(dt)</kbd> danh từ hoặc tổ hợp tương đương.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(đgt)</kbd> động từ hoặc tổ hợp tương đương</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(đt)</kbd> đại từ hoặc tổ hợp tương đương.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(lt)</kbd> liên hoặc tổ hợp tương đương.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(ng)</kbd> nghĩa.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(nh)</kbd> như.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(pht)</kbd> phụ từ.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(tht)</kbd> thán từ tổ hợp tương đương.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(tng)</kbd> thành ngữ, tục ngữ.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(trt)</kbd> trợ từ.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(trgt)</kbd> trạng từ.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(tt)</kbd> tính từ.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(tl)</kbd> từ loại.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(gt)</kbd> giới từ.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(st)</kbd> số từ.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(vd)</kbd> ví dụ.</p>
-                                            <p><kbd className="font-mono bg-gray-200 dark:bg-gray-600 px-1 py-0.5 rounded text-gray-800 dark:text-gray-200">(ckc)</kbd> chưa kiểm cứng.</p>
-                                        </div>
-                                    </div>
-                                    <div className="info2 text-center mt-6">
-                                        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Chào mừng bạn đến với<br />Từ Điển Êđê Việt</h3>
-                                          <blockquote className="text-justify mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
-                                           - Nội dung: Tổng hợp từ nhiều nguồn.
-                                            <br />
-                                        </blockquote>
-                                    </div>
+                                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Bảng chữ cái và Ký tự Đặc biệt của tiếng Êđê</h2>
+                                <p className="text-gray-600 dark:text-gray-400 mb-6">Dưới đây là bảng các chữ cái và ký tự đặc biệt trong tiếng Êđê, cùng với âm tiếng Việt tương ứng và ghi chú.</p>
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600 rounded-lg overflow-hidden">
+                                        <thead className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+                                            <tr>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider rounded-tl-lg">Chữ Êđê (In hoa/thường)</th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Âm tiếng Việt tương ứng</th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Unicode (Ví dụ)</th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider rounded-tr-lg">Ghi chú/Vấn đề hiển thị</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
+                                            {edeAlphabet.map((item, index) => (
+                                                <tr key={index} className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700' : 'bg-white dark:bg-gray-800'}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{item.char}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{item.vietnameseSound}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-mono">{item.unicode}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{item.notes}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         )}
@@ -975,7 +1048,7 @@
                         {activeTab === 'generate' && (
                             <div className="bg-white dark:bg-gray-700 p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl">
                                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Tạo đoạn văn Êđê</h2>
-                                <p className="text-gray-600 dark:text-gray-400 mb-4">Nhập một chủ đề bằng tiếng Việt, AI sẽ giúp bạn tạo một đoạn văn ngắn bằng tiếng Êđê.</p>
+                                <p className="text-gray-600 dark:text-gray-400 mb-4">Nhập một chủ đề bằng tiếng Việt, AI sẽ giúp bạn tạo một đoạn văn ngắn bằng tiếng Êđê có mở bài, thân bài và kết bài.</p>
                                 <div className="space-y-4">
                                     <div>
                                         <label htmlFor="paragraphPrompt" className="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2">
@@ -1073,37 +1146,6 @@
                             </div>
                         )}
 
-                        {activeTab === 'speechToText' && (
-                            <div className="bg-white dark:bg-gray-700 p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl">
-                                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Giọng nói thành Văn bản</h2>
-                                <p className="text-gray-600 dark:text-gray-400 mb-4">Nhấn "Bắt đầu ghi âm" để nói và chuyển giọng nói thành văn bản.</p>
-                                <div className="space-y-4">
-                                    <div className="flex justify-center space-x-4">
-                                        <button
-                                            onClick={startSpeechRecognition}
-                                            disabled={isRecording}
-                                            className="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
-                                        >
-                                            {isRecording ? 'Đang ghi âm...' : 'Bắt đầu ghi âm'}
-                                        </button>
-                                        <button
-                                            onClick={stopSpeechRecognition}
-                                            disabled={!isRecording}
-                                            className="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
-                                        >
-                                            Dừng ghi âm
-                                        </button>
-                                    </div>
-                                    <div className="mt-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-300 dark:border-gray-600 min-h-[100px]">
-                                        <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-1">Văn bản được nhận dạng:</h3>
-                                        <p className="text-gray-800 dark:text-gray-100 text-base whitespace-pre-wrap">
-                                            {speechRecognitionText || "Văn bản nhận dạng sẽ hiển thị ở đây."}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
                         {activeTab === 'textToSpeech' && (
                             <div className="bg-white dark:bg-gray-700 p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl">
                                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Văn bản thành Giọng nói</h2>
@@ -1160,6 +1202,7 @@
                             </div>
                         )}
 
+                        {/* History tab content (still accessible if activeTab is set to 'history' programmatically) */}
                         {activeTab === 'history' && (
                             <div className="bg-white dark:bg-gray-700 p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl">
                                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Lịch sử tương tác</h2>
@@ -1209,8 +1252,8 @@
                 disabled={disabled}
                 className={`px-4 py-2 text-lg font-medium rounded-t-lg transition-colors duration-200
                     ${activeTab === tabName
-                        ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500 dark:border-indigo-400'
-                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600'
+                        ? 'text-white bg-indigo-600 dark:bg-indigo-700 border-b-2 border-indigo-500 dark:border-indigo-400 shadow-md'
+                        : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 border-b-2 border-transparent hover:border-indigo-300 dark:hover:border-indigo-600'
                     }
                     ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
                 `}
