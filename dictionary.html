@@ -111,368 +111,420 @@
 
             // Hardcoded Êđê-Vietnamese dictionary for demonstration
             const edeDictionary = useMemo(() => [
-                { ede: "Abao", meanings: [{ type: "dt", vietnamese: "Ốc bươu", examples: [] }] },
-                { ede: "Abăn", meanings: [{ type: "dt", vietnamese: "Cái chăn (mền)", examples: ["Msăm abăn: Đắp chăn", "Abăn hmlei: Chăn bông"] }] },
-                { ede: "Abŭ", meanings: [{ type: "dt", vietnamese: "Cái hũ", examples: [] }] },
-                { ede: "Adei", meanings: [{ type: "dt", vietnamese: "Em", examples: [] }] },
-                { ede: "Adě", meanings: [{ type: "dt", vietnamese: "Hến", examples: [] }] },
-                { ede: "Adham", meanings: [{ type: "dt", vietnamese: "Một nhóm trong tộc người Êđê", examples: [] }] },
-                { ede: "Adhan", meanings: [{ type: "dt", vietnamese: "Cành", examples: ["Adhan kyão: Cành cây"] }] },
-                { ede: "Adhei", meanings: [{ type: "dt", vietnamese: "Trán", examples: ["Adhei bai: Trán rộng"] }] },
-                { ede: "Adiê", meanings: [{ type: "dt", vietnamese: "Trời", examples: ["Adiê hjan: Trời mưa"] }] },
-                { ede: "Adiê không", meanings: [{ type: "", vietnamese: "Nắng hạn", examples: [] }] },
-                { ede: "Adiê tlam", meanings: [{ type: "", vietnamese: "Xế chiều", examples: [] }] },
-                { ede: "Adih", meanings: [{ type: "đt", vietnamese: "Kia", examples: ["Sang kâo ti anôk adih: Nhà tôi chỗ kia", "Hruê aguah adih kâo đuễ hiu: Sáng ngày kia tôi đi chơi"] }] },
-                { ede: "Adôk", meanings: [{ type: "đgt", vietnamese: "Còn", examples: ["Kâo adôk prăk: Tôi còn tiền", "Adôk hdĩp: Còn sống"] }] },
-                { ede: "Adrăng", meanings: [{ type: "dt", vietnamese: "Rơm rạ", examples: ["Mkăm adrăng: Đống rơm"] }] },
-                { ede: "Adring", meanings: [{ type: "dt", vietnamese: "Hiên nhà sàn", examples: ["Amĭ kâo bhu mdiê ti adring: Mẹ tôi phơi lúa ở hiên nhà sàn"] }] },
-                { ede: "Adrök", meanings: [{ type: "dt", vietnamese: "Con cóc", examples: [] }] },
-                { ede: "Aduôn", meanings: [{ type: "dt", vietnamese: "Bà (nội, ngoại)", examples: [] }] },
-                {
-                    ede: "Adŭ",
-                    meanings: [
-                        { type: "dt", vietnamese: "Phòng", examples: ["Adŭ pit: Phòng ngủ", "Adŭ hriăm: Phòng học"] },
-                        { type: "dt", vietnamese: "Lớp", examples: ["Adŭ năm: Lớp 6", "Adŭ pluh dua: Lớp 12"] },
-                        { type: "dt", vietnamese: "Cái ô", examples: ["Adŭ jũ: Ô màu đen"] },
-                        { type: "dt", vietnamese: "Lớp, phòng, cái dù", examples: ["Adũ hriăm klei Êđê hmei thâo bi hgũm mguôp snăk. - Lớp học tiếng Êđê chúng tôi rất đoàn kết.", "Mỗ kâo mâo sa bẽ adũ. - Vợ tôi có một cái dù."] }
-                    ]
-                },
-                { ede: "Adŭ bruă", meanings: [{ type: "dt", vietnamese: "Văn phòng", examples: [] }] },
-                { ede: "Adŭ git gai bruă kiă kriê", meanings: [{ type: "dt", vietnamese: "Phòng hành chính", examples: [] }] },
-                { ede: "Adŭ tĭng yap", meanings: [{ type: "dt", vietnamese: "Phòng kế toán", examples: [] }] },
-                { ede: "Adŭng", meanings: [{ type: "dt", vietnamese: "Mũi", examples: ["Băng adũng: Lỗ mũi"] }] },
-                { ede: "Aê", meanings: [{ type: "dt", vietnamese: "Ông (nội, ngoại)", examples: [] }] },
-                { ede: "Aê êa drao", meanings: [{ type: "dt", vietnamese: "Bác sĩ", examples: [] }] },
-                { ede: "Aguah", meanings: [{ type: "trạng từ", vietnamese: "Buổi sáng", examples: ["Aguah ưm: Sáng sớm", "Aguah mgi: Sáng mai", "Aguah mbruê: Sáng hôm qua"] }] },
-                { ede: "Ai", meanings: [{ type: "dt", vietnamese: "Sức", examples: ["Ai ktang: Sức mạnh"] }] },
-                { ede: "Ajĭk", meanings: [{ type: "dt", vietnamese: "Ếch", examples: [] }] },
-                { ede: "Ak", meanings: [{ type: "dt", vietnamese: "Con quạ", examples: ["Jũ msě si ak: Đen như quạ"] }] },
-                { ede: "Akăt", meanings: [{ type: "dt", vietnamese: "Bụi (khóm)", examples: ["Akăt kram: Bụi tre"] }] },
-                { ede: "Akâo", meanings: [{ type: "đgt", vietnamese: "Xin", examples: ["Akâo prăk: Xin tiền", "Akâo êa mnăm: Xin nước uống"] }] },
-                { ede: "Ala", meanings: [{ type: "dt", vietnamese: "Con rắn", examples: ["Ala knăl: Rắn giun", "Ala mtah: Rắn lục"] }] },
-                { ede: "Alah", meanings: [{ type: "tt", vietnamese: "Lười biếng", examples: ["Alah mă bruă: Lười làm việc"] }] },
-                { ede: "Ală", meanings: [{ type: "dt", vietnamese: "Mắt", examples: ["Pĩt ală: Nhắm mắt"] }] },
-                { ede: "Ama", meanings: [{ type: "dt", vietnamese: "Bố (cha)", examples: [] }] },
-                { ede: "Amai", meanings: [{ type: "dt", vietnamese: "Chị", examples: [] }] },
-                { ede: "Amâo", meanings: [{ type: "pht", vietnamese: "Không", examples: ["Amâo mâo: Không có"] }] },
-                { ede: "Amĭ", meanings: [{ type: "dt", vietnamese: "Mẹ (má)", examples: [] }] },
-                { ede: "Ana", meanings: [{ type: "dt", vietnamese: "Cây; giống cái (Chỉ động vật)", examples: ["Hlăm hma, awa pla lu ana boh kroh. - Trong rẫy, bác trồng nhiều loại cây ăn trái.", "Ɇmô ana sang aê mrâo mdai. - Bò cái nhà ông mới đẻ."] }] },
-                { ede: "Anak", meanings: [{ type: "dt", vietnamese: "Con (người)", examples: [] }] },
-                {
-                    ede: "Anăn",
-                    meanings: [
-                        { type: "dt", vietnamese: "Tên; (đt): Đó, đấy", examples: [] },
-                        { type: "dt", vietnamese: "Tên; đó, ấy, đấy", examples: ["Mõng anei ko anăn amão kbui ôh : Từ đây đên đó không xa.", "Siam leh anăn : Đẹp rồi đó."] }
-                    ]
-                },
-                { ede: "Anei", meanings: [{ type: "đt", vietnamese: "Đây", examples: ["Kâo mă bruă ti anei: Tôi làm việc ở đây"] }] },
-                { ede: "Anôk", meanings: [{ type: "dt", vietnamese: "Nơi, chỗ, vị trí", examples: ["Djõ anôk: Đúng vị trí"] }] },
-                { ede: "Ao", meanings: [{ type: "dt", vietnamese: "Áo", examples: ["Ao kỗ: Áo trắng", "Ao hjan: Áo mưa"] }] },
-                { ede: "Arăng", meanings: [{ type: "đt", vietnamese: "Người ta", examples: ["Kâo dlăng arăng bị lông đi čữ. Tôi xem người ta thi leo núi."] }] },
-                { ede: "Asăr", meanings: [{ type: "dt", vietnamese: "Hạt, hột", examples: ["Asăr mdiê: Hạt lúa. Boh čên anei lu asăr. - Quả chanh này nhiều hột. Mdiê bi asăr êdi. - Lúa rất chắc hạt."] }] },
-                { ede: "Asâo", meanings: [{ type: "dt", vietnamese: "Con chó", examples: [] }] },
-                { ede: "Awa", meanings: [{ type: "dt", vietnamese: "Bác (anh, chị của bố)", examples: [] }] },
-                { ede: "Ayong", meanings: [{ type: "dt", vietnamese: "Anh", examples: [] }] },
-                {
-                    ede: "Băng",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Ăn (thức ăn nói chung), cháy, bén", examples: [] },
-                        { type: "đgt", vietnamese: "Ăn, cháy, bén", examples: ["Kâo čiăng băng boh truôl. - Tôi muốn ăn quả ổi.", "Yan bhang bị răng hệ dliê hui pui bỡng. - Mùa hè phải phòng chống cháy rừng.", "Kgă anei băng snăk. - Cái rựa này rất bén."] },
-                        { type: "đgt", vietnamese: "Ăn (bánh trái và thức ăn nói chung)", examples: [] }
-                    ]
-                },
-                { ede: "Blei", meanings: [{ type: "đgt", vietnamese: "Mua", examples: ["Amai blei dua aruăt klei mah. Chị mua hai sợi dây chuyền vàng."] }] },
-                { ede: "Blŭ", meanings: [{ type: "đgt", vietnamese: "Nói", examples: [] }] },
-                {
-                    ede: "Boh",
-                    meanings: [
-                        { type: "dt", vietnamese: "Quả, trái", examples: ["Boh suai: quả xoài", "boh kruễ: trái cam"] },
-                        { type: "dt", vietnamese: "Trứng", examples: ["boh mnũ: trứng gà"] },
-                        { type: "đt", vietnamese: "Giặt", examples: ["Boh chum ao: giặt quần áo"] },
-                        { type: "tt", vietnamese: "Cái xấu", examples: ["Boh jhat: cái xấu"] },
-                        { type: "tl", vietnamese: "Cái, chiếc", examples: ["Dua boh kčok: hai cái ly", "Sa boh sang: một ngôi nhà", "Êma boh čar: năm tỉnh", "Pă asăr boh kruễ: bốn quả cam"] },
-                        { type: "dt", vietnamese: "Quả, trái, giặt, chiếc, hòn (dùng đếm đồ vật)", examples: ["Kão khắp bỡng boh suai mmih. - Tôi thích ăn quả xoài ngọt.", "Sang kâo mâo dua boh êdeh pơ phút. - Nhà tôi có hai chiếc xe máy.", "Mỗ kâo dôk boh chum ao. - Vợ tôi đang giặt quần áo."] }
-                    ]
-                },
-                { ede: "Bruă", meanings: [{ type: "dt", vietnamese: "Việc, công việc", examples: ["Mă bruă: làm việc", "Tơ nao mă bruă, kâo khăng đi êdeh pơ phút. - Khi đi làm, tôi thường đi xe máy."] }] },
-                { ede: "Buôn", meanings: [{ type: "dt", vietnamese: "Làng, buôn", examples: ["Hlăm buôn anei, mão lu boh gõ esei kjăp băng huă. Trong buôn này, có nhiều con trâu ăn khỏe."] }] },
-                {
-                    ede: "Čih",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Viết", examples: [] },
-                        { type: "đgt", vietnamese: "Viết", examples: ["Kâo hriăm čih klei Êđê: Tôi học viết tiếng Êđê."] }
-                    ]
-                },
-                { ede: "Dlăng", meanings: [{ type: "đgt", vietnamese: "Đọc, xem, nhìn", examples: [] }] },
-                {
-                    ede: "Djam",
-                    meanings: [
-                        { type: "dt", vietnamese: "Rau, canh", examples: [] },
-                        { type: "dt", vietnamese: "Rau; canh", examples: ["Sang cơ chỉ lu mta djam. - Chợ bán nhiều loại rau.", "Ami tük djam djiă. - Mẹ nấu canh rau ngót."] }
-                    ]
-                },
-                { ede: "Djă", meanings: [{ type: "đgt", vietnamese: "Cầm, giữ", examples: ["Anak kâo djă sa bẽ giê čih. - Con tôi cầm một cây bút.", "Ayong djă êdeh wai ko adei pom đa. - Anh giữ xe đạp cho em bơm với."] }] },
-                {
-                    ede: "Drei",
-                    meanings: [
-                        { type: "đt", vietnamese: "Chúng ta, ta; (tl) con (dùng đếm con vật)", examples: [] },
-                        { type: "đt", vietnamese: "Chúng ta, ta, số đếm (con vật)", examples: ["Drei amão dưi čuh dliê pliă plia ôh. - Chúng ta không được đốt rừng bừa bãi.", "Lăn čar drei mdrōng leh anăn siam. - Đất nước ta giàu và đẹp.", "Sang aduôn rông dua drei miêu. - Nhà bà nuôi hai con mèo."] }
-                    ]
-                },
-                { ede: "Êa", meanings: [{ type: "dt", vietnamese: "Nước", examples: [] }] },
-                { ede: "Êdeh", meanings: [{ type: "dt", vietnamese: "Xe", examples: ["Tơ nao mă bruă, kâo khăng đi êdeh pơ phút. Khi đi làm, tôi thường đi xe máy."] }] },
-                { ede: "Êmô", meanings: [{ type: "dt", vietnamese: "Con bò", examples: [] }] },
-                { ede: "Êsei", meanings: [{ type: "dt", vietnamese: "Cơm", examples: [] }] },
-                { ede: "Hriăm", meanings: [{ type: "đgt", vietnamese: "Học", examples: [] }] },
-                { ede: "Hruê", meanings: [{ type: "dt", vietnamese: "Ngày", examples: ["Hruê mdei, kâo hiu chưn hồng bằng gặp. Ngày nghỉ, tôi đi chơi với bạn."] }] },
-                { ede: "Huă", meanings: [{ type: "đgt", vietnamese: "Ăn (cơm)", examples: [] }] },
-                { ede: "Ih", meanings: [{ type: "đt", vietnamese: "Anh, chị, bạn (ngôi thứ 2 số ít)", examples: [] }] },
-                {
-                    ede: "Jăk",
-                    meanings: [
-                        { type: "tt", vietnamese: "Tốt, ngon", examples: [] },
-                        { type: "tt", vietnamese: "Tốt, ngon", examples: ["Kan kruah bong jak snăk. - Cá lóc ăn rất ngon. Hoặc: Hmưi kơ gặp pīt jăk hõ. - Chúc bạn ngủ ngon nhé.", "Gặp anăn mâo knhuah ai tiê jăk êdi. - Bạn ấy có đức tính rất tốt."] }
-                    ]
-                },
-                { ede: "Kâo", meanings: [{ type: "đt", vietnamese: "Tôi (ngôi thứ nhất số ít)", examples: ["Kâo dlăng arăng bị lông đi čữ. Tôi xem người ta thi leo núi."] }] },
-                { ede: "Kan", meanings: [{ type: "dt", vietnamese: "Cá", examples: [] }] },
-                {
-                    ede: "Khăp",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Thích, yêu", examples: [] },
-                        { type: "đgt", vietnamese: "Thích, yêu", examples: ["Kão khăp hriăm klei Êđê. - Tôi thích học tiếng Êđê.", "Kão khăp kơ mỗ anak kâo. - Tôi yêu vợ con tôi."] }
-                    ]
-                },
-                {
-                    ede: "Klei",
-                    meanings: [
-                        { type: "dt", vietnamese: "Tiếng, lời, sự việc, dây", examples: ["Amai blei dua aruăt klei mah. Chị mua hai sợi dây chuyền vàng."] },
-                        { type: "dt", vietnamese: "Tiếng, dây, đào, sự việc, bài, điều...", examples: ["Kão khặp hriăm klei Êđê. - Tôi thích học tiếng Êđê.", "Phung hđeh hlăp kdăt klei. - Bọn trẻ chơi nhảy dây.", "Ama kâo dôk klei băng êa. - Bố tôi đang đào giếng."] }
-                    ]
-                },
-                { ede: "Kphê", meanings: [{ type: "dt", vietnamese: "Cà phê", examples: ["Čar Dak Lak pla lu kphê. Tỉnh Đắk Lắk trồng nhiều cà phê."] }] },
-                { ede: "Kyâo", meanings: [{ type: "dt", vietnamese: "Gỗ, cây", examples: ["Sang kâo ngã hõng kyâo. Nhà tôi làm bằng gỗ."] }] },
-                { ede: "Mă", meanings: [{ type: "đgt", vietnamese: "Làm, lấy, bắt", examples: [] }] },
-                {
-                    ede: "Mâo",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Có, được", examples: [] },
-                        { type: "đgt", vietnamese: "Có, được", examples: ["Kâo wah mâo êma drei kan bư. - Tôi câu được 5 con cá lóc.", "Kão mâo dua blah ao mrão. - Tôi có 2 cái áo mới."] }
-                    ]
-                },
-                { ede: "Mdiê", meanings: [{ type: "dt", vietnamese: "Lúa", examples: [] }] },
-                {
-                    ede: "Mlan",
-                    meanings: [
-                        { type: "dt", vietnamese: "Tháng, trăng", examples: [] },
-                        { type: "dt", vietnamese: "Tháng, trăng", examples: ["Mlan pluh sa anei, adŭ klei Êđê hmei bi lông jih gưl hriăm. - Tháng 11 này, lớp tiếng Êđê chúng tôi thi hết khoá học.", "Mlan pŭr mngač msẽ si yang hruê. - Trăng rằm sáng như ban ngày."] }
-                    ]
-                },
-                { ede: "Mnăm", meanings: [{ type: "đgt", vietnamese: "Uống", examples: [] }] },
-                { ede: "Mniê", meanings: [{ type: "dt", vietnamese: "Phụ nữ, con gái", examples: [] }] },
-                { ede: "Mnuih", meanings: [{ type: "dt", vietnamese: "Người", examples: [] }] },
-                { ede: "Mnŭ", meanings: [{ type: "dt", vietnamese: "Con gà", examples: [] }] },
-                { ede: "Nao", meanings: [{ type: "đgt", vietnamese: "Đi", examples: [] }] },
-                { ede: "Ñu", meanings: [{ type: "đt", vietnamese: "Nó, ông ấy, bà ấy (ngôi thứ 3 số ít)", examples: [] }] },
-                { ede: "Pla", meanings: [{ type: "đgt", vietnamese: "Trồng, cấy", examples: ["Hlăm hma, awa pla lu ana boh kroh. Trong rẫy, bác trồng nhiều loại cây ăn trái."] }] },
-                { ede: "Prăk", meanings: [{ type: "dt", vietnamese: "Tiền, bạc", examples: [] }] },
-                { ede: "Ruă", meanings: [{ type: "đgt", vietnamese: "Đau, ốm", examples: ["Amũ kâo ruă aruăt ariêng. Mẹ tôi đau gân cốt."] }] },
-                { ede: "Sang", meanings: [{ type: "dt", vietnamese: "Nhà", examples: ["Sang kâo ngã hõng kyâo. Nhà tôi làm bằng gỗ."] }] },
-                { ede: "Siam", meanings: [{ type: "tt", vietnamese: "Đẹp", examples: [] }] },
-                { ede: "Thâo", meanings: [{ type: "đgt", vietnamese: "Biết", examples: [] }] },
-                { ede: "Thuôn", meanings: [{ type: "dt", vietnamese: "Năm, tuổi", examples: [] }] },
-                { ede: "ŭn", meanings: [{ type: "dt", vietnamese: "Lợn, heo", examples: [] }] },
-                {
-                    ede: "Aruăt",
-                    meanings: [
-                        { type: "dt", vietnamese: "Gân, sợi", examples: ["Amũ kâo ruă aruăt ariêng. Mẹ tôi đau gân cốt. Amai blei dua aruăt klei mah. Chị mua hai sợi dây chuyền vàng."] },
-                        { type: "tl", vietnamese: "Sợi", examples: ["Sợi: dùng cho đổ vật có hình sợi: sợi dây, sợi tóc..."] }
-                    ]
-                },
-                {
-                    ede: "Čar",
-                    meanings: [
-                        { type: "dt", vietnamese: "Tỉnh, chẻ", examples: ["Čar Dak Lak pla lu kphê. Tỉnh Đắk Lắk trồng nhiều cà phê. Aê dôk čar mnũng. Ông đang chẻ lạt."] },
-                        { type: "đgt", vietnamese: "Chẻ", examples: ["Aê dôk čar mnũng: Ông đang chẻ lạt."] }
-                    ]
-                },
-                {
-                    ede: "Đi",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Leo, trèo, cưỡi, đi", examples: ["Kâo dlăng arăng bị lông đi čữ. Tôi xem người ta thi leo núi. Tơ nao mă bruă, kâo khăng đi êdeh pơ phút. Khi đi làm, tôi thường đi xe máy. Hruê mdei, kâo hiu chưn hồng bằng gặp. Ngày nghỉ, tôi đi chơi với bạn."] },
-                        { type: "đgt", vietnamese: "Leo, trèo, cưỡi, đi", examples: ["Kâo dlăng arăng bị lông [bi läng] đi čữ. - Tôi xem người ta thi leo núi.", "Tơ nao mă bruă, kâo khăng đi êdeh pơ phút. - Khi đi làm, tôi thường đi xe máy.", "Hruê mdei, kâo hiu chưn [ho\\ng] bằng gặp. - Ngày nghỉ, tôi đi chơi với ban."] }
-                    ]
-                },
-                { ede: "Yuăr", meanings: [{ type: "dt", vietnamese: "Cây canh kina rễ", examples: [] }] },
-                { ede: "Yuăt", meanings: [{ type: "đgt", vietnamese: "Bám", examples: ["Yuät ti dhan kyáo hrut asei â^ kå dläng: Bám cành cây âu người lăn."] }] },
-                { ede: "Yut yat", meanings: [{ type: "tt", vietnamese: "Đung đưa", examples: [] }] },
-                { ede: "Yŭ", meanings: [{ type: "dt", vietnamese: "(Hướng) Tây", examples: ["."] }] },
-                { ede: "Yŭ ngŏ", meanings: [{ type: "dt", vietnamese: "Phương hướng", examples: [""] }] },
-                { ede: "Yŭk", meanings: [{ type: "dt", vietnamese: "Ổi", examples: ["Yŭk ]hum: Ổi quấn."] }] },
-                { ede: "Yŭm", meanings: [{ type: "tt", vietnamese: "Mãn (nhiều), đông", examples: ["Yŭm anak: Mãn con", "Yŭm mse si hdăm: Đông như kiến."] }] },
-                { ede: "Yŭn", meanings: [{ type: "đgt", vietnamese: "Rung", examples: [] }] },
-                { ede: "Yŭng jing", meanings: [{ type: "đgt", vietnamese: "Đứng sững", examples: [] }] },
-                { ede: "Yŭr", meanings: [{ type: "dt", vietnamese: "Dãi", examples: ["Yŭr knga: Dãi tai."] }] },
-                { ede: "Yŭr tluôn", meanings: [{ type: "dt", vietnamese: "Mỏng, ít", examples: [] }] },
-                { ede: "yưh yưp", meanings: [{ type: "tt", vietnamese: "1. Chậm chạp", examples: ["Ãbat yæh yæp: Đi chậm chạp.", "2. Luôn bại. Ai tiã yæh yæp: Tinh thần luôn bại."] }] },
-                { ede: "Buă", meanings: [{ type: "đgt", vietnamese: "Đuổi, xua", examples: ["Buă mnŭ: Đuổi gà."] }] },
-                { ede: "Dliê", meanings: [{ type: "dt", vietnamese: "Rừng", examples: ["Kmrỡng dliê: Trong rừng."] }] },
-                { ede: "Êbat", meanings: [{ type: "đgt", vietnamese: "Đi bộ", examples: ["Kâo êbat nao sang hră: Tôi đi bộ đến trường."] }] },
-                { ede: "Hjan", meanings: [{ type: "dt", vietnamese: "Mưa", examples: ["Hjan prōng: Mưa lớn."] }] },
-                { ede: "Kông", meanings: [{ type: "dt", vietnamese: "Vòng (trang sức)", examples: ["Buh kông: Đeo vòng."] }] },
-                { ede: "Mgi", meanings: [{ type: "trạng từ", vietnamese: "Ngày mai", examples: ["Aguah mgi: Sáng mai."] }] },
-                { ede: "Mngač", meanings: [{ type: "tt", vietnamese: "Sáng, trong lành", examples: ["Pui mngač: Ánh sáng."] }] },
-                { ede: "Mnŭng", meanings: [{ type: "dt", vietnamese: "Rau, món ăn", examples: ["Djam mnŭng: Rau ăn."] }] },
-                { ede: "Pĭt", meanings: [{ type: "đgt", vietnamese: "Ngủ, nhắm (mắt)", examples: ["Pĩt ală: Nhắm mắt."] }] },
-                { ede: "Tlam", meanings: [{ type: "dt", vietnamese: "Buổi tối", examples: ["Tlam anei: Tối nay."] }] },
-                { ede: "Ung", meanings: [{ type: "dt", vietnamese: "Chồng", examples: ["Ung kâo: Chồng tôi."] }] },
-                {
-                    ede: "War",
-                    meanings: [
-                        { type: "dt", vietnamese: "Vườn, chuồng", examples: [] },
-                        { type: "dt", vietnamese: "Chuồng, vườn", examples: ["Hlăm war, ama kâo pla djam bei. - Trong vườn, bố tôi trồng rau cải.", "Awa kão dôk ngă war ũn. - Bác tôi đang làm chuồng heo."] }
-                    ]
-                },
-                { ede: "Yŭ", meanings: [{ type: "dt", vietnamese: "Phía Tây", examples: ["Yang hruê lẽ tĩng yũ: Mặt trời lặn phía Tây."] }] },
-                { ede: "Hăng", meanings: [{ type: "lt", vietnamese: "Bằng, với", examples: ["Hruê mdei, kâo hiu chưn [ho\\ng] bằng gặp. - Ngày nghỉ, tôi đi chơi với ban.", "Sang kâo ngã [ho\\ng] kyâo. - Nhà tôi làm bằng gỗ."] }] },
-                { ede: "Bĕ", meanings: [{ type: "tl", vietnamese: "Cái, chỉ số cây", examples: ["Anak blei pluh bĕ giê pioh hriăm yap. - Con mua mười cái que để tập đếm.", "Kão blei dua bẽ giê čih. - Tôi mua hai cây bút viết.", "Hlăm war, ama pla êma bě ana boh bor. - Trong vườn, bố trồng năm cây bơ."] }] },
-                { ede: "Ƀlĕ", meanings: [{ type: "đgt", vietnamese: "Chảy, mọc, trổ", examples: ["Êa blẽ tỉ dlông công čữ. - Nước chảy từ đỉnh núi.", "Yang hruê mrâo blẽ. - Mặt trời mới mọc.", "Mdiê lỗ hlăk blẽ. - Lúa ruộng đang trổ bông."] }] },
-                {
-                    ede: "Buh",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Đeo (ở tay, chân)", examples: ["Kão buh kông. - Tôi đeo vòng."] },
-                        { type: "đgt", vietnamese: "Tria (lúa)", examples: ["Hruê anei, hmei nao buh mdiê kơ hma. - Hôm nay, chúng tôi đi trĩa lúa ở rẫy."] },
-                        { type: "đgt", vietnamese: "Đeo (vòng (kông))", examples: [] }
-                    ]
-                },
-                { ede: "Čim", meanings: [{ type: "dt", vietnamese: "Thịt, chim", examples: ["Kão khặp bỡng čim kđeh hin ko čim prai. - Tôi thích ăn thịt nạc hơn thịt mỡ.", "Sang kâo rông lu čim ktrão. - Nhà tôi nuôi nhiều chim bồ câu."] }] },
-                { ede: "Čoh", meanings: [{ type: "đgt", vietnamese: "Mổ, cắn, cuốc", examples: ["Mnu čoh mdiê. - Gà mổ lúa.", "Ala čoh jỡng êmô. - Rắn cắn chân bò."] }] },
-                { ede: "Djă", meanings: [{ type: "đgt", vietnamese: "Cầm, giữ", examples: ["Anak kâo djă sa bẽ giê čih. - Con tôi cầm một cây bút.", "Ayong djă êdeh wai ko adei pom đa. - Anh giữ xe đạp cho em bơm với."] }] },
-                { ede: "Leh", meanings: [{ type: "pht", vietnamese: "Đã, rồi, xong", examples: ["Kão huā trei leh. - Tôi đã ăn no.", "Phung hmei ngă leh klei hriăm. - Chúng tôi làm xong bài tập rồi."] }] },
-                {
-                    ede: "Msăm",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Đắp (chăn)", examples: ["Adiê ê-ăt, kâo pīt msăm abăn. - Trời lạnh, tôi ngủ đắp chăn."] },
-                        { type: "tt", vietnamese: "Chua", examples: ["Boh kruễ anei msăm êdi. - Quả cam này chua lắm."] }
-                    ]
-                },
-                { ede: "Êluih", meanings: [{ type: "tt", vietnamese: "Rẻ; dễ", examples: ["Djam mtam chí êlưih snăk. - Rau bán rất rẻ.", "Klei ting anei êlrih thâo săng. - Phép tính này dễ hiểu."] }] },
-                { ede: "Mta", meanings: [{ type: "dt", vietnamese: "Lưỡi (dao, gươm); thứ, loại, món", examples: ["Dhõng anei mta bi k'hưt êdi. - Con dao này lưỡi sắc bén lắm.", "Hlăm sang cơ chỉ lu mta boh kroh. - Trong chợ bán nhiều thứ trái cây."] }] },
-                { ede: "Tal", meanings: [{ type: "đgt", vietnamese: "Xẻ, thứ", examples: ["Ama kâo tal čim ũn. - Bố tôi xẻ thịt heo.", "Kâo anak tal dua hlăm gõ êsei. - Tôi con thứ hai trong gia đình."] }] },
-                { ede: "Khŏk", meanings: [{ type: "đgt", vietnamese: "Gõ, cụng", examples: ["Lông khŏk lăng čing anei. - Anh gõ thử chiêng này.", "Drei mnăm kpiê khăng bị khōk kčok. - Chúng ta uống rượu thường cụng ly."] }] },
-                { ede: "Bi", meanings: [{ type: "pht", vietnamese: "Còn, phải", examples: ["Kão nao mă bruă bi anak kâo dê nao sang hră. - Tôi đi làm còn con tôi thì đi học.", "Drei bi gir ktür hriăm hẽ klei Êđê. - Chúng ta phải cố gắng học tiếng Êđê."] }] },
-                {
-                    ede: "Dôk",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Ở, đang, ngồi", examples: [] },
-                        { type: "đgt", vietnamese: "Ở, đang, ngồi, lấy (vợ, chồng)", examples: ["Kảo dôk tỉ sang. - Tôi ở nhà.", "Kảo đôk boh chum ao. - Tôi đang giặt quần áo.", "Adei kão dôk mỗ leh. - Em tôi lấy vợ rồi. Hoặc Adei kão dôk ung leh. - Em tôi lấy chồng rồi."] }
-                    ]
-                },
-                {
-                    ede: "Kkiêng",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Sinh đẻ (người)", examples: [] },
-                        { type: "đgt", vietnamese: "Sinh đẻ (người), khuỷu tay, góc", examples: ["Amai kảo kkiêng thũn sa êbảo dua păn êtuh năm pluh. - Chị tôi sinh năm 1960.", "Mỗ kão mrảo kkiêng. - Vợ tôi mới đẻ.", "Kảo rua kkiêng kngan. - Tôi đau khuỷu tay.", "Sang amai kảo ti kkiêng buôn prōng. - Nhà chị tôi ở góc phố."] }
-                    ]
-                },
-                {
-                    ede: "Khua",
-                    meanings: [
-                        { type: "dt", vietnamese: "Trường", examples: [] },
-                        { type: "dt", vietnamese: "Già, người lãnh đạo", examples: ["Ama kâo khua thũn leh. - Bố tôi già rồi.", "Hruê kjuh mdih kâo nao chưn sang khua buôn. - Chủ nhật vừa qua, tôi đi chơi nhà trưởng buôn."] }
-                    ]
-                },
-                { ede: "Lŏ", meanings: [{ type: "dt", vietnamese: "Ruộng, nữa, lại", examples: ["Awa kâo nao ngã lõ. - Bác tôi đi làm ruộng.", "Ayōng lõ čiăng băng boh suai mmih mỡ? - Anh muốn ăn xoài ngọt nữa không?"] }] },
-                { ede: "Djŏ", meanings: [{ type: "tt", vietnamese: "Trúng, đúng", examples: ["Kão mnah djō anôk čuăn leh. - Tôi đã bắn trúng mục tiêu.", "Anak kâo ngã djõ leh klei ting. - Con tôi làm bài toán đúng rồi."] }] },
-                { ede: "Čô", meanings: [{ type: "dt", vietnamese: "Cháu (nội, ngoại); gội; từ đếm số người, dra", examples: ["Ami kâo mâo pã cô cô. - Mẹ tôi có 4 đứa cháu.", "Grăp hruê kâo khăng cô kõ. - Hằng ngày, tôi thường gội đầu.", "Sang kâo mâo pã cô mnuih. - Nhà tôi có 4 người."] }] },
-                { ede: "Mtah", meanings: [{ type: "tt", vietnamese: "Xanh, tươi, sống", examples: ["Kão mâo sa blah ao mtah. - Tôi có một cái áo màu xanh.", "Mỗ kâo nao sang čơ blei sa ki kan mtah. - Vợ tôi đi chợ mua một ký cá tươi.", "Anak kâo knă êsei dôk mtah. - Con tôi nấu cơm còn sống."] }] },
-                { ede: "Khăng", meanings: [{ type: "tt", vietnamese: "Cứng, thường", examples: ["Boh tâo anei khăng. - Cục đá này cứng.", "Kâo khăng nao mă bruă kjuh mmông. - Tôi thường đi làm lúc 7 giờ."] }] },
-                { ede: "Hlâo", meanings: [{ type: "dt", vietnamese: "Chày, đôi", examples: ["Ama kâo blei sa bẽ hlâo. - Bố tôi mua 1 cái chày.", "Kâo blei sa hlâo hdruôm jỡng. - Tôi mua 1 đôi giày."] }] },
-                { ede: "Krah", meanings: [{ type: "dt", vietnamese: "Nhẫn, đẽo", examples: ["Kâo čut sa aruăt krah. - Tôi đeo một chiếc nhẫn.", "Awa krah kmeh ngă sang. - Bác đẽo cột để làm nhà."] }] },
-                { ede: "Knô", meanings: [{ type: "dt", vietnamese: "Đực; trống", examples: ["Sang awa rông sa drei êmô knô. - Nhà bác nuôi một con bò đực.", "Grăp aguah, mnũ knô khăng kdjỗ. - Mỗi buổi sáng, gà trống thường gáy."] }] },
-                {
-                    ede: "Čut",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Đeo, mặc", examples: [] },
-                        { type: "đgt", vietnamese: "Đeo, mặc, cắm (cờ, hoa,...)", examples: ["Kâo bi čut krah kơ bằng khăp. - Tôi đeo nhẫn cho người yêu.", "Anak kâo čut chum jũ. - Con tôi mặc quần màu đen.", "Mỗ kâo čut mnga hlăm tõ. - Vợ tôi cắm hoa trong bình (lọ)."] },
-                        { type: "đgt", vietnamese: "Đeo (nhẫn (krah), bông tai (buê))", examples: [] },
-                        { type: "đgt", vietnamese: "Đeo (giày (hdruôm jõng), dép (jep))", examples: [] }
-                    ]
-                },
-                { ede: "Pŏk", meanings: [{ type: "đgt", vietnamese: "Mở, số đếm (vở sách, trang, tờ...)", examples: ["Kão põk băng bhã čiăng kơ mngač. - Tôi mở cửa cho thoáng.", "Hdruôm hră hriăm klei Êđê mâo dua êtuh êma pluh năm põk. - Quyển sách học tiếng Êđê có 256 trang.", "Kão blei ko anak kâo pluh põk hdruôm m'ar. - Tôi mua cho con tôi 10 quyển vở.", "Kão mão êma pluh põk prăk êma êtuh. - Tôi có 50 tờ 500.000 đồng."] }] },
-                { ede: "Blah", meanings: [{ type: "đgt", vietnamese: "Chẻ, bổ, số đếm (màn, chăn, chiếu,...)", examples: ["Aduôn kâo dôk blah djuh. - Bà tôi đang chẻ củi.", "Ami kâo blah mkai bỡng. - Mẹ tôi bổ dưa hấu để ăn.", "Kão mrâo kčoh dua blah chum. - Tôi mới may 2 cái quần.", "Hoặc: Amai blei tlão blah mũng leh anăn dua blah anuê. - Chị mua 3 cái mùng và 2 chiếc chiếu."] }] },
-                { ede: "Phi", meanings: [{ type: "dt", vietnamese: "Mật, đắng", examples: ["Phí kgão tram kpiê. - Mật gấu ngâm rượu.", "Kảo khắp bỡng djam trong phi. - Tôi thích ăn cà đắng. Hoặc: Êa drao anei mnăm phĩ snak. - Viên thuốc này uống rất đắng."] }] },
-                { ede: "Kram", meanings: [{ type: "dt", vietnamese: "Tre, chim, dăm", examples: ["Sang hmei pla sa phún kram. - Nhà chúng tôi trồng một gốc tre. Hoặc: Amí kão nao dāk ēbüng kram. - Mẹ tôi đi hái (bè) măng tre.", "Mram kram gũ ĉa. - Chiếc thuyền chìm xuống dưới nước."] }] },
-                {
-                    ede: "Kčoh",
-                    meanings: [
-                        { type: "đgt", vietnamese: "May", examples: ["Mỗ kâo kčoh ao: Vợ tôi may áo."] },
-                        { type: "đgt", vietnamese: "Băm, may", examples: ["Ami kâo dôk kčoh mnỡng ko ăn. - Mẹ tôi đang băm rau cho heo.", "Kão mrão kčoh sa blah ao kỗ. - Tôi mới may một cái áo màu trắng."] }
-                    ]
-                },
-                { ede: "Diăng", meanings: [{ type: "đgt", vietnamese: "Đọc, xem, nhìn, trông...", examples: ["Kão dôk dlăng čưng boh. - Tôi đang xem đá bóng.", "Anak kâo dôk dlăng hră. - Con tôi đang đọc sách.", "Kão dlăng kơ adei adih kbät mniê êdi. - Tôi nhìn em kia rất xinh."] }] },
-                { ede: "Mbang", meanings: [{ type: "đgt", vietnamese: "Dịch thuật, giảng", examples: ["Grăp tlam, kâo mblang klei ting ko anak kâo. - Mỗi tối, tôi giảng bài toán cho con tôi.", "Kão hriăm mblang klei Êđê. - Tôi tập dịch tiếng Êđê."] }] },
-                { ede: "Jak", meanings: [{ type: "đgt", vietnamese: "Mời, rủ", examples: ["Kâo jak bĩng gặp hriê chưn sang kâo. - Tôi rủ bạn bè đến nhà tôi chơi.", "Kâo jak Y- Lan nao mnăm kphê. - Tôi mời Y- Lan đi uống cà phê."] }] },
-                { ede: "Mdah", meanings: [{ type: "đgt", vietnamese: "Chiếu; trình diễn; bày tỏ", examples: ["Knỡng bruă hmei nao mdah rup tỉ buôn Alê A. - Cơ quan chúng tôi đi chiếu phim tại buôn Alê A.", "Hmei nao mdah klei kdō mmun. - Chúng tôi đi diễn văn nghệ."] }] },
-                { ede: "Yăl dliê", meanings: [{ type: "đgt", vietnamese: "Nói chuyện, kể chuyện", examples: ["Aduôn kâo khăng yăl dliê klei đưm. - Bà tôi thường kể chuyện cổ tích.", "Hmei mnăn kpiê êjai, yăl dliê êjai. - Chúng tôi vừa uống rượu, vừa nói chuyện."] }] },
-                { ede: "Năng ai", meanings: [{ type: "pht", vietnamese: "Khoảng chừng, có lẽ, có thể", examples: ["Ênoh mnuih nao kbin năng ai êbeh ko sa êtuh cô mnuih. - Số lượng người đi họp khoảng chừng hơn 100 người.", "Tơ dah jao bruă anei năng ai kão amâo dưi ngã ôh. - Nếu giao việc này có lẽ tôi không làm được đâu."] }] },
-                { ede: "Thăn", meanings: [{ type: "dt", vietnamese: "Năm, tuổi", examples: ["Thun anei, adiê không. - Năm nay, trời hạn hán.", "Kâo mrâo pă pluh thũn. - Tôi mới 40 tuổi."] }] },
-                { ede: "Dlông", meanings: [{ type: "tt", vietnamese: "Dài, cao", examples: ["Anak kâo dlông awan. - Con tôi cao ráo.", "Sang dlông Êđê mâo dua kdrễč. - Nhà dài Êđê có 2 phần."] }] },
-                { ede: "Gŏ êsei", meanings: [{ type: "dt", vietnamese: "Nồi cơm, hộ, gia đình", examples: ["Gõ êsei kâo mâo tlâo čô mnuih. - Gia đình tôi có 3 người.", "Ami brei kơ ung mỗ kâo sa boh gõ êsei. - Mẹ cho vợ chồng tôi một cái nồi cơm.", "Grăp boh gõ êsei bi mâo hẽ hră gõ êsei. - Mỗi hộ gia đình phải có sổ hộ khẩu."] }] },
-                { ede: "Čhĭ", meanings: [{ type: "đgt", vietnamese: "Bán, bỏ (mắm, muối vào thức ăn)", examples: ["Ami chi boh kroh. - Mẹ bán trái cây.", "Mỗ kâo chĩ hra hlăm djam. - Vợ tôi bỏ muối vào canh."] }] },
-                { ede: "Doh", meanings: [{ type: "đgt", vietnamese: "Kéo, chảy", examples: ["Eman doh kyão. - Voi kéo gỗ.", "Êa doh êtăng. - Nước chảy xiết."] }] },
-                { ede: "Hlăm", meanings: [{ type: "gt", vietnamese: "Trong, trên, dưới (nước)", examples: ["Anak kâo dum chum ao hlăm hip mdỡng. - Con tôi bỏ quần áo trong tủ.", "Čim ngă hruh hlăm ana kyão. - Chim làm tổ trên cây."] }] },
-                { ede: "Hruh", meanings: [{ type: "dt", vietnamese: "Tổ (chim,..), gói (thuốc, bánh,...)", examples: ["Čim ngã hruh hlăm ana kyão. - Chim làm tổ trên cây. Hoặc: Kgâo hiu duah hruh hnuê. - Con gấu đi tìm tổ ong.", "Kão blei dua hruh hặt. - Tôi mua 2 gói thuốc. Hoặc: Kão blei dua hruh bên kơ anak kâo. - Tôi mua 2 gói bánh cho con tôi."] }] },
-                { ede: "Lĕ", meanings: [{ type: "đgt", vietnamese: "Rơi, lặn (mặt trời)", examples: ["Kão bi lĕ prăk. - Tôi làm rơi tiền.", "Yang hruê lẽ tĩng yũ: Mặt trời lặn phía Tây."] }] },
-                { ede: "Hwiê", meanings: [{ type: "đgt", vietnamese: "Vứt bỏ, mây (song)", examples: ["Đăm hwiê djah pliă plia ôh. - Đừng vứt rác bừa bãi.", "Hwiê pioh mñam jhưng mdỗ. - Mây dùng để đan bàn ghế."] }] },
-                { ede: "Êgao", meanings: [{ type: "pht", vietnamese: "Qua, quá", examples: ["Êgao êma mlan hriăm klei Êđê kão thâo čih, dlăng, hmữ leh anăn blũ. - Qua 5 tháng học tiếng Êđê tôi biết viết, đọc, nghe và nói.", "Kão nao hriăm klei Êđê êgao mmông leh. - Tôi đi học tiếng Êđê đã quá giờ rồi."] }] },
-                { ede: "Wăt", meanings: [{ type: "dt", vietnamese: "Chim cút, cả, kể cả, cúng (sức khỏe)", examples: ["Anak kâo khăp bông čim wăt ăm. - Con tôi thích ăn thịt chim cút nướng.", "Kâo hnec mă bruă wăt miam. - Tôi tranh thủ làm việc cả ban đêm.", "Élão ko nao anôk kbưi, ama wặt kão hõng mnũ knô. - Trước khi đi công tác xa, bố cúng sức khỏe tôi với con gà trống."] }] },
-                { ede: "Jhŏng", meanings: [{ type: "tt", vietnamese: "Dữ; dám", examples: ["Sang kâo rông sa drei asão jhong snak. - Nhà tôi nuôi một con chó rất dữ.", "Anak kâo amâo jhōng hiu chưn mmặt ôh. - Con tôi không dám đi chơi tối đâu."] }] },
-                {
-                    ede: "Tŭk",
-                    meanings: [
-                        { type: "đgt", vietnamese: "Nấu; luộc", examples: ["Mô̆ kâo tŭk êa. - Vợ tôi nấu nước.", "Anak tŭk ktor. - Con luộc bắp."] },
-                        { type: "đgt", vietnamese: "Nấu (canh)", examples: [] }
-                    ]
-                },
-                { ede: "Mmông", meanings: [{ type: "dt", vietnamese: "Giờ đồng hồ", examples: ["Kão khăng nao mă bruă kjuh mmông aguah. - Tôi thường đi làm lúc 7 giờ sáng.", "Ung kâo blei mmông mrâo. - Chồng tôi mua đồng hồ mới."] }] },
-                { ede: "Mdjiê", meanings: [{ type: "đgt", vietnamese: "Giết; tắt", examples: ["Arăng mdjiê êmô. - Người ta giết con bò.", "Êlão ko pīt, drei mdjiê hẽ pui. - Trước khi ngủ, chúng ta phải tắt điện."] }] },
-                { ede: "Yuôm", meanings: [{ type: "tt", vietnamese: "Quý; đắt", examples: ["Kyâo jing mnỡng yuôm hlăm kmrỡng dliê. - Gỗ là loại quý trong rừng.", "Hlăm sang cơ chĩ djăp mnỡng yuôm s'ai. - Trong chợ bán mọi thứ đều đắt."] }] },
-                { ede: "Jing", meanings: [{ type: "đt", vietnamese: "Là, thành, tốt, đạt, được", examples: ["Nu jing hđeh hriăm hrã: Nó là học sinh", "Mdiê sang kão jing ėdi: Lúa nhà tôi tốt lắm"] }] },
-                { ede: "Mƀâo", meanings: [{ type: "đgt", vietnamese: "Ngửi; hôi", examples: ["Kão bão boh mkao: Tôi ngửi quả thị", "Yui bão snăk: Bọ xít rất hôi"] }] },
-                { ede: "Čŏng", meanings: [{ type: "dt", vietnamese: "Đỉnh, chóp, tự", examples: ["Čăng cữ Phan Xi Păng dlông êdi: Đỉnh núi Phan Xi Păng cao lắm", "Nu čăng ngă sang: Nó tự làm nhà"] }] },
-                { ede: "Pah", meanings: [{ type: "dt", vietnamese: "Màng; mảnh; thuê; mướn; vỗ; đập", examples: ["Tăm kpök sa pah klit: Bị tróc một mảng da", "Jih jang drei pah kngan: Tất cả chúng ta vỗ tay."] }] },
-                { ede: "Mdih", meanings: [{ type: "dt", vietnamese: "Hôm kia; thức giấc", examples: ["Mdih ti ih nao?: Hôm kia anh đi đâu?", "Đăm blũ ktang ôh leh mdih: Đừng nói to kẻo bé thức giấc!"] }] },
-                { ede: "Kđăl", meanings: [{ type: "dt", vietnamese: "Mề (gà); đóng; khóa, nghẽn...", examples: ["Anak kão khăp băng kđăl mnũ: Con tôi thích ăn mề gà", "Sang mnia kđăl băng hruē kjuh: Cửa hàng đóng cửa ngày chủ nhật."] }] },
-                { ede: "Đăm", meanings: [{ type: "đgt", vietnamese: "Ngủ lại; đừng, chớ", examples: ["Ih đăm hõng hmei! - Chị ngủ lại với chúng tôi!", "Đăm ngå ya mta klei jhat! - Chớ làm những việc xấu!"] }] },
-                { ede: "Mnga", meanings: [{ type: "dt", vietnamese: "Hoa; lãi, lời", examples: ["Tlao khūn msě si mnga. - Cười tươi như hoa", "Lỡ chỉ bông mnga. - Bán lại lấy lãi"] }] },
-                { ede: "Ksŭng", meanings: [{ type: "đgt", vietnamese: "Xóc, súc, xông lên", examples: ["Kão ksũng giết čai. - Tôi xóc chai", "Leh huă, anak kâo ksũng băng égei: - Ăn xong, con tôi súc miệng."] }] },
-                { ede: "Brăng", meanings: [{ type: "dt", vietnamese: "Bồ, vựa, bẻ", examples: ["Ama kão tuh mdie hläm brăng. - Bố tôi để thóc vào bồ", "Brăng mdie: Vựa lúa", "Êa doh mặt kơ brăng. - Nước chảy vào bể"] }] },
-                { ede: "Krao", meanings: [{ type: "dt", vietnamese: "Sáo, họa mi, khướu; rên", examples: ["Čim krao mňě jăk edi: - Chim họa mi hót hay", "Blŭ msě si čim krao: - Nói như khướu.", "Mnuih ruă krao nanao: - Người ốm rên mãi."] }] },
-                { ede: "Puh", meanings: [{ type: "đgt", vietnamese: "Lùa, thổi, cuốn, giạt", examples: ["Ung kão dôk puh êmô kbao wit kơ war: - Chồng tôi đang lùa trâu bò vào chuồng.", "Angin puh knam nao kơ yũ: - Gió thổi mây đen về phía tây.", "Đung puh phă hang : - trôi giạt vào bờ."] }] },
-                { ede: "Phung", meanings: [{ type: "dt", vietnamese: "Đàn, đoàn, bầy, chúng, bọn, lũ, tôi...", examples: ["Hlăm kmrỡng mão phung hlỏ jhōng. - Trong rừng có bầy thú dữ.", "Phung hđeh dôk hlặp. - Lũ trẻ đang chơi"] }] },
-                { ede: "Đê̆č", meanings: [{ type: "dt", vietnamese: "Hoa văn, khắc, trổ", examples: ["Boh đěč abăn bã anei siam edi! - Hoa văn cái địu này đẹp thật!", "Arăng dôk đěč boh hrã. - Người ta đang khắc chữ."] }] },
-                { ede: "Krông", meanings: [{ type: "dt", vietnamese: "Càng, sông", examples: ["Krông ariêng anei prõng êdi! - Càng cua này to lắm", "Krông hrõ, klõ boh tão lhuih. - Sông cạn, đá mòn.", "Krông mão kčün, mnuih mão yun. - Sông có khúc, người có mệnh."] }] },
-                { ede: "Kteh", meanings: [{ type: "đgt", vietnamese: "Quảng, ren, lắc, vẫy", examples: ["Yang hruê kteh hjan, mlan kteh không. - Mặt trời quảng thì mưa, mặt trăng quảng thì hạn.", "Elan kteh ti dlông mnal. - Đường ren trên vải", "Asão kteh ku drông pô. - Chó vẫy đuôi mừng chủ."] }] },
-                { ede: "Kđheh", meanings: [{ type: "đgt", vietnamese: "Búng, gảy", examples: ["Kdheh hong kđiêng kngan: - Búng ngón tay", "Mã giê kďheh hdăm: - Lấy que gảy con kiến."] }] },
-                { ede: "Kđip", meanings: [{ type: "đgt", vietnamese: "Cắp, cặp lại, kẹp, gắp...", examples: ["Ariêng kđip kngan: - cua cắp tay", "Kđip hră chỉ mnỡng mbit hõng hrã djā knal mdē. - Hóa đơn kẹp với chứng từ khác.", "Mã giê dưh kđip djam. - Lấy đũa gắp rau"] }] },
-                { ede: "Kđŏng", meanings: [{ type: "tt", vietnamese: "Dỏng, vênh, hếch, kênh lên..", examples: ["Asão kđõng ku groh. - Con chó dỏng đuôi lên sủa", "Sa nah kyão kđông đi kơ dlông: - một đầu cây gỗ bị kênh lên"] }] },
-                { ede: "Kgông", meanings: [{ type: "đgt", vietnamese: "Gặm, ngậm, tha", examples: ["Asão kgông klang. - Con chó gặm xương", "Čim kgông rỡk wit ngă hruh. - Chim tha cỏ về làm tổ"] }] },
-                { ede: "Kẽ", meanings: [{ type: "đgt", vietnamese: "Cắn, đốt", examples: ["Asão kě jỡng ñu. - Chó cắn chân nó", "Anak kâo kě klõ bễn. - Con tôi cắn miếng bánh", "Kěč kě ba kman ruă. - Muỗi đốt truyền bệnh"] }] },
-                { ede: "Ksăn", meanings: [{ type: "đgt", vietnamese: "Chồng, dồn", examples: ["Ksăn dăm boh chiên mbit. - Chồng mấy cái bát lên nhau", "Ksŭn bruă ko mnuih mkăn. - dồn việc cho người khác"] }] },
-                { ede: "Ktang", meanings: [{ type: "tt", vietnamese: "Khỏe, mạnh, to, đặc", examples: ["Kbao anei ktang snak. - Con trâu này rất khỏe", "Ênai mtuh ktang. - Tiếng nổ mạnh", "Blu ktang. - Nói to", "Če kar ktang. - Chè pha đặc"] }] },
-                { ede: "Hua", meanings: [{ type: "đgt", vietnamese: "Ăn (cơm)", examples: [] }] },
-                { ede: "Kna", meanings: [{ type: "đgt", vietnamese: "Nấu (cơm)", examples: [] }] },
-                { ede: "Ria", meanings: [{ type: "đgt", vietnamese: "Nấu (cháo, hầm,...)", examples: [] }] },
-                { ede: "H'ô", meanings: [{ type: "đgt", vietnamese: "Mặc (áo)", examples: [] }] },
-                { ede: "Mdai", meanings: [{ type: "đgt", vietnamese: "Đẻ, sinh (dùng cho con vật đẻ con)", examples: [] }] },
-                { ede: "Čiêng", meanings: [{ type: "đgt", vietnamese: "Đeo (cặp (kdô), túi (bai)...)", examples: [] }] },
-                { ede: "Truă", meanings: [{ type: "đgt", vietnamese: "Đeo (kính (ală king))", examples: [] }] },
-                { ede: "Bäk", meanings: [{ type: "đgt", vietnamese: "Đeo (dây chuyền (klei mah))", examples: [] }] },
-                { ede: "Atiêng", meanings: [{ type: "dt", vietnamese: "Nhánh (nhánh gừng, nhánh nghệ)", examples: [] }] },
-                { ede: "Čo", meanings: [{ type: "tl", vietnamese: "Đứa, người (dùng cho con người)", examples: [] }] },
-                { ede: "Hriê", meanings: [{ type: "đgt", vietnamese: "Tới, đến (đây)", examples: ["Ih hriê sang kão hõ!"] }] },
-                { ede: "Truh", meanings: [{ type: "đgt", vietnamese: "(Đã) tới một địa điểm nào đó", examples: ["Kão truh kơ sang"] }] }
+Abao (dt) : Ốc bươu
+Abăn (dt) : Cái chăn (mền)
+Abŭ (dt) : Cái hũ
+Adei (dt) : Em
+Adĕ (dt) : Hến
+Adham (dt) : Một nhóm trong tộc người Êđê
+Adhan (dt) : Cành
+Adhei (dt) : Trán
+Adiê (dt) : Trời
+Adiê không : Nắng hạn
+Adiê tlam : Xế chiều
+Adih (đt) : Kia
+Adôk (đgt) : Còn
+Adrăng (dt) : Rơm rạ
+Adring (dt) : Hiên nhà sàn
+Adrŏk (dt) : Con cóc
+Aduôn (dt) : Bà (nội, ngoại)
+Adŭ (dt) : Phòng; Lớp; Cái ô
+Adŭ bruă (dt) : Văn phòng
+Adŭ git gai bruă kiă kriê (dt) : Phòng hành chính
+Adŭ tĭng yap (dt) : Phòng kế toán
+Adŭng (dt) : Mũi
+Aê (dt) : Ông (nội, ngoại)
+Aê êa drao (dt) : Bác sĩ
+Agam (tt) : Loạn luân
+Agha (dt) : Rễ
+Aguah (trạng từ) : Buổi sáng
+Aguăt (dt) : Con bọ cạp
+Ah (hư từ) : Ạ
+Ai (dt) : Sức
+Ai hriăm (dt) : Học lực
+Ai êwa (dt) (tt) : Khí thế, hơi sức
+Ai mĭn (đgt) : Suy nghĩ
+Ajĭk (dt) : Ếch
+Ak (dt) : Con quạ
+Akăt (dt) : Bụi (khóm)
+Akâo (đgt) : Xin
+Ala (dt) : Con rắn
+Ala čar (dt) : Tổ quốc
+Ala čar tač êngao (dt) : Nước ngoài
+Alah (tt) : Lười biếng
+Alah alan (tt) : Uể oải
+Ală (dt) : Mắt
+Ală kĭng (dt) : Kính
+Ală mmăt (tt) : Cận thị
+Alĕ, Aluê̆ (đgt) : Nhả
+Alê (dt) : Le
+Alôk (đgt) : Lột
+Alum akâo (đgt) : Cầu xin
+Alum kkuh (đgt) : Kính thưa
+Alum mpŭ (đgt) : Trân trọng, kính trọng
+Alŭ (dt) : Thôn, xóm
+Alŭ wăl (dt) : Vùng
+Alŭ buôn prŏng : Phố phường
+Alưñ (tt) : Gớm
+Am pul pui (dt) : Bóng đèn
+Ama (dt) : Bố (cha)
+Amai (dt) : Chị
+Amâo (pht) : Không
+Amâo dah (lt) : Hay (hoặc)
+Amâo dưi : Không thể, không được
+Amâo djŏ ai (tt) : Không vừa lòng
+Amâo djŏ knŏng (trgt) : Chẳng những
+Amâo kpă (tt) : Bất chính
+Amâo klă mngač (tt) : Bất minh
+Amâo răk (đgt) : Bất cứ, không kể đến
+Amâo răk rai (hư từ) : Bất diệt
+Amâo thâo knga (tt) : Vô ơn
+Amâo mâo tŭ ư (đgt) : Phản đối
+Amiêt (dt) : Cậu
+Amĭ (dt) : Mẹ (má)
+Amĭ ama hđeh (dt) : Phụ huynh
+Amlơ̆k (dt) : Cám
+Amra (pht) : Sẽ
+Amrak (dt) : Con công
+Amrê̆č (dt) : Ớt
+Amung mtei (dt) : Buồng chuối
+Amung mdiê (dt) : Bông lúa
+Amung kngan (dt) : Mu tay
+Amung ŭn (dt) : Mõm lợn (heo)
+Amuôn (dt) : Cháu (cháu với cậu, bác là người anh, em trai của mẹ)
+Ana (dt) : Cây; giống cái (từ dùng chỉ động vật giống cái)
+Anak (dt) : Con (dùng cho người)
+Anak ală (dt) : Con ngươi
+Anak ĭ (dt) : Trẻ sơ sinh
+Anak rai (dt) : Con rồng
+Anal (dt) : Con sâu nái
+Anal kŏ (dt) : Cái gối
+Anăn (dt) : Tên; Đó, đấy
+Anăn kdrưh (dt) : Danh hiệu
+Anăp (giới từ) : Trước
+Anei (đt) : Đây
+Aneh (dt) : Dì
+Angĭn (dt) : Gió
+Angĭn êbŭ (dt) : Bão
+Angưr (đgt) : Ngẩng
+Anghar (đgt) : Ngáy
+Anôk (dt) : Nơi, chỗ, vị trí
+Anôk dôk (dt) : Nơi ở, chổ ở
+Anôk dôk êjai (dt) : Nơi tạm trú
+Anôk mjưh (dt) : Nơi dừng
+Anôk mjưh mran (dt) : Cảng
+Anuă (dt) : Cái cưa
+Anŭng (dt) : Túi
+Anur (dt) : Con dúi
+Anut (dt) : Cái cúc áo
+Añŭ (dt) : Hạt cườm (chuỗi)
+Añuê (dt) : Chiếu
+Añhuôr (đgt) : Duỗi
+Añhuih (đgt) : Hỉ
+Ao (dt) : Áo
+Ap (đgt) : Đè
+Ap gư̆ (đgt) : Đàn áp
+Aprŏng (dt) : Bác (chị của mẹ)
+Ară anei (trgt) : Hiện nay, bây giờ
+Arăn (đgt) : Rặn
+Arăng (đt) : Người ta
+Areh (dt) : Con rệp
+Ariêng (dt) : Con cua
+Aruăt (dt) : Gân, sợi
+Arul (dt) : Họ của người Êđê
+Arưp aram (đgt) : Đe dọa
+Asăp (dt) : Lời; Khói
+Asăp mtrŭn (dt) : Nghị quyết, nghị định, chỉ thị
+Asăr (dt) : Hạt, hột; Viên
+Aseh (dt) : Con ngựa
+Asâo (dt) : Con chó
+Asei (dt) : Thân, mình
+Asei mlei (dt) : Thân thể, cơ thể
+Asei wah (dt) : Lưỡi câu
+Atăt (đgt) : Dẫn
+Atâo (dt) : Người chết (thi hài người chết)
+Ai tiê (dt) : Tấm lòng
+Ai tiê jăk (dt) : Sự tốt bụng, lòng tốt
+Ai tiê kriăng (tt) : Chăm chỉ, siêng năng
+Atŭt (dt) : Đốt
+Atiêng (dt) : Nhánh
+Awa (dt) : Bác (anh trai và chị gái của bố)
+Awak (dt) : Cái thìa
+Awak boh (dt) : Cái muôi (làm bằng tre)
+Awan (dt) : Khúc, đoạn (cây), dáng (người)
+Awăt (tt) : Yếu, đuối
+Ayŏng (dt) : Anh
+Ayõng khua (dt) : Anh cả
+Ăl (đgt) : Mắng, giận
+Ăl čôn (tt) : Giận hờn
+Ăm (đgt) : Nướng
+Ăp (đgt) : Bịt; Áp; Chườm
+Ăt (pht) : Vẫn; Cũng
+Ba (đgt) : Mang
+Ba tian (đgt) : Mang bầu (có chửa dùng cho người)
+Ba kđi (đgt) : Bồi thường
+Bai (dt) : Giỏ
+Bai đih (dt) : Nôi (em bé)
+Ban (đgt) : Trườn
+Bă (đgt) : Đụng, chạm phải
+Băk (đgt) : Đeo (vào cổ)
+Bě (tht) : Thôi! (ý hối thúc)
+Bê (dt) : Dê (con vật)
+Bhang (dt) : Hè, hạ (mùa)
+Bhañ (đgt) : Hắt hơi
+Bhĩ (dt) : Tên của một loài chim
+Bhiăn (phó từ) : Thường
+Bhiâo (tt) : Một lúc, (một lát)
+Bhiâo hin (pht) : Chóng vánh
+Bhiâo riâo rit : Chốc lát, tức thì, thoáng qua
+Bhir (đgt) : Ném
+Bhit (tt) : Rậm
+Bhit pum/bhit dliê (dt) : Bụi rậm
+Bhôk gah (dt) : Ngăn nhỏ ở gian trước nhà sàn Êđê
+Bhŏng bhŏng (đgt) : Ào ạt
+Bhung aguah (trt) : Suốt đêm
+Bhung bhang (tt) : Sáng sủa
+Bi (lt) : Còn; (trt) Phải
+Bi ăl (đgt) : Giận nhau
+Bi blũ (đgt) : Đàm thoại, đối thoại
+Bi čīk (đgt) : Vật nhau
+Bi dơ̆k bi dria (tt) : Rộn rã
+Bi êdah (đgt) : Thể hiện, biểu hiện
+Bi hlĭ (tt) : Hòa thuận
+Bi hdơr (đgt) : Tưởng nhớ
+Bi kbưi (đgt) : Cách ly
+Bi kjăp (đgt) : Củng cố
+Bi kmiêk (đgt) : Ôm nhau
+Bi lar (đgt) : Trau dồi
+Bi leh (đgt) : Hoàn thành
+Bi liê (đgt) : Tiêu, xài
+Bi lir (gt) : Liền nhau (sát)
+Bi lông : Thi (thi cử); Đua
+Bi lui (đgt) : Ly dị, bỏ nhau
+Bi mđĩ (đgt) : Nâng cao
+Bi măn (đgt) : Suy nghĩ
+Bi mlih (đgt) : Thay đổi
+Bi mtlaih (đgt) : Giải thoát, giải phóng
+Bi ruễ (đgt) : Kết thúc, bế giảng, bế mạc
+Bi rŭng (đgt) : Gây rối, nổi loạn
+Bi ŭk bi ăk (tt) : Tấp nập (chỉ sự ồn ào, náo nhiệt ở chợ)
+Bi yông (tt) : Tụ lại nhau
+Biêng (đgt) : Đập
+Biêr (tt) : Lùn; Thấp
+Bih (dt) : Thuộc nhóm dân tộc Êđê
+Bip (dt) : Vịt
+Bip êa (dt) : Con vịt nước
+Bir (dt) : Vỉa hè
+Biut (dt) : Mây
+Blač (đgt) : Mổ
+Blah (đgt) : Bổ; Chẻ; (tl) Từ dùng để đếm số cái, số tấm, số chiếc
+Blang (đgt) : Nở (hoa)
+Blao (tt) : Nhát
+Bliŭ (đgt) : Lật; (dt) Lần
+Blô (tt) : Bầu (bĩnh)
+Blũ (đgt) : Nói
+Blũ bi hmữ (đgt) : Nói khóe
+Blũ mhriêng (đgt) : Nói bóng
+Blũ tlao (đgt) : Cười nói
+Blũ wah wơ (đgt) : Nói trống không
+Blũ myão (đgt) : Nói khéo
+Blũ yăl (đgt) : Nói năng
+Boh (dt) : Quả, trái; Trứng; (đgt) Giặt; (tl) Từ dùng để đếm cái
+Boh anăn (dt) : Danh từ
+Boh anut (dt) : Cái khuy (cúc áo)
+Boh areh (dt) : Long não
+Boh bip êđai (dt) : Trứng vịt lộn
+Boh dlông (dt) : Chiều cao, chiều dài
+Boh đếč (dt) : Hoa văn
+Boh blů (dt) : Từ ngữ (từ vựng)
+Boh blũ mčuê (dt) : Giới từ, từ nối
+Boh ƀai (dt) : Diện tích
+Boh ƀleh (dt) : Thận, cật
+Boh hră (dt) : Chữ, chữ cái
+Boh kbưi (dt) : Cách xa, khoảng cách
+Boh jhat (tt) : Sự xấu xa
+Boh jing (dt) : Tính từ; Thành quả
+Boh kê̆ñ (dt) : Bánh chè
+Boh kŏ (dt) : Cái đầu
+Boh kpăt (dt) : Bồ hòn
+Boh lăn (dt) : Trái đất
+Boh m'ô̆ (dt) : Hầu (người); Xoài rừng (hột nhỏ)
+Boh mdê (dt) : Đặc thù
+Boh mtuh (dt) : Lựu đạn
+Boh nik (nak) (tt) : Nhất là
+Boh păm (dt) : Bồ kết
+Boh pha (dt) : Bắp vế
+Boh phùn (dt) : Nội dung
+Boh pia (dt) : Phụ âm
+Boh tih (dt) : Bắp chân
+Boh tluôn (dt) : Cái mông
+Bò (tt) : Đầy
+Bök (đgt) : Sưng, viêm (phù)
+Bök yơi (dt) : Quai bị
+Bök wi wu (đgt) : Sưng vù
+Băng bù (dt) : Bìm bịp
+Bông (dt) : Quan tài (hòm)
+Bơ bhô (tt) : Ông ộc
+Braih (dt) : Gạo
+Braih ka hroh (dt) : Gạo lức
+Braih mkuễ (dt) : Gạo (gạo thóc nói chung)
+Brang (dt) : Gai (cây gai)
+Brei (đgt) : Cho
+Bring (tt) : Rỉ, rỉ sét
+Brỗ (dt) : Đàn
+Bru bra (đgt) : Tán loạn
+Brŭ (tt) : Thối
+Brŭ hiă (tt) : Thối hoắc, thối nát
+Bruă (dt) : Việc
+Bruă čuăn (dt) : Quy định, chuẩn hóa
+Bruă kmrơ̆ng dhông (dt) : Lâm nghiệp
+Bruă lõ hma (dt) : Nông nghiệp, việc đồng áng
+Bruă lĭng kahan (dt) : Quân sự
+Bruă mă (dt) : Nghề nghiệp
+Bruă mă hgăm (dt) : Công tác bí mật
+Bruă mă kơ lu mnuih (dt) : Dịch vụ
+Bruă mdrao mgŭn (dt) : Y tế; Y khoa
+Bruă mgang ala čar (dt) : Quốc phòng
+Bruă mjeh mjuk (dt) : Công tác dân vận
+Bruă tĭng yap (dt) : Kế toán
+Bruă truh (dt) : Sự việc
+Bruă yua (dt) : Công dụng
+Bruă yua kiê kngan (dt) : Nghề thủ công
+Brung (tt) : Đốm
+Brung brê̆č (tt) : Sặc sỡ
+Buê (dt) : Hoa tai (bông tai)
+Buh (đgt) : Đeo (ở tay, chân); Tría
+Buk (tt) : Phồng; (dt) Nệm
+Bum (tt) : Mù, đui
+Buôr (dt) : Hạch; Cháo
+Bu (dt) : Con gái (gọi thân trong nhà)
+Búč (đgt) : Nhổ
+Bŭl (tt) : Cuộn (dây, chỉ)
+Bŭng (dt) : Cái gùi
+Bư̆ (đgt) : Rào
+Bư̆ guê (đgt) : Đắp bờ
+Bưn (dt) : Vườn (ở xa nhà, vườn rẫy)
+Bưng (dt) : Bát (làm bằng bầu khô)
+Bưng gŏ (dt) : Nồi niêu
+Ƀah (tt) : Mẻ (sứt)
+Ƀah dah...ƀah dah : Vừa...vừa
+Ƀai (tt) : Rộng; (đgt) Ác ôn
+Ƀai kdai (tt) : Rộng rãi
+Ƀaih (ct) : Ôi (chỉ sự ngạc nhiên)
+Ƀaih haih (ct) : Ai chà
+Ƀal (đgt) : Đẽo
+Ƀă (đgt) : Địu, cõng
+Ƀă anak lung êra : Chửa con so
+Ƀă pum (dt) : Chửa hoang
+Ƀăl (tt) : Chát
+Ƀăng (dt) : Lỗ; Hốc; Hầm; Hang (động)
+Ƀăng bhă (dt) : Cái cửa (dùng chung)
+Ƀăng bhă điêt (dt) : Cửa sổ
+Ƀăng bhă prŏng (dt) : Cửa ra vào
+Ƀăng đuê̆ dăp (dt) : Hầm hào
+Ƀăng eh (dt) : Hậu môn
+Ƀăng êa (dt) : Giếng nước
+Ƀăng êgei (dt) : Miệng (mồm)
+Ƀăng jang (dt) : Cổng, ngõ
+Ƀâo (tt) : Hôi
+Ƀâo brŭ (tt) : Hôi thối
+Ƀâo iu (tt) : Ôi thiu (Bị ôi, bị thiu)
+Ƀâo khơr (tt) : Khai (mùi khai)
+Ƀâo kmĭl (tt) : Hôi nách
+Ƀâo mnâo (đgt) : Đánh hơi
+Ƀâo mngưi (tt) : Thơm (mùi thơm)
+Ƀap (dt) : Cái ví
+Ƀar (đgt) : Mặc (váy, khố)
+Ƀar h’ô (đgt) : Ăn mặc
+Ƀĕ (dt) : Cái; Cây
+Ƀê̆č (đgt) : Bẫy
+Ƀê̆č ƀê̆č : Lẩm bẩm
+Ƀê̆ñ (dt) : Bánh
+Ƀê̆ñ hra (dt) : Đường ăn
+Ƀê̆ñ kpŭng (mi) (dt) : Bánh mì
+Ƀê̆ñ mlim (dt) : Kẹo
+Ƀhĭ (tt) : Nát, ải
+Ƀhĭ ƀhê̆ñ (tt) : Li ti
+Ƀhiăr (tt) : Phẳng lì
+Ƀhơi (đgt) : Đáng
+Ƀhu (đgt) : Phơi
+Ƀhư (tt) : Rộ
+Ƀhŭl (dt) : Bụi mù
+Ƀhur (tt) : Thổi
+Ƀi (yu) : Bi
+Ƀiă (tt) : Ít
+Ƀiă dhit : Quá ít
+Ƀiă ƀiă (tt) : Chút ít
+Ƀiă dah (lt) : Nhưng
+Ƀiêk (dt) : Khóe miệng, mép môi
+Ƀiêp ƀiêp (tt) : Nhai nhải
+Ƀiêr (dt) : Bia
+Ƀik ƀik (tt) : Nườm nượp
+Ƀĭng (dt) : Bạn
+Ƀĭng găp (dt) : Bạn bè
+Ƀĭng khăp (dt) : Người yêu
+Ƀĭng kna (dt) : Đồng chí
+Ƀlă (dt) : Ốc sên
+Ƀlĕ (đgt) : Chảy; Mọc; Trổ
+Ƀlĕ eh (đgt) : Ỉa
+Ƀlĕ êa ală (đgt) : Rơi nước mắt
+Ƀlĕ k’hŏ k’hang (đgt) : Toát mồ hôi
+Ƀlĕ tlao (đgt) : Phì cười (bật cười)
+Ƀlĕ k’ul (tt) : Buồn nôn
+Ƀlê̆č ƀlir (tt) : Đểu
+Ƀlia (tt) : Láng
+Ƀling (tt) : Lé
+Ƀlĭp ƀlĭp (tt) : Chớp (ánh sáng)
+Ƀlir (đgt) : Dán
+Ƀlir ƀlir (tt) : Long lanh
+Ƀlĭt (tt) : Dính
+Ƀloh (dt) : Muỗi
+Ƀlŏng ƀlŏng (tt) : Véo von
+Ƀlŏng ƀlut (tt) : Lênh đênh
+Ƀlô (dt) : Một nhánh người thuộc dân tộc Êđê
+Ƀlông (dt) : Gòn
+Ƀluôn (dt) : Múi
+Ƀlŭng (dt) : Hố
+Ƀô (đgt) : Mê
+Ƀôñ (tt) : Bện
+Ƀô̆ (tt) : Mặt
+Ƀô̆mta (dt) : Khuôn mặt (mặt mày)
+Ƀơ̆ng (đgt) : Ăn; Cháy; (tt) Sắc (bén)
+Ƀơ̆ng dôč (tt) : Ăn vặt
+Ƀơ̆ng hŏng kngan : Ăn bốc
+Ƀơ̆ng ngăn (tt) : Ăn hối lộ, tham ô
+Ƀrĭk (dt) : Gạch
+Ƀrah ƀrơp (tt) : Long đong
+Ƀrô mơh : May ra
+Ƀrôč (tt) : Thủng; Dột
+Ƀruêh (dt) (Anh) : Bàn chải
+Ƀrôk ƀrôk (tt) : Oang oang
+Ƀrŏng (dt) : Ngọn (cây)
+Ƀru ƀra (tt) : Tán loạn
+Ƀruih (dt) : Bụi
+Ƀruih ƀram (dt) : Bụi bặm
+Ƀrŭk ƀrŭk (tt) : Sùng sục
+Ƀrư̆ ƀrư̆ (tt) : Dần dần, từ từ
+Ƀrư̆ hruê ƀrư̆ (lt) : Càng ngày càng
+Ƀuah (đgt) : Trách
+Ƀuăn (đgt) : Hứa
+Ƀuăn rơ̆ng (đgt) : Cam đoan, cam kết
+Ƀuh (đgt) : Thấy
+Ƀuh klei soh : Thấy khuyết điểm
+Ƀun (dt) : Nghèo
+Ƀun ƀin (dt) : Nghèo nàn
+Ƀuôn (dt) : Buôn, làng; Ấp
+Ƀuôn hgŭm (dt) : Phường, thị trấn
+Ƀuôn phŭn (dt) : Thủ đô
+Ƀuôn prŏng (dt) : Thành phố, thị xã
+Ƀuôn sang (dt) : Làng mạc, quê hương
+Ƀuôr (đgt) : Khơi (mương)
+Ƀur (dt) : Bụi (cây nhỏ lùm cây)
+Ƀŭk (dt) : Tóc
+Ƀŭk ƀiêk (dt) : Tóc tai
+Ƀŭl ƀŭl (tt) : Đông đúc
+Ƀư̆ (đgt) : Ưỡn (người), (uốn cây)
+
             ], []);
 
             const showMessage = (msg) => {
