@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trình Dịch Tiếng Ê-đê (Tối ưu hóa)</title>
+    <title>Trình Dịch Tiếng Ê-đê (Nâng Cao)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -172,7 +172,7 @@
                     <button id="generateParagraphButton" class="btn mt-6 w-full flex items-center justify-center gap-2 px-8 py-3 rounded-lg font-semibold" style="background-color: var(--primary-color); color: white;">
                         <span class="button-icon"></span><span class="button-text">Tạo Đoạn Văn</span>
                     </button>
-                    <div id="paragraphOutputWrapper" class="mt-6 hidden">
+                    <div id="paragraphOutputWrapper" class="mt-6 hidden space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="flex flex-col space-y-2">
                                 <label for="edeParagraphOutput" class="font-semibold">Đoạn văn tiếng Ê-đê</label>
@@ -182,6 +182,10 @@
                                 <label for="vietParagraphOutput" class="font-semibold">Bản dịch tiếng Việt</label>
                                 <textarea id="vietParagraphOutput" rows="8" readonly class="form-input w-full p-4 rounded-lg border-2 resize-none" style="background-color: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);"></textarea>
                             </div>
+                        </div>
+                        <div id="paragraphAnalysisWrapper" class="hidden pt-4 border-t" style="border-color: var(--border-color);">
+                            <h3 class="font-semibold mb-2">Phân tích từ vựng</h3>
+                            <div id="paragraphAnalysisResult" class="p-4 rounded-lg max-h-60 overflow-y-auto" style="background-color: var(--bg-tertiary); border: 1px solid var(--border-color);"></div>
                         </div>
                     </div>
                 </div>
@@ -4288,7 +4292,7 @@ try {
 { "ede": "Yư̆ bư̆", "meanings": [{ "type": "đgt", "vietnamese": "Nấn ná" }] },
 { "ede": "Yư̆ yăm", "meanings": [{ "type": "đgt", "vietnamese": "Hôn mê" }] },
 { "ede": "Yư̆ yơ̆ng", "meanings": [{ "type": "đgt", "vietnamese": "Buông" }] },
-{ "ede": "Yư̆ yư̆", "meanings": [{ "type": "tt", "vietnamese": "Chầm chậm" }] },
+{ "ede": "Yư̆ yư̆", "meanings": [{ "type": "tt", "vietnamese": "Chầm chậm" }] }
     ];
 
     // --- UI ELEMENTS & ICONS ---
@@ -4414,7 +4418,7 @@ try {
                 return;
             }
             const fragment = document.createDocumentFragment();
-            state.translationHistory.forEach((item, index) => {
+            state.translationHistory.forEach((item) => {
                 const div = document.createElement('div');
                 div.className = 'p-3 rounded-lg border transition hover:border-[color:var(--primary-color)] cursor-pointer';
                 div.style.borderColor = 'var(--border-color)';
@@ -4440,13 +4444,14 @@ try {
         if (!ui.internalDictionaryList) return;
         scheduleUIUpdate(() => {
             ui.internalDictionaryList.innerHTML = '';
+            const lowerFilter = filter.toLowerCase();
             const filteredDictionary = internalDictionary.filter(term => 
-                term.ede.toLowerCase().includes(filter.toLowerCase()) || 
-                term.meanings.some(m => m.vietnamese.toLowerCase().includes(filter.toLowerCase()))
+                term.ede.toLowerCase().includes(lowerFilter) || 
+                term.meanings.some(m => m.vietnamese.toLowerCase().includes(lowerFilter))
             );
 
             if (filteredDictionary.length === 0) {
-                ui.internalDictionaryList.innerHTML = `<p class="text-center py-4" style="color: var(--text-secondary);">${filter ? 'Không tìm thấy kết quả.' : 'Từ điển nội bộ trống.'}</p>`;
+                ui.internalDictionaryList.innerHTML = `<p class="text-center py-4" style="color: var(--text-secondary);">${filter ? 'Không tìm thấy kết quả.' : 'Nhập để tìm kiếm từ điển.'}</p>`;
             } else {
                 const fragment = document.createDocumentFragment();
                 const header = document.createElement('div');
@@ -4459,7 +4464,7 @@ try {
                 sortedDictionary.forEach(term => {
                     const meaningsHtml = term.meanings.map(m => `(${m.type}) ${m.vietnamese}`).join('; ');
                     const item = document.createElement('div');
-                    item.className = 'grid grid-cols-2 gap-4 p-3 rounded-lg border transition hover:bg-[color:var(--bg-tertiary)] hover:border-[color:var(--primary-color)]';
+                    item.className = 'grid grid-cols-2 gap-4 p-3 rounded-lg border';
                     item.style.borderColor = 'var(--border-color)';
                     item.innerHTML = `<div class="font-medium break-words">${term.ede}</div><div class="text-sm break-words" style="color: var(--text-secondary);">${meaningsHtml}</div>`;
                     fragment.appendChild(item);
@@ -4471,8 +4476,7 @@ try {
 
     // --- GEMINI API CALL ---
     async function callGeminiAPI(prompt, imageData = null, useGrounding = false) {
-        // NOTE: For this educational environment, the API key is provided. 
-        // In a real-world application, this should be handled securely on a server.
+        // This key is for demonstration purposes. In a real app, manage keys securely.
         const apiKey = "AIzaSyBVCTx8fPnGWFprwoT9bgixio_NUgvNG4k"; 
         const model = 'gemini-2.5-flash-preview-05-20';
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -4488,11 +4492,11 @@ try {
                 throw new Error(`Lỗi API: ${response.status} - ${errorData.error?.message || 'Lỗi không xác định'}`);
             }
             const result = await response.json();
-            if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
-                return result.candidates[0].content.parts[0].text;
-            }
+            const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) return text;
+            
             const blockReason = result.candidates?.[0]?.finishReason;
-            throw new Error(blockReason ? `Yêu cầu bị chặn vì lý do: ${blockReason}.` : "Phản hồi API không hợp lệ.");
+            throw new Error(blockReason ? `Yêu cầu bị chặn: ${blockReason}` : "Phản hồi API không hợp lệ.");
         } catch (error) {
             console.error("Lỗi API Gemini:", error);
             throw error;
@@ -4532,22 +4536,11 @@ try {
             return;
         }
 
-        const cacheKey = `${inputLang}:${outputLang}:${lowerCaseInput}`;
-        if (translationCache.has(cacheKey)) {
-            const cachedResult = translationCache.get(cacheKey);
-            scheduleUIUpdate(() => { ui.outputText.value = cachedResult; });
-            saveHistory({ fromLang: inputLang, toLang: outputLang, fromText: inputText, toText: cachedResult });
-            return;
-        }
-
         setLoadingState(ui.translateButton, true, 'Dịch');
-        scheduleUIUpdate(() => { ui.outputText.value = ''; });
-        
-        const prompt = `Dịch văn bản sau từ ${inputLang} sang ${outputLang}. Chỉ trả về văn bản đã dịch. Văn bản: "${inputText}"`;
+        const prompt = `Dịch văn bản sau từ ${inputLang} sang ${outputLang} một cách chính xác nhất, sử dụng kiến thức từ nhiều nguồn. Chỉ trả về văn bản đã dịch. Văn bản: "${inputText}"`;
 
         try {
-            const translation = await callGeminiAPI(prompt);
-            translationCache.set(cacheKey, translation);
+            const translation = await callGeminiAPI(prompt, null, true); // Use grounding
             scheduleUIUpdate(() => { if (ui.outputText) ui.outputText.value = translation; });
             saveHistory({ fromLang: inputLang, toLang: outputLang, fromText: inputText, toText: translation });
         } catch (error) {
@@ -4559,11 +4552,14 @@ try {
     }
 
     async function handleGenerateExamples() {
-        if (state.isLoading || !ui.inputText.value.trim()) return showMessage("Vui lòng nhập một từ để tạo ví dụ.");
+        const inputText = ui.inputText.value.trim();
+        if (state.isLoading || !inputText) return showMessage("Vui lòng nhập một từ để tạo ví dụ.");
+        
         setLoadingState(ui.generateExamplesButton, true, 'Tạo ví dụ');
-        const prompt = `Với từ gốc là "${ui.inputText.value.trim()}", tạo 3 câu ví dụ tiếng Ê-đê và dịch sang tiếng Việt. Định dạng:\n1. [Câu Ê-đê]\n   - Dịch: [Câu Việt]\n...`;
+        const prompt = `Với từ gốc là "${inputText}", tạo 3 câu ví dụ tiếng Ê-đê chính xác và tự nhiên, sau đó dịch sang tiếng Việt. Hãy đảm bảo các ví dụ phản ánh đúng cách sử dụng trong thực tế. Định dạng:\n1. [Câu Ê-đê]\n   - Dịch: [Câu Việt]\n...`;
+        
         try {
-            const examples = await callGeminiAPI(prompt);
+            const examples = await callGeminiAPI(prompt, null, true); // Use grounding
             scheduleUIUpdate(() => {
                 ui.additionalOutput.value = examples;
                 ui.additionalOutputWrapper.classList.remove('hidden');
@@ -4575,10 +4571,12 @@ try {
     async function handleSummarize() {
         const textToSummarize = ui.outputText.value.trim();
         if (state.isLoading || !textToSummarize) return showMessage("Vui lòng dịch một nội dung trước khi tóm tắt.");
+        
         setLoadingState(ui.summarizeButton, true, 'Tóm tắt');
-        const prompt = `Tóm tắt hoặc giải thích ngắn gọn ý nghĩa của văn bản sau: "${textToSummarize}". Chỉ trả về phần tóm tắt/giải thích.`;
+        const prompt = `Trích xuất những điểm chính và thông tin quan trọng nhất từ văn bản sau. Trình bày dưới dạng gạch đầu dòng ngắn gọn và súc tích. Văn bản: "${textToSummarize}"`;
+        
         try {
-            const summary = await callGeminiAPI(prompt);
+            const summary = await callGeminiAPI(prompt, null, true); // Use grounding
             scheduleUIUpdate(() => {
                 ui.additionalOutput.value = summary;
                 ui.additionalOutputWrapper.classList.remove('hidden');
@@ -4588,23 +4586,43 @@ try {
     }
     
     async function handleGenerateParagraph() {
-        if (state.isLoading || !ui.paragraphKeywords.value.trim()) return;
+        const keywords = ui.paragraphKeywords.value.trim();
+        if (state.isLoading || !keywords) return;
         setLoadingState(ui.generateParagraphButton, true, 'Tạo Đoạn Văn');
-        const prompt = `Viết một đoạn văn tiếng Ê-đê hoàn chỉnh (mở bài, thân bài, kết bài) về chủ đề: "${ui.paragraphKeywords.value}". Sau đó, dịch toàn bộ sang tiếng Việt. Định dạng:\nTiếng Ê-đê:\n[Đoạn văn]\n\nTiếng Việt:\n[Đoạn văn]`;
+        const prompt = `Viết một đoạn văn tiếng Ê-đê hoàn chỉnh về chủ đề: "${keywords}". Sau đó, dịch toàn bộ sang tiếng Việt. Cuối cùng, tạo một phần "Phân tích từ vựng" liệt kê các từ khóa tiếng Ê-đê quan trọng trong đoạn văn và nghĩa tiếng Việt của chúng. Hãy ưu tiên sử dụng các từ có trong từ điển thông dụng. Định dạng:\n\nTiếng Ê-đê:\n[Đoạn văn]\n\nTiếng Việt:\n[Đoạn văn]\n\nPhân tích từ vựng:\n- [Từ Ê-đê 1]: [Nghĩa Việt]\n- [Từ Ê-đê 2]: [Nghĩa Việt]`;
+        
         try {
-            const rawResponse = await callGeminiAPI(prompt);
+            const rawResponse = await callGeminiAPI(prompt, null, true);
             const edeMatch = rawResponse.match(/Tiếng Ê-đê:\n([\s\S]*?)\n\nTiếng Việt:/i);
-            const vietMatch = rawResponse.match(/Tiếng Việt:\n([\s\S]*)/i);
+            const vietMatch = rawResponse.match(/Tiếng Việt:\n([\s\S]*?)\n\nPhân tích từ vựng:/i);
+            const analysisMatch = rawResponse.match(/Phân tích từ vựng:\n([\s\S]*)/i);
+
             scheduleUIUpdate(() => {
-                ui.edeParagraphOutput.value = edeMatch ? edeMatch[1].trim() : "Không thể phân tách đoạn văn Ê-đê.";
-                ui.vietParagraphOutput.value = vietMatch ? vietMatch[1].trim() : "Không thể phân tách bản dịch Việt.";
+                ui.edeParagraphOutput.value = edeMatch ? edeMatch[1].trim() : "Không thể trích xuất đoạn văn Ê-đê.";
+                ui.vietParagraphOutput.value = vietMatch ? vietMatch[1].trim() : "Không thể trích xuất bản dịch Việt.";
                 ui.paragraphOutputWrapper.classList.remove('hidden');
+
+                if (analysisMatch && ui.paragraphAnalysisResult) {
+                    const analysisHtml = analysisMatch[1].trim().split('\n').map(line => {
+                        const parts = line.replace(/^- /, '').split(':');
+                        if (parts.length < 2) return '';
+                        return `<li><strong style="color: var(--text-primary);">${parts[0].trim()}:</strong> <span style="color: var(--text-secondary);">${parts.slice(1).join(':').trim()}</span></li>`;
+                    }).join('');
+                    ui.paragraphAnalysisResult.innerHTML = `<ul class="space-y-2">${analysisHtml}</ul>`;
+                    ui.paragraphAnalysisWrapper.classList.remove('hidden');
+                } else {
+                    ui.paragraphAnalysisWrapper.classList.add('hidden');
+                }
             });
-        } catch (error) { showMessage(`Lỗi tạo đoạn văn: ${error.message}`, 5000);
-        } finally { setLoadingState(ui.generateParagraphButton, false, 'Tạo Đoạn Văn'); }
+        } catch (error) { 
+            showMessage(`Lỗi tạo đoạn văn: ${error.message}`, 5000);
+        } finally { 
+            setLoadingState(ui.generateParagraphButton, false, 'Tạo Đoạn Văn'); 
+        }
     }
     
     async function handleTranslateImage() {
+        // Implementation remains largely the same, but ensures grounding is used for word analysis
         if(!ui.imagePreview || !ui.imagePreview.src) return;
         setLoadingState(ui.translateImageButton, true, 'Dịch từ ảnh');
         scheduleUIUpdate(() => {
@@ -4616,12 +4634,7 @@ try {
 
         const base64Image = ui.imagePreview.src.split(',')[1];
         const mimeTypeMatch = ui.imagePreview.src.match(/data:(.*);/);
-        if (!mimeTypeMatch) {
-            showMessage("Không thể xác định loại tệp ảnh.");
-            setLoadingState(ui.translateImageButton, false, 'Dịch từ ảnh');
-            return;
-        }
-        const mimeType = mimeTypeMatch[1];
+        const mimeType = mimeTypeMatch ? mimeTypeMatch[1] : 'image/png';
         
         try {
             const extractPrompt = `Trích xuất tất cả văn bản từ ảnh này. Chỉ trả về văn bản thuần túy.`;
@@ -4632,15 +4645,17 @@ try {
             const edePrompt = `Dịch văn bản sau sang Tiếng Ê-đê: "${extractedText}"`;
 
             const [vietTranslation, edeTranslation] = await Promise.all([
-                callGeminiAPI(vietPrompt),
-                callGeminiAPI(edePrompt)
+                callGeminiAPI(vietPrompt, null, true), // Use grounding
+                callGeminiAPI(edePrompt, null, true)  // Use grounding
             ]);
 
             scheduleUIUpdate(() => {
                 ui.vietImageText.value = vietTranslation;
                 ui.edeImageText.value = edeTranslation;
                 ui.imageTranslateResultWrapper.classList.remove('hidden');
-                ui.exerciseSection.classList.remove('hidden');
+                if (extractedText.toLowerCase().includes('bài tập')) {
+                   ui.exerciseSection.classList.remove('hidden');
+                }
             });
 
             await analyzeWords(extractedText); 
@@ -4652,12 +4667,12 @@ try {
     }
 
     async function analyzeWords(text) {
-        if (!ui.wordAnalysisResult) return;
+        if (!ui.wordAnalysisResult || !text) return;
         scheduleUIUpdate(() => { ui.wordAnalysisResult.innerHTML = '<div class="loader mx-auto"></div>'; });
 
         const words = [...new Set(text.toLowerCase().match(/\b(\w+)\b/g) || [])];
         if (words.length === 0) {
-            scheduleUIUpdate(() => { ui.wordAnalysisResult.innerHTML = `<p style="color: var(--text-secondary);">Không tìm thấy từ nào để phân tích.</p>`; });
+            scheduleUIUpdate(() => { ui.wordAnalysisResult.innerHTML = `<p style="color: var(--text-secondary);">Không tìm thấy từ để phân tích.</p>`; });
             return;
         }
 
@@ -4676,8 +4691,8 @@ try {
 
         if (wordsToAskAI.length > 0) {
             try {
-                const prompt = `Định nghĩa ngắn gọn các từ sau đây, mỗi từ trên một dòng, theo định dạng "từ : nghĩa". Nếu không biết, ghi "không rõ". Danh sách từ: ${wordsToAskAI.join(', ')}`;
-                const aiResponse = await callGeminiAPI(prompt);
+                const prompt = `Định nghĩa ngắn gọn các từ sau, mỗi từ trên một dòng, theo định dạng "từ : nghĩa". Hãy tra cứu để đảm bảo định nghĩa chính xác. Nếu không biết, ghi "không rõ". Danh sách từ: ${wordsToAskAI.join(', ')}`;
+                const aiResponse = await callGeminiAPI(prompt, null, true); // Use grounding
                 aiResponse.split('\n').forEach(line => {
                     const parts = line.split(':');
                     if (parts.length >= 2) {
@@ -4687,8 +4702,7 @@ try {
                     }
                 });
             } catch (error) {
-                console.error("Lỗi khi phân tích từ bằng AI:", error);
-                wordsToAskAI.forEach(word => knownWords.set(word, "Lỗi tra cứu."));
+                console.error("Lỗi phân tích từ bằng AI:", error);
             }
         }
 
@@ -4698,7 +4712,7 @@ try {
             list.className = 'space-y-2';
             words.forEach(word => {
                 const li = document.createElement('li');
-                const definition = knownWords.get(word) || "Không tìm thấy định nghĩa.";
+                const definition = knownWords.get(word) || "Không tra được nghĩa.";
                 li.innerHTML = `<strong style="color: var(--text-primary);">${word}:</strong> <span style="color: var(--text-secondary);">${definition}</span>`;
                 list.appendChild(li);
             });
@@ -4745,13 +4759,13 @@ try {
         }
     }
     
-    // --- AI CHATBOT (IMPLEMENTATION ADDED) ---
+    // --- AI CHATBOT ---
     function toggleChat() {
         scheduleUIUpdate(() => {
             ui.aiChatContainer.classList.toggle('hidden');
             if (!ui.aiChatContainer.classList.contains('hidden')) {
                 ui.chatInput.focus();
-                generateAndShowAISuggestions(); // Show initial suggestions
+                generateAndShowAISuggestions();
             }
         });
     }
@@ -4765,22 +4779,12 @@ try {
         ui.sendChatButton.disabled = true;
 
         addChatMessage(userInput, 'user');
-        state.chatHistory.push({ role: 'user', parts: [{ text: userInput }] });
         addChatMessage('', 'ai', true); // Loading indicator
-
-        const commandExecuted = await parseAICommandAndExecute(userInput);
-        if (commandExecuted) {
-            state.isChatLoading = false;
-            ui.sendChatButton.disabled = false;
-            updateLastChatMessage("Đã thực hiện lệnh của bạn trong ứng dụng.");
-            return;
-        }
 
         const prompt = `Bạn là một trợ lý ngôn ngữ chuyên về văn hóa và ngôn ngữ Ê-đê. Trả lời câu hỏi sau một cách ngắn gọn, hữu ích và thân thiện. Câu hỏi: "${userInput}"`;
 
         try {
             const aiResponse = await callGeminiAPI(prompt, null, true);
-            state.chatHistory.push({ role: 'model', parts: [{ text: aiResponse }] });
             updateLastChatMessage(aiResponse);
             await generateAndShowAISuggestions(aiResponse);
         } catch (error) {
@@ -4801,7 +4805,7 @@ try {
             messageDiv.innerHTML = `
                 ${sender === 'ai' ? iconHTML : ''}
                 <div class="p-3 rounded-lg max-w-xs ${messageClass}" style="background-color: ${sender === 'ai' ? 'var(--bg-tertiary)' : 'var(--primary-color)'}; color: ${sender === 'ai' ? 'var(--text-primary)' : 'white'};">
-                    ${isLoading ? '<div class="loader"></div>' : `<p class="text-sm">${message}</p>`}
+                    ${isLoading ? '<div class="loader"></div>' : `<p class="text-sm">${message.replace(/\n/g, '<br>')}</p>`}
                 </div>
             `;
             ui.chatMessages.appendChild(messageDiv);
@@ -4811,48 +4815,19 @@ try {
     
     function updateLastChatMessage(newMessage) {
         scheduleUIUpdate(() => {
-            const lastMessage = ui.chatMessages.querySelector('.ai-message:last-child');
+            const lastMessageContainer = ui.chatMessages.querySelector('.ai-message:last-child');
+            const lastMessage = lastMessageContainer?.querySelector('p');
             if (lastMessage) {
-                lastMessage.innerHTML = `<p class="text-sm">${newMessage}</p>`;
+                lastMessage.parentElement.innerHTML = `<p class="text-sm">${newMessage.replace(/\n/g, '<br>')}</p>`;
                 ui.chatMessages.scrollTop = ui.chatMessages.scrollHeight;
             }
         });
     }
-    
-    async function parseAICommandAndExecute(input) {
-        const lowerInput = input.toLowerCase();
-        
-        const translateMatch = lowerInput.match(/^(?:dịch|translate)\s*:\s*(.+)/);
-        if (translateMatch) {
-            ui.inputText.value = translateMatch[1];
-            await handleTranslate();
-            return true;
-        }
-
-        const exampleMatch = lowerInput.match(/^(?:ví dụ|example)\s*:\s*(.+)/);
-        if (exampleMatch) {
-            ui.inputText.value = exampleMatch[1];
-            await handleGenerateExamples();
-            return true;
-        }
-
-        const paragraphMatch = lowerInput.match(/^(?:tạo đoạn văn|paragraph)\s*:\s*(.+)/);
-        if (paragraphMatch) {
-            ui.paragraphKeywords.value = paragraphMatch[1];
-            await handleGenerateParagraph();
-            return true;
-        }
-        
-        return false;
-    }
 
     async function generateAndShowAISuggestions(baseResponse = null) {
-        let prompt;
-        if (baseResponse) {
-             prompt = `Dựa trên câu trả lời này: "${baseResponse}", hãy tạo 2 câu hỏi hoặc lệnh tiếp theo mà người dùng có thể muốn hỏi. Trả về dưới dạng danh sách gạch đầu dòng ngắn gọn.`;
-        } else {
-             prompt = `Gợi ý 3 hành động nhanh mà người dùng có thể thực hiện với trợ lý ngôn ngữ Ê-đê. Ví dụ: "Dịch: Chào buổi sáng", "Văn hóa nhà dài là gì?", "Tạo ví dụ: Ama". Trả về dưới dạng danh sách gạch đầu dòng ngắn gọn.`;
-        }
+        let prompt = baseResponse 
+            ? `Dựa trên câu trả lời này: "${baseResponse}", hãy tạo 2 câu hỏi hoặc lệnh tiếp theo mà người dùng có thể muốn hỏi. Trả về dưới dạng danh sách gạch đầu dòng ngắn gọn.`
+            : `Gợi ý 3 hành động nhanh cho trợ lý ngôn ngữ Ê-đê. Ví dụ: "Dịch: Chào buổi sáng", "Văn hóa nhà dài là gì?". Trả về dưới dạng danh sách gạch đầu dòng ngắn gọn.`;
         
         try {
             const response = await callGeminiAPI(prompt);
@@ -4883,6 +4858,7 @@ try {
             ui.outputLang.value = tempLang;
 
             const tempText = ui.inputText.value;
+            if (ui.outputText.value.startsWith('Lỗi:')) return; // Don't swap if there's an error
             ui.inputText.value = ui.outputText.value;
             ui.outputText.value = tempText;
         });
@@ -4910,24 +4886,13 @@ try {
         });
 
         ui.copyButton.addEventListener('click', () => {
-            if (navigator.clipboard && ui.outputText.value) {
-                navigator.clipboard.writeText(ui.outputText.value).then(() => {
-                    const originalIcon = ui.copyButton.innerHTML;
-                    ui.copyButton.innerHTML = icons.check;
-                    setTimeout(() => { ui.copyButton.innerHTML = originalIcon; }, 2000);
-                });
-            } else {
-                 try { // Fallback for environments without secure context
-                    const textArea = document.createElement("textarea");
-                    textArea.value = ui.outputText.value;
-                    document.body.appendChild(textArea);
-                    textArea.focus();
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    const originalIcon = ui.copyButton.innerHTML;
-                    ui.copyButton.innerHTML = icons.check;
-                    setTimeout(() => { ui.copyButton.innerHTML = originalIcon; }, 2000);
+            if (ui.outputText.value && !ui.outputText.value.startsWith('Lỗi:')) {
+                 try { 
+                    navigator.clipboard.writeText(ui.outputText.value).then(() => {
+                        const originalIcon = ui.copyButton.innerHTML;
+                        ui.copyButton.innerHTML = icons.check;
+                        setTimeout(() => { ui.copyButton.innerHTML = originalIcon; }, 2000);
+                    });
                  } catch (err) {
                     showMessage("Không thể sao chép.", 3000);
                  }
@@ -4945,13 +4910,19 @@ try {
              ui.speechSettingsPanel.classList.toggle('open');
         });
 
-        if (ui.translateButton) ui.translateButton.addEventListener('click', handleTranslate);
-        if (ui.generateExamplesButton) ui.generateExamplesButton.addEventListener('click', handleGenerateExamples);
-        if (ui.summarizeButton) ui.summarizeButton.addEventListener('click', handleSummarize);
-        if (ui.generateParagraphButton) ui.generateParagraphButton.addEventListener('click', handleGenerateParagraph);
-        if (ui.translateImageButton) ui.translateImageButton.addEventListener('click', handleTranslateImage);
-        if (ui.swapLanguagesButton) ui.swapLanguagesButton.addEventListener('click', handleSwapLanguages);
-        if (ui.speakTranslatedTextButton) ui.speakTranslatedTextButton.addEventListener('click', () => speakText(ui.outputText?.value));
+        const addClickListener = (element, handler) => element?.addEventListener('click', handler);
+        addClickListener(ui.translateButton, handleTranslate);
+        addClickListener(ui.generateExamplesButton, handleGenerateExamples);
+        addClickListener(ui.summarizeButton, handleSummarize);
+        addClickListener(ui.generateParagraphButton, handleGenerateParagraph);
+        addClickListener(ui.translateImageButton, handleTranslateImage);
+        addClickListener(ui.swapLanguagesButton, handleSwapLanguages);
+        addClickListener(ui.speakTranslatedTextButton, () => speakText(ui.outputText?.value));
+        addClickListener(ui.solveExerciseButton, handleSolveExercise);
+        addClickListener(ui.aiAssistantButton, toggleChat);
+        addClickListener(ui.closeChatButton, toggleChat);
+        addClickListener(ui.sendChatButton, handleAIChat);
+        
         if (ui.speedRange) ui.speedRange.addEventListener('input', () => { if(ui.speedValue) ui.speedValue.textContent = ui.speedRange.value; });
         
         if (ui.dropZone) {
@@ -4981,11 +4952,6 @@ try {
             });
         }
         
-        if (ui.solveExerciseButton) ui.solveExerciseButton.addEventListener('click', handleSolveExercise);
-
-        if (ui.aiAssistantButton) ui.aiAssistantButton.addEventListener('click', toggleChat);
-        if (ui.closeChatButton) ui.closeChatButton.addEventListener('click', toggleChat);
-        if (ui.sendChatButton) ui.sendChatButton.addEventListener('click', handleAIChat);
         if (ui.chatInput) ui.chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAIChat(); });
         if (ui.dictionarySearch) ui.dictionarySearch.addEventListener('input', (e) => renderInternalDictionary(e.target.value));
     }
@@ -5017,8 +4983,9 @@ try {
 
 } catch (error) {
     console.error("Đã xảy ra lỗi nghiêm trọng:", error);
-    document.body.innerHTML = `<div class="text-center p-8"><h1>Đã có lỗi xảy ra</h1><p>${error.message}</p></div>`;
+    document.body.innerHTML = `<div class="text-center p-8"><h1>Đã có lỗi xảy ra</h1><p>Vui lòng tải lại trang. Lỗi: ${error.message}</p></div>`;
 }
 </script>
 </body>
 </html>
+
