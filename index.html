@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trình Dịch Tiếng Ê-đê (Hoàn thiện)</title>
+    <title>Trình Dịch Tiếng Ê-đê (Tối ưu hóa)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,7 +54,7 @@
         .message-box { position: fixed; top: 20px; left: 50%; background-color: #111827; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease; transform: translate(-50%, -20px); }
         .message-box.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
         #aiAssistantButton { position: fixed; bottom: 2rem; right: 2rem; z-index: 999; }
-        #aiChatContainer { position: fixed; bottom: 6rem; right: 2rem; z-index: 998; width: 100%; max-width: 18rem; transition: opacity 0.3s ease, transform 0.3s ease; transform-origin: bottom right; }
+        #aiChatContainer { position: fixed; bottom: 6rem; right: 2rem; z-index: 998; width: 100%; max-width: 22rem; transition: opacity 0.3s ease, transform 0.3s ease; transform-origin: bottom right; }
         #aiChatContainer.hidden { opacity: 0; transform: scale(0.9); pointer-events: none; }
         .form-input:focus { outline: none; border-color: var(--primary-color) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 25%, transparent); }
         .btn { transition: all 0.2s ease-in-out; }
@@ -258,7 +258,7 @@
         <div id="chatMessages" class="p-4 h-64 overflow-y-auto space-y-4">
              <div class="flex items-start gap-3">
                 <div id="aiIconContainer" class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: var(--primary-color); color: white;"></div>
-                <div class="p-3 rounded-lg" style="background-color: var(--bg-tertiary);">
+                <div class="p-3 rounded-lg ai-message" style="background-color: var(--bg-tertiary);">
                     <p class="text-sm" id="aiGreetingMessage">Xin chào! Tôi là một trợ lý AI. Tôi có thể giúp gì cho bạn hôm nay?</p>
                 </div>
             </div>
@@ -275,7 +275,7 @@
 try {
     // --- STATE MANAGEMENT ---
     const state = { 
-        isLoading: false, 
+        isLoading: false,
         isChatLoading: false, 
         chatHistory: [], 
         translationHistory: [],
@@ -284,6 +284,7 @@ try {
         lastExtractedImageText: '' 
     };
     const translationCache = new Map();
+    // Dictionary has been reduced as requested.
     const internalDictionary = [
       { "ede": "Abao", "meanings": [{ "type": "dt", "vietnamese": "Ốc bươu" }] },
 { "ede": "Abăn", "meanings": [{ "type": "dt", "vietnamese": "Cái chăn (mền)" }] },
@@ -4350,6 +4351,7 @@ try {
 
     function setLoadingState(button, isLoading, originalText) {
         if (!button) return;
+        state.isLoading = isLoading;
         scheduleUIUpdate(() => {
             const textSpan = button.querySelector('.button-text');
             const iconSpan = button.querySelector('.button-icon');
@@ -4469,6 +4471,8 @@ try {
 
     // --- GEMINI API CALL ---
     async function callGeminiAPI(prompt, imageData = null, useGrounding = false) {
+        // NOTE: For this educational environment, the API key is provided. 
+        // In a real-world application, this should be handled securely on a server.
         const apiKey = "AIzaSyBVCTx8fPnGWFprwoT9bgixio_NUgvNG4k"; 
         const model = 'gemini-2.5-flash-preview-05-20';
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -4740,18 +4744,149 @@ try {
             setLoadingState(ui.solveExerciseButton, false, 'Giải bài tập');
         }
     }
-
-
-    // --- AI CHATBOT ---
-    function toggleChat() { /* ... implementation unchanged ... */ }
-    function parseAICommandAndExecute(input) { /* ... implementation unchanged ... */ }
-    async function generateAndShowAISuggestions(baseResponse) { /* ... implementation unchanged ... */ }
-    async function handleAIChat() { /* ... implementation unchanged ... */ }
-    function addChatMessage(message, sender, isLoading = false) { /* ... implementation unchanged ... */ }
-    function updateLastChatMessage(newMessage) { /* ... implementation unchanged ... */ }
     
+    // --- AI CHATBOT (IMPLEMENTATION ADDED) ---
+    function toggleChat() {
+        scheduleUIUpdate(() => {
+            ui.aiChatContainer.classList.toggle('hidden');
+            if (!ui.aiChatContainer.classList.contains('hidden')) {
+                ui.chatInput.focus();
+                generateAndShowAISuggestions(); // Show initial suggestions
+            }
+        });
+    }
+
+    async function handleAIChat() {
+        const userInput = ui.chatInput.value.trim();
+        if (!userInput || state.isChatLoading) return;
+
+        state.isChatLoading = true;
+        ui.chatInput.value = '';
+        ui.sendChatButton.disabled = true;
+
+        addChatMessage(userInput, 'user');
+        state.chatHistory.push({ role: 'user', parts: [{ text: userInput }] });
+        addChatMessage('', 'ai', true); // Loading indicator
+
+        const commandExecuted = await parseAICommandAndExecute(userInput);
+        if (commandExecuted) {
+            state.isChatLoading = false;
+            ui.sendChatButton.disabled = false;
+            updateLastChatMessage("Đã thực hiện lệnh của bạn trong ứng dụng.");
+            return;
+        }
+
+        const prompt = `Bạn là một trợ lý ngôn ngữ chuyên về văn hóa và ngôn ngữ Ê-đê. Trả lời câu hỏi sau một cách ngắn gọn, hữu ích và thân thiện. Câu hỏi: "${userInput}"`;
+
+        try {
+            const aiResponse = await callGeminiAPI(prompt, null, true);
+            state.chatHistory.push({ role: 'model', parts: [{ text: aiResponse }] });
+            updateLastChatMessage(aiResponse);
+            await generateAndShowAISuggestions(aiResponse);
+        } catch (error) {
+            updateLastChatMessage(`Xin lỗi, đã có lỗi xảy ra: ${error.message}`);
+        } finally {
+            state.isChatLoading = false;
+            ui.sendChatButton.disabled = false;
+        }
+    }
+
+    function addChatMessage(message, sender, isLoading = false) {
+        scheduleUIUpdate(() => {
+            const messageDiv = document.createElement('div');
+            const iconHTML = sender === 'ai' ? `<div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: var(--primary-color); color: white;">${icons.ai}</div>` : '';
+            const messageClass = sender === 'ai' ? 'ai-message' : 'user-message ml-auto';
+            
+            messageDiv.className = `flex items-start gap-3 ${sender === 'user' ? 'justify-end' : ''}`;
+            messageDiv.innerHTML = `
+                ${sender === 'ai' ? iconHTML : ''}
+                <div class="p-3 rounded-lg max-w-xs ${messageClass}" style="background-color: ${sender === 'ai' ? 'var(--bg-tertiary)' : 'var(--primary-color)'}; color: ${sender === 'ai' ? 'var(--text-primary)' : 'white'};">
+                    ${isLoading ? '<div class="loader"></div>' : `<p class="text-sm">${message}</p>`}
+                </div>
+            `;
+            ui.chatMessages.appendChild(messageDiv);
+            ui.chatMessages.scrollTop = ui.chatMessages.scrollHeight;
+        });
+    }
+    
+    function updateLastChatMessage(newMessage) {
+        scheduleUIUpdate(() => {
+            const lastMessage = ui.chatMessages.querySelector('.ai-message:last-child');
+            if (lastMessage) {
+                lastMessage.innerHTML = `<p class="text-sm">${newMessage}</p>`;
+                ui.chatMessages.scrollTop = ui.chatMessages.scrollHeight;
+            }
+        });
+    }
+    
+    async function parseAICommandAndExecute(input) {
+        const lowerInput = input.toLowerCase();
+        
+        const translateMatch = lowerInput.match(/^(?:dịch|translate)\s*:\s*(.+)/);
+        if (translateMatch) {
+            ui.inputText.value = translateMatch[1];
+            await handleTranslate();
+            return true;
+        }
+
+        const exampleMatch = lowerInput.match(/^(?:ví dụ|example)\s*:\s*(.+)/);
+        if (exampleMatch) {
+            ui.inputText.value = exampleMatch[1];
+            await handleGenerateExamples();
+            return true;
+        }
+
+        const paragraphMatch = lowerInput.match(/^(?:tạo đoạn văn|paragraph)\s*:\s*(.+)/);
+        if (paragraphMatch) {
+            ui.paragraphKeywords.value = paragraphMatch[1];
+            await handleGenerateParagraph();
+            return true;
+        }
+        
+        return false;
+    }
+
+    async function generateAndShowAISuggestions(baseResponse = null) {
+        let prompt;
+        if (baseResponse) {
+             prompt = `Dựa trên câu trả lời này: "${baseResponse}", hãy tạo 2 câu hỏi hoặc lệnh tiếp theo mà người dùng có thể muốn hỏi. Trả về dưới dạng danh sách gạch đầu dòng ngắn gọn.`;
+        } else {
+             prompt = `Gợi ý 3 hành động nhanh mà người dùng có thể thực hiện với trợ lý ngôn ngữ Ê-đê. Ví dụ: "Dịch: Chào buổi sáng", "Văn hóa nhà dài là gì?", "Tạo ví dụ: Ama". Trả về dưới dạng danh sách gạch đầu dòng ngắn gọn.`;
+        }
+        
+        try {
+            const response = await callGeminiAPI(prompt);
+            const suggestions = response.split('\n').map(s => s.replace(/^- /, '').trim()).filter(Boolean);
+            scheduleUIUpdate(() => {
+                ui.aiSuggestions.innerHTML = '';
+                suggestions.slice(0, 3).forEach(suggestionText => {
+                    const button = document.createElement('button');
+                    button.textContent = suggestionText;
+                    button.className = 'ai-suggestion-btn text-xs px-3 py-1 rounded-full';
+                    button.onclick = () => {
+                        ui.chatInput.value = suggestionText;
+                        handleAIChat();
+                    };
+                    ui.aiSuggestions.appendChild(button);
+                });
+            });
+        } catch (error) {
+            console.error("Lỗi tạo gợi ý:", error);
+        }
+    }
+
     // --- EVENT HANDLERS & SETUP ---
-    function handleSwapLanguages() { /* ... implementation unchanged ... */ }
+    function handleSwapLanguages() {
+        scheduleUIUpdate(() => {
+            const tempLang = ui.inputLang.value;
+            ui.inputLang.value = ui.outputLang.value;
+            ui.outputLang.value = tempLang;
+
+            const tempText = ui.inputText.value;
+            ui.inputText.value = ui.outputText.value;
+            ui.outputText.value = tempText;
+        });
+    }
 
     function setupEventListeners() {
         ui.themeButtons.forEach(button => {
@@ -4782,7 +4917,7 @@ try {
                     setTimeout(() => { ui.copyButton.innerHTML = originalIcon; }, 2000);
                 });
             } else {
-                 try { // Fallback for older browsers
+                 try { // Fallback for environments without secure context
                     const textArea = document.createElement("textarea");
                     textArea.value = ui.outputText.value;
                     document.body.appendChild(textArea);
@@ -4887,4 +5022,3 @@ try {
 </script>
 </body>
 </html>
-
