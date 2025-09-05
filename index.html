@@ -207,6 +207,10 @@
                                 <span class="button-icon"></span><span class="button-text">Dịch từ ảnh</span>
                             </button>
                             <div id="imageTranslateResultWrapper" class="mt-6 hidden space-y-6">
+                                <div class="flex flex-col space-y-2">
+                                    <label class="font-semibold">Văn bản gốc trích xuất</label>
+                                    <textarea id="extractedImageText" rows="4" readonly class="form-input w-full p-4 rounded-lg border-2 resize-none" style="background-color: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);"></textarea>
+                                </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="flex flex-col space-y-2"><label class="font-semibold">Bản dịch Tiếng Việt</label><textarea id="vietImageText" rows="6" readonly class="form-input w-full p-4 rounded-lg border-2 resize-none" style="background-color: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);"></textarea></div>
                                     <div class="flex flex-col space-y-2"><label class="font-semibold">Bản dịch Tiếng Ê-đê</label><textarea id="edeImageText" rows="6" readonly class="form-input w-full p-4 rounded-lg border-2 resize-none" style="background-color: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);"></textarea></div>
@@ -290,7 +294,7 @@ try {
     const translationCache = new Map();
     // Dictionary has been reduced as requested.
     const internalDictionary = [
-      { "ede": "Abao", "meanings": [{ "type": "dt", "vietnamese": "Ốc bươu" }] },
+     { "ede": "Abao", "meanings": [{ "type": "dt", "vietnamese": "Ốc bươu" }] },
 { "ede": "Abăn", "meanings": [{ "type": "dt", "vietnamese": "Cái chăn (mền)" }] },
 { "ede": "Abŭ", "meanings": [{ "type": "dt", "vietnamese": "Cái hũ" }] },
 { "ede": "Adei", "meanings": [{ "type": "dt", "vietnamese": "Em" }] },
@@ -4622,7 +4626,6 @@ try {
     }
     
     async function handleTranslateImage() {
-        // Implementation remains largely the same, but ensures grounding is used for word analysis
         if(!ui.imagePreview || !ui.imagePreview.src) return;
         setLoadingState(ui.translateImageButton, true, 'Dịch từ ảnh');
         scheduleUIUpdate(() => {
@@ -4637,23 +4640,32 @@ try {
         const mimeType = mimeTypeMatch ? mimeTypeMatch[1] : 'image/png';
         
         try {
-            const extractPrompt = `Trích xuất tất cả văn bản từ ảnh này. Chỉ trả về văn bản thuần túy.`;
+            const extractPrompt = `Phân tích kỹ hình ảnh này và trích xuất TOÀN BỘ văn bản có trong đó. Cố gắng hết sức để đọc chính xác từng chữ, bao gồm cả các dấu câu và ký tự đặc biệt của tiếng Việt hoặc tiếng Ê-đê. Nếu văn bản mờ, hãy đưa ra phỏng đoán tốt nhất. Chỉ trả về văn bản thuần túy.`;
             const extractedText = await callGeminiAPI(extractPrompt, { mimeType, data: base64Image });
             state.lastExtractedImageText = extractedText;
 
-            const vietPrompt = `Dịch văn bản sau sang Tiếng Việt: "${extractedText}"`;
-            const edePrompt = `Dịch văn bản sau sang Tiếng Ê-đê: "${extractedText}"`;
+            // Display extracted text for verification
+            scheduleUIUpdate(() => {
+                ui.extractedImageText.value = extractedText;
+            });
+            
+            // Logic for translation using dictionary first is complex for sentences.
+            // AI is used for contextual translation, then analysis uses the dictionary.
+            const vietPrompt = `Ưu tiên sử dụng từ điển cá nhân khi có thể, dịch văn bản sau sang Tiếng Việt một cách chính xác: "${extractedText}"`;
+            const edePrompt = `Ưu tiên sử dụng từ điển cá nhân khi có thể, dịch văn bản sau sang Tiếng Ê-đê một cách chính xác: "${extractedText}"`;
 
             const [vietTranslation, edeTranslation] = await Promise.all([
-                callGeminiAPI(vietPrompt, null, true), // Use grounding
-                callGeminiAPI(edePrompt, null, true)  // Use grounding
+                callGeminiAPI(vietPrompt, null, true),
+                callGeminiAPI(edePrompt, null, true)
             ]);
 
             scheduleUIUpdate(() => {
                 ui.vietImageText.value = vietTranslation;
                 ui.edeImageText.value = edeTranslation;
                 ui.imageTranslateResultWrapper.classList.remove('hidden');
-                if (extractedText.toLowerCase().includes('bài tập')) {
+
+                const exerciseKeywords = ['bài tập', 'bài giải', 'câu hỏi', 'giải bài', 'tính:', 'question:', 'exercise:'];
+                if (exerciseKeywords.some(kw => extractedText.toLowerCase().includes(kw))) {
                    ui.exerciseSection.classList.remove('hidden');
                 }
             });
@@ -4670,7 +4682,7 @@ try {
         if (!ui.wordAnalysisResult || !text) return;
         scheduleUIUpdate(() => { ui.wordAnalysisResult.innerHTML = '<div class="loader mx-auto"></div>'; });
 
-        const words = [...new Set(text.toLowerCase().match(/\b(\w+)\b/g) || [])];
+        const words = [...new Set(text.toLowerCase().match(/[\w'-]+/g) || [])];
         if (words.length === 0) {
             scheduleUIUpdate(() => { ui.wordAnalysisResult.innerHTML = `<p style="color: var(--text-secondary);">Không tìm thấy từ để phân tích.</p>`; });
             return;
@@ -4988,4 +5000,3 @@ try {
 </script>
 </body>
 </html>
-
